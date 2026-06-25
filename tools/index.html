@@ -2640,21 +2640,21 @@ function clearFeedback(){
 // SETTINGS
 // ─────────────────────────────────────────────
 function openSettings(){
-  document.getElementById("anthropicKey").value=anthropicKey;
-  document.getElementById("googleKey").value=googleKey;
-  document.getElementById("googleCX").value=googleCX;
-  document.getElementById("googleWebCX").value=googleWebCX;
-  document.getElementById("serpApiKey").value=serpApiKey;
+  const ak=document.getElementById("anthropicKey"); if(ak) ak.value=anthropicKey;
+  const gk=document.getElementById("googleKey"); if(gk) gk.value=googleKey;
+  const gc=document.getElementById("googleCX"); if(gc) gc.value=googleCX;
+  const gwc=document.getElementById("googleWebCX"); if(gwc) gwc.value=googleWebCX;
+  const sk=document.getElementById("serpApiKey"); if(sk) sk.value=serpApiKey;
   refreshStatuses();
   document.getElementById("settingsOverlay").classList.add("open");
 }
 function closeSettings(){ document.getElementById("settingsOverlay").classList.remove("open"); }
 function saveSettings(){
-  anthropicKey=document.getElementById("anthropicKey").value.trim();
-  googleKey=document.getElementById("googleKey").value.trim();
-  googleCX=document.getElementById("googleCX").value.trim();
-  googleWebCX=document.getElementById("googleWebCX").value.trim();
-  serpApiKey=document.getElementById("serpApiKey").value.trim();
+  const ak=document.getElementById("anthropicKey"); if(ak) anthropicKey=ak.value.trim();
+  const gk=document.getElementById("googleKey"); if(gk) googleKey=gk.value.trim();
+  const gc=document.getElementById("googleCX"); if(gc) googleCX=gc.value.trim();
+  const gwc=document.getElementById("googleWebCX"); if(gwc) googleWebCX=gwc.value.trim();
+  const sk=document.getElementById("serpApiKey"); if(sk) serpApiKey=sk.value.trim();
   localStorage.setItem("fc_ant",anthropicKey);
   localStorage.setItem("fc_goog",googleKey);
   localStorage.setItem("fc_gcx",googleCX);
