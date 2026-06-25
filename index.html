@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FirstCustomer — Get Your First Customer Online. Free.</title>
+<meta name="description" content="6 AI-powered tools to rank on Google, find warm leads, write SEO content, and grow your business. Free forever. No agency needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060f;--card:#0d0d1a;--border:#1e1e3a;
+  --text:#e2e2f0;--muted:#5a5a7a;--muted2:#8888aa;
+  --purple:#818cf8;--purple-d:#4f46e5;
+  --green:#34d399;--pink:#f472b6;--yellow:#fbbf24;--orange:#fb923c;--blue:#60a5fa;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#2d2d5f;border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:13px 48px;background:rgba(6,6,15,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(30,30,58,.8)}
+.nav-logo{font-size:19px;font-weight:900;color:#fff;text-decoration:none}
+.nav-logo span{color:var(--purple)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:13px;font-weight:500;transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--purple-d);color:#fff;padding:9px 22px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 2px 14px rgba(79,70,229,.35);transition:all .15s}
+.nav-cta:hover{background:#6366f1}
+
+/* TICKER */
+.ticker-wrap{margin-top:59px;overflow:hidden;background:#07070e;border-bottom:1px solid var(--border);padding:10px 0}
+.ticker{display:flex;animation:tick 38s linear infinite;white-space:nowrap}
+.ti{padding:0 26px;font-size:12px;color:var(--muted2);display:flex;align-items:center;gap:7px;flex-shrink:0}
+.ti b{color:var(--purple);font-weight:700}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* HERO */
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 80px;position:relative;overflow:hidden}
+.glow{position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:900px;height:700px;background:radial-gradient(ellipse,rgba(79,70,229,.2) 0%,rgba(124,58,237,.07) 40%,transparent 70%);pointer-events:none}
+.glow2{position:absolute;bottom:-180px;right:-100px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(244,114,182,.08) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.2);border-radius:100px;padding:6px 18px;margin-bottom:30px;font-size:12px;color:var(--purple);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{opacity:.5;box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+h1.hh{font-size:clamp(38px,6.5vw,74px);font-weight:900;line-height:1.06;color:#fff;max-width:840px;margin-bottom:24px;letter-spacing:-2px}
+.grad{background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:17px;color:var(--muted2);max-width:560px;margin-bottom:44px;line-height:1.75}
+.hero-sub strong{color:var(--text)}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.btn-xl{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:16px 36px;border-radius:12px;text-decoration:none;font-weight:700;font-size:16px;box-shadow:0 6px 28px rgba(79,70,229,.45);transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-xl:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(79,70,229,.6)}
+.btn-xl-g{background:transparent;color:var(--muted2);padding:16px 28px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--border);transition:all .2s}
+.btn-xl-g:hover{color:#fff;border-color:var(--muted)}
+.trust-row{font-size:12px;color:var(--muted);margin-bottom:56px;display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
+.trust-row span::before{content:'✓ ';color:var(--green);font-weight:700}
+.hstats{display:flex;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+.hs{padding:22px 36px;text-align:center;border-right:1px solid var(--border)}
+.hs:last-child{border-right:none}
+.hs-n{font-size:30px;font-weight:900;color:#fff;letter-spacing:-1px}
+.hs-l{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* SECTIONS */
+section{padding:96px 24px}
+.con{max-width:1100px;margin:0 auto}
+.sl{font-size:11px;font-weight:700;letter-spacing:2.5px;color:var(--purple);text-transform:uppercase;margin-bottom:12px}
+.st{font-size:clamp(28px,4vw,46px);font-weight:800;color:#fff;letter-spacing:-.8px;line-height:1.15;margin-bottom:16px}
+.ss{font-size:16px;color:var(--muted2);line-height:1.75;max-width:580px}
+.btn-p{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 26px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 3px 14px rgba(79,70,229,.35)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(79,70,229,.5)}
+
+/* PROBLEM */
+.prob{background:#07070f;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:52px}
+.pc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;overflow:hidden;transition:border-color .2s}
+.pc:hover{border-color:#3d3d6f}
+.pc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#f87171,#fbbf24)}
+.pi{font-size:30px;margin-bottom:12px}
+.pt{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+.pb{font-size:13px;color:var(--muted2);line-height:1.7}
+.pq{margin-top:12px;padding:10px 12px;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.12);border-radius:8px;font-size:12px;color:#f87171;font-style:italic}
+
+/* PROOF BAR */
+.pbar{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:36px 24px}
+.pbar-in{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px}
+.ps{text-align:center}
+.psn{font-size:36px;font-weight:900;color:#fff;letter-spacing:-1px}
+.psl{font-size:12px;color:var(--muted);margin-top:2px}
+.pdiv{width:1px;height:48px;background:var(--border)}
+
+/* FEATURE SECTIONS */
+.fs{padding:96px 24px}
+.fs.alt{background:#07070f;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:76px;align-items:center;max-width:1100px;margin:0 auto}
+.frow.rev{direction:rtl}.frow.rev>*{direction:ltr}
+.ftag{display:inline-flex;align-items:center;gap:8px;border-radius:100px;padding:6px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px}
+.tp{background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.2);color:var(--purple)}
+.tg{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);color:var(--green)}
+.tk{background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);color:var(--pink)}
+.ty{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);color:var(--yellow)}
+.tb{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);color:var(--blue)}
+.to{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:var(--orange)}
+.fh{font-size:clamp(24px,3vw,36px);font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1.15;margin-bottom:14px}
+.fp{font-size:15px;color:var(--muted2);line-height:1.8;margin-bottom:22px}
+.fbl{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.fbl li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--muted2);line-height:1.6}
+.ck{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.cp{background:rgba(129,140,248,.15);color:var(--purple)}
+.cg{background:rgba(52,211,153,.15);color:var(--green)}
+.ck2{background:rgba(244,114,182,.15);color:var(--pink)}
+.cy{background:rgba(251,191,36,.15);color:var(--yellow)}
+.cb{background:rgba(96,165,250,.15);color:var(--blue)}
+.co{background:rgba(251,146,60,.15);color:var(--orange)}
+.fbl li strong{color:var(--text);font-weight:600}
+
+/* MOCK UI */
+.mock{border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5);background:var(--card)}
+.mbar{background:#0a0a18;border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:8px}
+.md{width:10px;height:10px;border-radius:50%}
+.mt{font-size:12px;color:var(--muted);margin-left:8px;font-weight:500}
+.mb{padding:18px}
+.sig-item{background:#0c0c18;border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px;display:flex;gap:11px;align-items:flex-start}
+.sig-item:last-child{margin-bottom:0}
+.sc{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.sch{background:rgba(52,211,153,.15);color:var(--green)}
+.scm{background:rgba(251,191,36,.15);color:var(--yellow)}
+.st2{font-size:12px;color:var(--muted2);line-height:1.5;flex:1}
+.st2 strong{color:#fff;font-size:12px}
+.sm{font-size:10px;color:var(--muted);margin-top:4px}
+.sac{display:flex;gap:5px;margin-top:7px}
+.sb{font-size:10px;padding:4px 10px;border-radius:5px;border:none;cursor:pointer;font-weight:600}
+.sbp{background:rgba(129,140,248,.2);color:var(--purple)}
+.sbg{background:rgba(52,211,153,.15);color:var(--green)}
+.rrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.rrow:last-child{border-bottom:none}
+.rpos{width:36px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.rb1{background:rgba(248,113,113,.12);color:#f87171}
+.rb2{background:rgba(251,191,36,.12);color:var(--yellow)}
+.rb3{background:rgba(52,211,153,.12);color:var(--green)}
+.rkw{flex:1;color:var(--text)}
+.rdiff{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:700}
+.de{background:rgba(52,211,153,.12);color:var(--green)}
+.dm{background:rgba(251,191,36,.12);color:var(--yellow)}
+.dc{background:rgba(248,113,113,.12);color:#f87171}
+.rtip{font-size:10px;padding:3px 8px;border-radius:5px;background:rgba(129,140,248,.15);color:var(--purple);cursor:pointer}
+.ctabs{display:flex;gap:2px;background:#0a0a18;padding:7px;border-radius:8px;margin-bottom:13px}
+.ct2{flex:1;text-align:center;padding:5px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;color:var(--muted)}
+.ct2.a{background:var(--purple-d);color:#fff}
+.cart{background:#0c0c18;border-radius:8px;padding:13px}
+.ctt{font-size:13px;font-weight:700;color:#fff;margin-bottom:5px;line-height:1.4}
+.ctm{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.ctag{font-size:9px;padding:2px 8px;border-radius:4px;font-weight:700;background:rgba(52,211,153,.1);color:var(--green)}
+.ctb{font-size:11px;color:var(--muted2);line-height:1.6}
+.ctb p{margin-bottom:5px}
+.cwc{font-size:10px;color:var(--muted);margin-top:7px;padding-top:7px;border-top:1px solid var(--border)}
+.li{background:#0c0c18;border:1px solid var(--border);border-radius:10px;padding:11px;margin-bottom:9px}
+.li:last-child{margin-bottom:0}
+.lih{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.lit{font-size:12px;font-weight:600;color:#fff;line-height:1.4;flex:1;margin-right:7px}
+.lis{font-size:9px;padding:3px 8px;border-radius:100px;font-weight:700;white-space:nowrap}
+.ln{background:rgba(129,140,248,.15);color:var(--purple)}
+.lc{background:rgba(251,191,36,.15);color:var(--yellow)}
+.lw{background:rgba(52,211,153,.15);color:var(--green)}
+.lib{font-size:11px;color:var(--muted2);line-height:1.5;margin-bottom:7px}
+.lif{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+.yti{display:flex;gap:10px;align-items:center;background:#0c0c18;border-radius:8px;padding:10px;margin-bottom:8px}
+.yti:last-child{margin-bottom:0}
+.ytth{width:60px;height:38px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.yti-i{flex:1}
+.ythn{font-size:11px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:2px}
+.ythm{font-size:10px;color:var(--muted)}
+.ysc{font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;background:rgba(52,211,153,.15);color:var(--green);flex-shrink:0}
+
+/* HOW IT WORKS */
+.how{background:#07070f;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.hsteps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px}
+.hstep{padding:36px 22px;text-align:center}
+.hnum{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;margin:0 auto 18px;box-shadow:0 8px 28px rgba(79,70,229,.4)}
+.htitle{font-size:15px;font-weight:700;color:#fff;margin-bottom:9px}
+.hdesc{font-size:13px;color:var(--muted2);line-height:1.65}
+.hsub{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px}
+.wc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;position:relative}
+.wnum{font-size:46px;font-weight:900;color:rgba(129,140,248,.06);position:absolute;top:14px;right:18px;line-height:1}
+.wic{font-size:26px;margin-bottom:12px}
+.wtitle{font-size:15px;font-weight:700;color:#fff;margin-bottom:7px}
+.wbody{font-size:13px;color:var(--muted2);line-height:1.65}
+.wtag{display:inline-block;margin-top:11px;font-size:11px;padding:3px 10px;border-radius:100px;background:rgba(129,140,248,.1);color:var(--purple);font-weight:600}
+
+/* COMPARE */
+.cmpwrap{overflow-x:auto;border-radius:14px;border:1px solid var(--border);margin-top:48px}
+table.ct{width:100%;border-collapse:collapse;min-width:600px}
+.ct th{background:#0c0c1a;padding:15px 22px;font-size:13px;font-weight:600;color:var(--muted);text-align:left;border-bottom:1px solid var(--border)}
+.ct th.h1{color:var(--purple);background:rgba(79,70,229,.08)}
+.ct th.hh{font-size:15px;font-weight:800;color:#fff}
+.ct td{padding:14px 22px;border-bottom:1px solid rgba(30,30,58,.5);font-size:13px}
+.ct tr:last-child td{border-bottom:none}
+.ct td.fn{color:var(--text);font-weight:500}
+.ct td.cy2{color:var(--green);font-weight:700}
+.ct td.cn{color:#333}
+.ct td.cpt{color:var(--yellow);font-weight:600}
+.ct td.cf{background:rgba(79,70,229,.05)}
+.ct tr:hover td{background:rgba(255,255,255,.015)}
+.cprice{font-size:15px;font-weight:800}
+.cpf{color:var(--green)}.cpe{color:#f87171}
+
+/* TESTIMONIALS */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;display:flex;flex-direction:column;transition:border-color .2s;position:relative;overflow:hidden}
+.tc:hover{border-color:#3d3d6f}
+.tc::before{content:'"';position:absolute;top:-8px;left:18px;font-size:90px;color:rgba(129,140,248,.05);font-family:Georgia,serif;line-height:1;pointer-events:none}
+.tst{color:var(--yellow);font-size:13px;letter-spacing:2px;margin-bottom:12px}
+.tq{font-size:14px;color:var(--text);line-height:1.75;flex:1;margin-bottom:20px}
+.tq strong{color:var(--purple);font-style:normal;font-weight:600}
+.tau{display:flex;align-items:center;gap:11px;padding-top:14px;border-top:1px solid var(--border)}
+.tav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.tn{font-size:13px;font-weight:700;color:#fff}
+.tr{font-size:11px;color:var(--muted)}
+.ttag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;background:rgba(52,211,153,.1);color:var(--green);margin-top:3px;display:inline-block}
+
+/* PRICING */
+.pcard{max-width:660px;margin:48px auto 0;background:var(--card);border:2px solid rgba(129,140,248,.3);border-radius:22px;padding:56px 44px;position:relative;overflow:hidden;text-align:center}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#4f46e5,#7c3aed,#c084fc,#f472b6)}
+.pbadge{display:inline-block;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:100px;padding:5px 18px;font-size:12px;color:var(--green);font-weight:700;margin-bottom:22px}
+.pamt{font-size:76px;font-weight:900;color:#fff;letter-spacing:-3px;line-height:1}
+.pamt sup{font-size:26px;font-weight:700;vertical-align:top;margin-top:14px;display:inline-block;color:var(--purple)}
+.pper{font-size:17px;color:var(--muted2);font-weight:600;margin-bottom:7px}
+.psub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+.pfeats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:36px;text-align:left}
+.pf{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted2)}
+.pf::before{content:'✓';color:var(--green);font-weight:700;font-size:13px;flex-shrink:0}
+.anote{background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.12);border-radius:10px;padding:14px 18px;margin-top:22px;font-size:12px;color:var(--muted2);line-height:1.65;text-align:left}
+.anote a{color:var(--purple);text-decoration:none}
+
+/* FAQ */
+.fq-sec{background:#07070f;border-top:1px solid var(--border)}
+.fqcols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.fqi{border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:8px}
+.fqq{width:100%;background:var(--card);border:none;color:#fff;padding:16px 20px;font-size:14px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;transition:background .15s}
+.fqq:hover{background:#111122}
+.fqq .arr{color:var(--muted);font-size:12px;transition:transform .2s;flex-shrink:0}
+.fqq.open{background:#0f0f20;color:var(--purple)}
+.fqq.open .arr{transform:rotate(180deg);color:var(--purple)}
+.fqa{display:none;padding:0 20px 16px;background:#0f0f20;font-size:13px;color:var(--muted2);line-height:1.75}
+.fqa.open{display:block}
+.fqa a{color:var(--purple);text-decoration:none}
+
+/* FINAL CTA */
+.fcta{background:linear-gradient(180deg,var(--bg) 0%,#0a0a20 100%);text-align:center;padding:110px 24px;position:relative;overflow:hidden}
+.fcta h2{font-size:clamp(30px,5vw,58px);font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px}
+.fcta p{font-size:17px;color:var(--muted2);margin-bottom:38px;line-height:1.7;max-width:560px;margin-left:auto;margin-right:auto}
+.ftrust{margin-top:26px;font-size:12px;color:var(--muted);display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.ftrust span::before{content:'✓ ';color:var(--green);font-weight:700}
+
+/* FOOTER */
+footer{background:#03030a;border-top:1px solid var(--border);padding:56px 48px 36px}
+.ftop{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px}
+.flogo{font-size:19px;font-weight:900;color:#fff;margin-bottom:9px}
+.flogo span{color:var(--purple)}
+.fdesc{font-size:13px;color:var(--muted);line-height:1.65;max-width:250px;margin-bottom:18px}
+.fcol h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:14px}
+.fcol a{display:block;color:var(--muted);text-decoration:none;font-size:13px;margin-bottom:9px;transition:color .15s}
+.fcol a:hover{color:#fff}
+.fbot{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border);flex-wrap:wrap;gap:12px}
+.fcopy{font-size:12px;color:var(--muted)}
+.fbadges{display:flex;gap:8px;flex-wrap:wrap}
+.fbadge{font-size:11px;padding:4px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:12px 20px}
+  .nav-links{display:none}
+  .frow,.frow.rev{grid-template-columns:1fr;direction:ltr;gap:36px}
+  .hsteps{grid-template-columns:1fr 1fr}
+  .tgrid{grid-template-columns:1fr}
+  .fqcols{grid-template-columns:1fr}
+  .ftop{grid-template-columns:1fr 1fr}
+  .hstats{flex-wrap:wrap}
+  .wgrid{grid-template-columns:1fr}
+  .pfeats{grid-template-columns:1fr}
+  footer{padding:36px 20px 24px}
+}
+@media(max-width:560px){
+  .hero-btns{flex-direction:column;align-items:center}
+  .hsteps{grid-template-columns:1fr}
+  .ftop{grid-template-columns:1fr}
+  h1.hh{letter-spacing:-1px}
+  .pcard{padding:36px 22px}
+  .hstats{flex-direction:column}
+  .hs{border-right:none !important;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">First<span>Customer</span></a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#compare">Compare</a>
+    <a href="#stories">Stories</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="nav-cta" href="https://signals.convertshorts.com" target="_blank">Open free tool →</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ti">🎯 <b>Signal Hunter</b> — find buyers posting on Reddit right now</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📊 <b>Rank Tracker</b> — see your exact Google position for every keyword</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">✍️ <b>Content Studio</b> — write SEO articles, social posts & emails in seconds</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">🎯 <b>Lead Finder</b> — warm leads + outreach + CRM all in one</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📺 <b>YouTube Studio</b> — optimise every video for YouTube search</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📖 <b>SEO Guide</b> — 80+ terms explained with real India examples</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">🎯 <b>Signal Hunter</b> — find buyers posting on Reddit right now</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📊 <b>Rank Tracker</b> — see your exact Google position for every keyword</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">✍️ <b>Content Studio</b> — write SEO articles, social posts & emails in seconds</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">🎯 <b>Lead Finder</b> — warm leads + outreach + CRM all in one</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📺 <b>YouTube Studio</b> — optimise every video for YouTube search</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+    <div class="ti">📖 <b>SEO Guide</b> — 80+ terms explained with real India examples</div><span style="color:var(--border);flex-shrink:0;padding:0 4px">·</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="glow"></div><div class="glow2"></div>
+  <div class="hero-badge"><div class="dot"></div>Free forever · 6 tools · No agency needed</div>
+  <h1 class="hh">The free tool that gets you<br>your <span class="grad">first customer online</span></h1>
+  <p class="hero-sub">Signal Hunter. Rank Tracker. Content Studio. Lead Finder. YouTube Studio. SEO Guide.<br><strong>All free. All AI-powered. All in one place.</strong></p>
+  <div class="hero-btns">
+    <a class="btn-xl" href="https://signals.convertshorts.com" target="_blank">Open FirstCustomer — it's free →</a>
+    <a class="btn-xl-g" href="#features">See all 6 tools ↓</a>
+  </div>
+  <div class="trust-row">
+    <span>No account needed</span>
+    <span>No credit card</span>
+    <span>Works in your browser</span>
+    <span>India-optimised</span>
+    <span>AI-powered</span>
+  </div>
+  <div class="hstats">
+    <div class="hs"><div class="hs-n">6</div><div class="hs-l">Tools built in</div></div>
+    <div class="hs"><div class="hs-n" style="color:var(--green)">₹0</div><div class="hs-l">Monthly cost</div></div>
+    <div class="hs"><div class="hs-n" style="color:var(--pink)">80+</div><div class="hs-l">SEO terms explained</div></div>
+    <div class="hs"><div class="hs-n" style="color:var(--yellow)">4–8</div><div class="hs-l">Weeks to first ranking</div></div>
+    <div class="hs"><div class="hs-n" style="color:var(--blue)">2 min</div><div class="hs-l">Setup time</div></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="prob">
+  <div class="con">
+    <div class="sl">The problem</div>
+    <h2 class="st">Getting your first online customer<br>shouldn't take 6 months of confusion</h2>
+    <p class="ss">Most small businesses and creators try everything and still can't figure out why nobody is finding them. The real problem isn't effort — it's not knowing where to start.</p>
+    <div class="pgrid">
+      <div class="pc">
+        <div class="pi">🌐</div>
+        <div class="pt">"My website has been live for months — zero visitors"</div>
+        <div class="pb">You paid to build it, made it look great, and waited. Google doesn't know you exist. The gap between "website is live" and "Google sends traffic" is invisible without the right tools.</div>
+        <div class="pq">"I thought just having a website was enough. I had no idea I needed to do anything else."</div>
+      </div>
+      <div class="pc">
+        <div class="pi">🔍</div>
+        <div class="pt">"I have no idea what keywords to target"</div>
+        <div class="pb">Every SEO article says "do keyword research" but assumes you have a ₹5,000/month tool. And even then, how do you know which keywords a new site can actually win?</div>
+        <div class="pq">"I targeted 'resume builder' and wondered why I ranked at position 500. Nobody told me that's a keyword held by 50-million-dollar companies."</div>
+      </div>
+      <div class="pc">
+        <div class="pi">💸</div>
+        <div class="pt">"SEO agencies want ₹30,000/month minimum"</div>
+        <div class="pb">Agencies send beautiful proposals. Cheapest package: ₹25,000–₹1,00,000 per month with 6-month lock-in. That's your entire profit margin. And they still won't guarantee results.</div>
+        <div class="pq">"An agency quoted ₹60,000/month. I earn ₹80,000/month. There had to be another way."</div>
+      </div>
+      <div class="pc">
+        <div class="pi">📭</div>
+        <div class="pt">"I post on Instagram every day — no leads"</div>
+        <div class="pb">Social media takes 12–18 months to build meaningful numbers. Meanwhile your customers are on Reddit right now, posting about their exact problem — and you have no way to find them.</div>
+        <div class="pq">"300 Instagram posts, 400 followers, 0 paying customers. I was doing the completely wrong thing."</div>
+      </div>
+      <div class="pc">
+        <div class="pi">✍️</div>
+        <div class="pt">"I know I need content — but I can't write"</div>
+        <div class="pb">SEO needs regular content. Blog posts, landing pages, social captions, emails, ads. If you're not a professional writer, the cost is enormous. Hiring a writer: ₹2,000–₹10,000 per article.</div>
+        <div class="pq">"I spent 4 hours on one blog post. It got 7 views. I gave up after 3 posts."</div>
+      </div>
+      <div class="pc">
+        <div class="pi">📺</div>
+        <div class="pt">"My YouTube videos get 50 views and plateau"</div>
+        <div class="pb">You upload consistently. Good content. But videos die at 50–200 views. The reason: your title, description, and tags aren't optimised. YouTube rewards discoverability — not just quality.</div>
+        <div class="pq">"I made 40 videos. Average 80 views. Then I fixed my titles. The next video got 4,000 views."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF BAR -->
+<div class="pbar">
+  <div class="pbar-in">
+    <div class="ps"><div class="psn" style="color:var(--purple)">6</div><div class="psl">Tools in one free app</div></div>
+    <div class="pdiv"></div>
+    <div class="ps"><div class="psn" style="color:var(--green)">₹0</div><div class="psl">Zero monthly cost</div></div>
+    <div class="pdiv"></div>
+    <div class="ps"><div class="psn" style="color:var(--pink)">80+</div><div class="psl">SEO terms explained</div></div>
+    <div class="pdiv"></div>
+    <div class="ps"><div class="psn" style="color:var(--yellow)">4–8 wk</div><div class="psl">To first Google ranking</div></div>
+    <div class="pdiv"></div>
+    <div class="ps"><div class="psn" style="color:var(--blue)">2 min</div><div class="psl">Setup time</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div id="features">
+
+<!-- 1 SIGNAL HUNTER -->
+<section class="fs">
+  <div class="frow">
+    <div>
+      <div class="ftag tp">🎯 Tool 1 of 6 — Signal Hunter</div>
+      <h2 class="fh">Find people who need your product — right now, on Reddit</h2>
+      <p class="fp">Every day, thousands of people post about their exact problems publicly. They're asking for recommendations, venting about frustrations, describing situations where your product is the answer. Signal Hunter finds them before they hire someone else.</p>
+      <ul class="fbl">
+        <li><span class="ck cp">✓</span><div><strong>Live scans across 6+ platforms</strong> — Reddit, Hacker News, Dev.to, Lobste.rs, Stack Overflow, and more. Fresh results every single scan.</div></li>
+        <li><span class="ck cp">✓</span><div><strong>Relevance score out of 10</strong> — AI scores every post so you know instantly which are worth your time. Focus on 7+ for maximum ROI.</div></li>
+        <li><span class="ck cp">✓</span><div><strong>AI-drafted replies in seconds</strong> — Claude reads the post and writes a reply that sounds human and helpful, not like an advertisement.</div></li>
+        <li><span class="ck cp">✓</span><div><strong>Agent memory that learns</strong> — thumb up what's relevant, thumb down what isn't. The AI improves with every session.</div></li>
+        <li><span class="ck cp">✓</span><div><strong>Searches pain, not your service name</strong> — instead of "resume writing", searches "need help with resume" — finding people at exactly the right moment.</div></li>
+        <li><span class="ck cp">✓</span><div><strong>Mark as Posted — track every reply</strong> — click Posted ✓ after replying on Reddit. The tool counts your activity and tracks what works.</div></li>
+      </ul>
+      <a class="btn-p" href="https://signals.convertshorts.com" target="_blank">Try Signal Hunter free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">🎯 Signal Hunter — Live Scan</div></div>
+        <div class="mb">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-size:12px;color:var(--muted)">Found <b style="color:#fff">8 signals</b> for "resume writer"</div>
+            <div style="font-size:10px;padding:3px 10px;border-radius:100px;background:rgba(52,211,153,.1);color:var(--green)">● 3 high-value</div>
+          </div>
+          <div class="sig-item">
+            <div class="sc sch">9</div>
+            <div>
+              <div class="st2"><strong>r/resumes · 2h ago</strong><br>"Applied to 47 jobs, 0 callbacks. Recruiter told me my resume is the problem. I don't know where to start fixing it..."</div>
+              <div class="sm">23 comments · High buying intent</div>
+              <div class="sac"><button class="sb sbp">✦ Draft Reply</button><button class="sb sbg">Posted ✓</button></div>
+            </div>
+          </div>
+          <div class="sig-item">
+            <div class="sc sch">8</div>
+            <div>
+              <div class="st2"><strong>r/india · 4h ago</strong><br>"Looking for someone to rewrite my CV professionally — have interview next week, budget around ₹1500–2000"</div>
+              <div class="sm">11 comments · Ready to pay</div>
+              <div class="sac"><button class="sb sbp">✦ Draft Reply</button><button class="sb sbg">Posted ✓</button></div>
+            </div>
+          </div>
+          <div class="sig-item">
+            <div class="sc scm">6</div>
+            <div>
+              <div class="st2"><strong>r/cscareerquestions · 6h ago</strong><br>"Is my resume too basic? Getting screened out before even talking to a human"</div>
+              <div class="sm">7 comments · Warm signal</div>
+              <div class="sac"><button class="sb sbp">✦ Draft Reply</button><button class="sb sbg">Posted ✓</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 RANK TRACKER -->
+<section class="fs alt">
+  <div class="frow rev">
+    <div>
+      <div class="ftag tg">📊 Tool 2 of 6 — Rank Tracker</div>
+      <h2 class="fh">Track every keyword. Know exactly what to fix. Watch your position climb.</h2>
+      <p class="fp">Most website owners have no idea how they rank on Google. Rank Tracker shows your exact position for every keyword your site appears for — and tells you precisely what to do to improve each one.</p>
+      <ul class="fbl">
+        <li><span class="ck cg">✓</span><div><strong>Import from Google Search Console</strong> — connect your free GSC account and import your real keyword data in seconds. No guessing.</div></li>
+        <li><span class="ck cg">✓</span><div><strong>Keyword difficulty scoring</strong> — Easy (4+ words, rank in 4–8 weeks), Medium (3 words), or Competitive (1–2 words, avoid until established).</div></li>
+        <li><span class="ck cg">✓</span><div><strong>Tips button — word-for-word instructions</strong> — exact page title to create, exact ChatGPT prompt, exact steps to submit to Google. No vague advice.</div></li>
+        <li><span class="ck cg">✓</span><div><strong>AI keyword suggestions</strong> — 15+ keyword ideas sorted by easiest-to-rank first. Always start with green (Easy) keywords.</div></li>
+        <li><span class="ck cg">✓</span><div><strong>Auto-check with SerpAPI</strong> — check all positions automatically. 100 free checks/month on SerpAPI's free plan.</div></li>
+        <li><span class="ck cg">✓</span><div><strong>Smart dashboard integration</strong> — buried keywords feed into "What to do next" so you always know your highest-priority fix.</div></li>
+      </ul>
+      <a class="btn-p" style="background:linear-gradient(135deg,#059669,#10b981)" href="https://signals.convertshorts.com" target="_blank">Try Rank Tracker free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">📊 Rank Tracker — Your Keywords</div></div>
+        <div class="mb">
+          <div style="margin-bottom:11px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;color:var(--muted)">12 keywords tracked</div>
+            <div style="display:flex;gap:5px">
+              <span style="font-size:9px;padding:2px 7px;border-radius:4px;background:rgba(52,211,153,.1);color:var(--green)">3 Page 1</span>
+              <span style="font-size:9px;padding:2px 7px;border-radius:4px;background:rgba(251,191,36,.1);color:var(--yellow)">4 Opportunity</span>
+              <span style="font-size:9px;padding:2px 7px;border-radius:4px;background:rgba(248,113,113,.1);color:#f87171">5 Buried</span>
+            </div>
+          </div>
+          <div class="rrow"><div class="rpos rb3">#3</div><div class="rkw" style="font-size:11px">ayurvedic herbs for hair growth india</div><span class="rdiff de">Easy</span><div class="rtip">💡 Tips</div></div>
+          <div class="rrow"><div class="rpos rb2">#14</div><div class="rkw" style="font-size:11px">traditional herb library online</div><span class="rdiff dm">Medium</span><div class="rtip">💡 Tips</div></div>
+          <div class="rrow"><div class="rpos rb1">#47</div><div class="rkw" style="font-size:11px">ayurvedic wellness advisor</div><span class="rdiff dc">Competitive</span><div class="rtip">💡 Tips</div></div>
+          <div class="rrow"><div class="rpos rb3">#7</div><div class="rkw" style="font-size:11px">best ayurvedic herbs for diabetes india</div><span class="rdiff de">Easy</span><div class="rtip">💡 Tips</div></div>
+          <div class="rrow"><div class="rpos rb2">#18</div><div class="rkw" style="font-size:11px">amla powder benefits and uses</div><span class="rdiff dm">Medium</span><div class="rtip">💡 Tips</div></div>
+          <div style="margin-top:11px;padding:9px 12px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:8px;font-size:11px;color:var(--green)">💡 Priority: Fix "ayurvedic wellness advisor" — create a dedicated page this week</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 CONTENT STUDIO -->
+<section class="fs">
+  <div class="frow">
+    <div>
+      <div class="ftag tk">✍️ Tool 3 of 6 — Content Studio</div>
+      <h2 class="fh">Write every piece of marketing content you'll ever need — in seconds</h2>
+      <p class="fp">Four tools in one: Article Writer, Social Posts, Email Campaign, and Ad Copy. Every output is AI-powered and tailored to your business. No writer's block. No copywriter fees. No blank page.</p>
+      <ul class="fbl">
+        <li><span class="ck ck2">✓</span><div><strong>Article Writer</strong> — enter a keyword, get a full SEO article with H1 title, 4 H2 sections, meta title, meta description, and URL slug. 300, 500, or 800 words. Ready to publish.</div></li>
+        <li><span class="ck ck2">✓</span><div><strong>Social Posts</strong> — one topic generates Instagram caption + hashtags, LinkedIn post, WhatsApp message, and Twitter/X thread simultaneously.</div></li>
+        <li><span class="ck ck2">✓</span><div><strong>Email Campaign</strong> — full email with 3 subject line options to A/B test, preview text, body copy, and CTA. Works with Mailchimp, ConvertKit, any tool.</div></li>
+        <li><span class="ck ck2">✓</span><div><strong>Ad Copy</strong> — Google Ads headlines (30 chars each), Meta/Instagram copy, and CTA variants. Multiple versions to split test immediately.</div></li>
+        <li><span class="ck ck2">✓</span><div><strong>Personalised to your business</strong> — reads your profile (website, niche, target customer) and writes specifically for you, not generic filler.</div></li>
+        <li><span class="ck ck2">✓</span><div><strong>Tone memory</strong> — friendly, professional, simple, or authoritative. The tool remembers your preference and pre-selects it next time.</div></li>
+      </ul>
+      <a class="btn-p" style="background:linear-gradient(135deg,#be185d,#ec4899)" href="https://signals.convertshorts.com" target="_blank">Try Content Studio free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">✍️ Content Studio</div></div>
+        <div class="mb">
+          <div class="ctabs"><div class="ct2 a">📄 Article</div><div class="ct2">📱 Social</div><div class="ct2">📧 Email</div><div class="ct2">🎯 Ads</div></div>
+          <div class="cart">
+            <div class="ctt">Ayurvedic Herbs for Hair Growth India — Complete 2025 Guide</div>
+            <div class="ctm">
+              <span class="ctag">SEO Optimised</span>
+              <span class="ctag" style="background:rgba(129,140,248,.1);color:var(--purple)">550 words</span>
+              <span class="ctag" style="background:rgba(251,191,36,.1);color:var(--yellow)">Friendly tone</span>
+            </div>
+            <div class="ctb">
+              <p><strong style="color:var(--muted2)">Meta:</strong> "Discover the best ayurvedic herbs for hair growth in India | Evidence-based guide with dosage and usage"</p>
+              <p><strong style="color:var(--muted2)">Slug:</strong> /ayurvedic-herbs-for-hair-growth-india</p>
+              <p style="margin-top:7px;color:#777">## What Are Ayurvedic Herbs for Hair Growth?<br>India has used ayurvedic herbs for thousands of years to treat hair loss naturally...</p>
+              <p>## Best Herbs: Bhringraj, Amla, Ashwagandha — how each works and dosage...</p>
+            </div>
+            <div class="cwc">✓ 550 words · 4 H2 headings · Keyword 4× · CTA included</div>
+          </div>
+          <div style="margin-top:11px;display:flex;gap:7px">
+            <button style="flex:1;padding:8px;border-radius:7px;background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.2);color:var(--pink);font-size:11px;font-weight:600;cursor:pointer">📋 Copy Article</button>
+            <button style="flex:1;padding:8px;border-radius:7px;background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.2);color:var(--purple);font-size:11px;font-weight:600;cursor:pointer">↗ Get Social Posts too</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 LEAD FINDER -->
+<section class="fs alt">
+  <div class="frow rev">
+    <div>
+      <div class="ftag ty">🎯 Tool 4 of 6 — Lead Finder</div>
+      <h2 class="fh">Find warm leads, write personalised outreach, close clients — all in one place</h2>
+      <p class="fp">Lead Finder finds people who already posted publicly about needing your service. Warm outreach gets 3–5x higher response rates than cold DMs. It then writes the outreach message and tracks every lead through your pipeline.</p>
+      <ul class="fbl">
+        <li><span class="ck cy">✓</span><div><strong>Pain-focused search</strong> — searches the problem your customers express, not your service name. Finds people at the exact moment they need you.</div></li>
+        <li><span class="ck cy">✓</span><div><strong>AI outreach generator</strong> — reads each lead's actual post and writes a personalised message referencing what they said. Never sounds like a template.</div></li>
+        <li><span class="ck cy">✓</span><div><strong>Built-in CRM pipeline</strong> — New → Contacted → Replied → Won ✓ → Not Interested. Track every lead through every stage without a separate tool.</div></li>
+        <li><span class="ck cy">✓</span><div><strong>Two-wave fallback search</strong> — if the first search returns few results, automatically tries broader queries so you always find leads.</div></li>
+        <li><span class="ck cy">✓</span><div><strong>Export to CSV</strong> — download all leads as a spreadsheet to share with a team or import into HubSpot, Notion, or any CRM.</div></li>
+        <li><span class="ck cy">✓</span><div><strong>India-optimised</strong> — detects Indian context and searches r/india, r/IndiaBusiness, and India-specific queries automatically.</div></li>
+      </ul>
+      <a class="btn-p" style="background:linear-gradient(135deg,#92400e,#d97706)" href="https://signals.convertshorts.com" target="_blank">Try Lead Finder free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">🎯 Lead Finder — Pipeline</div></div>
+        <div class="mb">
+          <div style="display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap">
+            <span style="font-size:10px;padding:3px 9px;border-radius:6px;background:rgba(129,140,248,.1);color:var(--purple)">8 New</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:6px;background:rgba(251,191,36,.1);color:var(--yellow)">5 Contacted</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:6px;background:rgba(96,165,250,.1);color:var(--blue)">3 Replied</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:6px;background:rgba(52,211,153,.1);color:var(--green)">2 Won ✓</span>
+          </div>
+          <div class="li">
+            <div class="lih"><div class="lit">"Looking for resume writer, interview next week, budget ₹2000"</div><div class="lis ln">New</div></div>
+            <div class="lib">Posted 3h ago on r/india — high urgency, clear budget. Click to generate personalised outreach.</div>
+            <div class="lif"><div>🟠 Reddit · r/india</div><div>💬 Generate outreach</div></div>
+          </div>
+          <div class="li">
+            <div class="lih"><div class="lit">"Rejected 30 times, think my ATS resume is the issue"</div><div class="lis lc">Contacted</div></div>
+            <div class="lib">Sent outreach 2 days ago. Follow up today with one useful tip to re-engage.</div>
+            <div class="lif"><div>🟠 Reddit · r/resumes</div><div>📝 Update status</div></div>
+          </div>
+          <div class="li">
+            <div class="lih"><div class="lit">"Switched career from engineer to marketing — need fresh CV"</div><div class="lis lw">Won ✓</div></div>
+            <div class="lib">Paid ₹1800. Career change CV rewrite. Referred 1 friend already.</div>
+            <div class="lif"><div>🟠 Reddit · r/cscareerquestions</div><div style="color:var(--green);font-weight:600">₹1,800 earned</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 YOUTUBE STUDIO -->
+<section class="fs">
+  <div class="frow">
+    <div>
+      <div class="ftag tb">📺 Tool 5 of 6 — YouTube Studio</div>
+      <h2 class="fh">Make every video rank on YouTube search — not just get published</h2>
+      <p class="fp">YouTube is the world's second largest search engine. 500 hours of video uploaded every minute — most invisible because titles, descriptions, and tags are wrong. YouTube Studio gives you the exact optimisation to get discovered.</p>
+      <ul class="fbl">
+        <li><span class="ck cb">✓</span><div><strong>Trending videos by category and country</strong> — see what's hot in Education, Technology, Business, and more in India. Know what topics work before you film.</div></li>
+        <li><span class="ck cb">✓</span><div><strong>Video SEO Score (out of 100)</strong> — paste a YouTube URL and get scored on title, description, tags, and CTA. Know exactly what to fix.</div></li>
+        <li><span class="ck cb">✓</span><div><strong>AI Title + Description + Tags generator</strong> — type your topic, get a click-optimised title with power words + year, 200-word keyword-rich description, and 10 relevant tags. Copy-paste into YouTube when uploading.</div></li>
+        <li><span class="ck cb">✓</span><div><strong>YouTube keyword research</strong> — find what people actually search on YouTube for your topic. High-value, low-competition keywords your channel can realistically rank for.</div></li>
+        <li><span class="ck cb">✓</span><div><strong>Hindi language support</strong> — specify Hindi and all titles, descriptions, and tags are generated in Hindi, optimised for Indian YouTube audiences.</div></li>
+      </ul>
+      <a class="btn-p" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)" href="https://signals.convertshorts.com" target="_blank">Try YouTube Studio free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">📺 YouTube Studio — Trending India</div></div>
+        <div class="mb">
+          <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap">
+            <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:rgba(96,165,250,.15);color:var(--blue);font-weight:600">🔴 Education</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">💼 Business</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">💻 Tech</span>
+          </div>
+          <div class="yti">
+            <div class="ytth" style="background:rgba(239,68,68,.12)">📚</div>
+            <div class="yti-i">
+              <div class="ythn">UPSC Mains 2025 — Complete Strategy for Paper 1 | How to Score 130+</div>
+              <div class="ythm">4.2M views · Trending #1 Education India</div>
+            </div>
+            <div class="ysc">82</div>
+          </div>
+          <div class="yti">
+            <div class="ytth" style="background:rgba(251,191,36,.1)">🌿</div>
+            <div class="yti-i">
+              <div class="ythn">5 Ayurvedic Herbs That Regrow Hair in 30 Days — Backed by Science</div>
+              <div class="ythm">1.8M views · Trending #3 Health India</div>
+            </div>
+            <div class="ysc">91</div>
+          </div>
+          <div class="yti">
+            <div class="ytth" style="background:rgba(129,140,248,.1)">🤖</div>
+            <div class="yti-i">
+              <div class="ythn">How to Use AI for Business India 2025 — Free Tools That Actually Work</div>
+              <div class="ythm">920K views · Trending #5 Technology India</div>
+            </div>
+            <div class="ysc">76</div>
+          </div>
+          <div style="margin-top:11px;padding:9px 12px;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:8px;font-size:11px;color:var(--blue)">💡 Opportunity: "ayurvedic herbs hair growth 2025" — trending + achievable for small channels</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 SEO GUIDE -->
+<section class="fs alt">
+  <div class="frow rev">
+    <div>
+      <div class="ftag to">📖 Tool 6 of 6 — SEO Guide & Glossary</div>
+      <h2 class="fh">Learn everything about SEO and digital marketing — completely free</h2>
+      <p class="fp">No course to buy. No YouTube rabbit hole. No agency jargon. A complete, plain-English education from "what is SEO" to advanced content strategy — with India-specific examples throughout.</p>
+      <ul class="fbl">
+        <li><span class="ck co">✓</span><div><strong>8 SEO lessons from zero to advanced</strong> — What is SEO, keywords, easy vs hard, step-by-step ranking, how to write pages, timelines, mistakes, full FAQ.</div></li>
+        <li><span class="ck co">✓</span><div><strong>80+ terms in plain English</strong> — Position, CTR, Backlink, Crawl, Meta Title, Slug, Long-tail, SERP, Domain Authority, H-tags, Search Intent, and every other term you'll ever encounter.</div></li>
+        <li><span class="ck co">✓</span><div><strong>Complete tool glossary</strong> — every term in every tab explained with a definition and a real example. Nothing assumed.</div></li>
+        <li><span class="ck co">✓</span><div><strong>Digital marketing glossary</strong> — Funnel, ROI, Engagement Rate, Content Marketing, Brand Awareness, Analytics, Bounce Rate, Conversion — all covered.</div></li>
+        <li><span class="ck co">✓</span><div><strong>India-specific examples throughout</strong> — every concept illustrated with an Indian business example (Ayurveda, UPSC coaching, resume service, SaaS startup).</div></li>
+      </ul>
+      <a class="btn-p" style="background:linear-gradient(135deg,#92400e,#f97316)" href="https://signals.convertshorts.com" target="_blank">Read the SEO Guide free →</a>
+    </div>
+    <div>
+      <div class="mock">
+        <div class="mbar"><div class="md" style="background:#ff5f57"></div><div class="md" style="background:#febc2e"></div><div class="md" style="background:#28c840"></div><div class="mt">📖 SEO Guide & Glossary</div></div>
+        <div class="mb">
+          <div style="margin-bottom:13px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:7px">Jump to section:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.2)">📊 SEO Terms</span>
+              <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">🎯 Signal Hunter</span>
+              <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">📊 Rank Tracker</span>
+              <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">📺 YouTube</span>
+              <span style="font-size:10px;padding:3px 9px;border-radius:5px;background:var(--card);color:var(--muted);border:1px solid var(--border)">🎯 Lead Finder</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:#0c0c18;border-radius:8px;padding:12px;border-left:3px solid var(--orange)">
+              <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:4px">Long-tail Keyword</div>
+              <div style="font-size:11px;color:var(--muted2);line-height:1.5">A keyword with 4+ words. Low competition, achievable for new sites in 4–8 weeks. Always start here.</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:italic;border-left:2px solid var(--border);padding-left:7px">"ayurvedic herbs for diabetes control india" = Easy. "ayurvedic" alone = Competitive (impossible for new sites).</div>
+            </div>
+            <div style="background:#0c0c18;border-radius:8px;padding:12px;border-left:3px solid var(--orange)">
+              <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:4px">CTR (Click-Through Rate)</div>
+              <div style="font-size:11px;color:var(--muted2);line-height:1.5">% of searchers who click your result. Under 2% means fix your meta title — it's free traffic you're leaving behind.</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:6px;font-style:italic;border-left:2px solid var(--border);padding-left:7px">1,000 impressions × 3% = 30 visitors. Fix title → 6% = 60 visitors. Traffic doubled at zero cost.</div>
+            </div>
+          </div>
+          <div style="margin-top:9px;text-align:center;font-size:11px;color:var(--muted)">+ 78 more terms explained with India examples</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <div class="con">
+    <div style="text-align:center">
+      <div class="sl" style="text-align:center">How it works</div>
+      <h2 class="st" style="text-align:center">From zero to first customer in four steps</h2>
+      <p class="ss" style="text-align:center;margin:0 auto">No setup fee. No agency. No technical knowledge. Just open the tool and follow the steps.</p>
+    </div>
+    <div class="hsteps">
+      <div class="hstep">
+        <div class="hnum">1</div>
+        <div class="htitle">Open the tool</div>
+        <div class="hdesc">No account or sign-up needed. Open FirstCustomer in your browser. Add your Anthropic API key in ⚙️ Settings — takes 2 minutes.</div>
+        <div class="hsub">Free tier from Anthropic available</div>
+      </div>
+      <div class="hstep">
+        <div class="hnum">2</div>
+        <div class="htitle">Set up your profile</div>
+        <div class="hdesc">Enter your website URL, niche, and target customer. Every AI output in every tool personalises itself specifically for your business.</div>
+        <div class="hsub">Takes 60 seconds</div>
+      </div>
+      <div class="hstep">
+        <div class="hnum">3</div>
+        <div class="htitle">Follow the dashboard</div>
+        <div class="hdesc">The smart dashboard reads your data and tells you exactly what one thing to do next. No confusion about where to start.</div>
+        <div class="hsub">Updates based on your progress</div>
+      </div>
+      <div class="hstep">
+        <div class="hnum">4</div>
+        <div class="htitle">Get your first customer</div>
+        <div class="hdesc">Reply to signals, publish content, contact leads. Follow the tool for 4 weeks consistently. Your first customer will come.</div>
+        <div class="hsub">Typical timeline: 4–8 weeks</div>
+      </div>
+    </div>
+    <div class="wgrid">
+      <div class="wc">
+        <div class="wnum">01</div>
+        <div class="wic">⚡</div>
+        <div class="wtitle">Day 1 — First signals found</div>
+        <div class="wbody">Open Signal Hunter, enter your product. Within 60 seconds you have 5–15 real people posting about the problem you solve. Draft a reply and post it within your first hour.</div>
+        <div class="wtag">Day 1</div>
+      </div>
+      <div class="wc">
+        <div class="wnum">02</div>
+        <div class="wic">📈</div>
+        <div class="wtitle">Week 1 — First SEO article published</div>
+        <div class="wbody">Rank Tracker shows your easiest keywords. Content Studio writes the article. You paste it into your website. Google crawls it within 7 days and it starts ranking.</div>
+        <div class="wtag">Week 1</div>
+      </div>
+      <div class="wc">
+        <div class="wnum">03</div>
+        <div class="wic">🎯</div>
+        <div class="wtitle">Week 2–4 — First warm lead contacted</div>
+        <div class="wbody">Lead Finder surfaces someone who posted about needing your service. AI writes your outreach. You personalise and send. Average response rate for warm leads: 15–30%.</div>
+        <div class="wtag">Weeks 2–4</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare" style="padding:96px 24px;background:var(--bg)">
+  <div class="con">
+    <div class="sl">Why FirstCustomer</div>
+    <h2 class="st">Compare your options honestly</h2>
+    <p class="ss">What ₹0 vs ₹60,000/month vs a stack of separate tools actually gets you.</p>
+    <div class="cmpwrap">
+      <table class="ct">
+        <thead>
+          <tr>
+            <th style="width:30%">What you get</th>
+            <th class="h1 hh">✦ FirstCustomer</th>
+            <th>SEO Agency</th>
+            <th>Multiple tools</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="fn">Keyword rank tracking</td><td class="cy2 cf">✓ Unlimited</td><td class="cy2">✓ Included</td><td class="cpt">₹2,000/mo</td></tr>
+          <tr><td class="fn">Find leads on Reddit</td><td class="cy2 cf">✓ Built-in</td><td class="cn">✗ Not offered</td><td class="cn">✗ No tool exists</td></tr>
+          <tr><td class="fn">AI content writing</td><td class="cy2 cf">✓ Unlimited</td><td class="cpt">Extra ₹10,000+</td><td class="cpt">₹3,500/mo</td></tr>
+          <tr><td class="fn">Social + email + ad copy</td><td class="cy2 cf">✓ Included</td><td class="cpt">Extra charge</td><td class="cpt">₹2,500+/mo</td></tr>
+          <tr><td class="fn">YouTube SEO optimiser</td><td class="cy2 cf">✓ Included</td><td class="cn">✗ Separate</td><td class="cpt">₹1,500/mo</td></tr>
+          <tr><td class="fn">Lead CRM / pipeline</td><td class="cy2 cf">✓ Built-in</td><td class="cn">✗ You manage</td><td class="cpt">₹1,000/mo</td></tr>
+          <tr><td class="fn">Full SEO education (80+ terms)</td><td class="cy2 cf">✓ Free</td><td class="cn">✗ Not included</td><td class="cn">✗ Extra courses</td></tr>
+          <tr><td class="fn">AI that learns your business</td><td class="cy2 cf">✓ Profile memory</td><td class="cn">✗ You brief them</td><td class="cn">✗ No memory</td></tr>
+          <tr><td class="fn">Smart "what to do next" dashboard</td><td class="cy2 cf">✓ Automatic</td><td class="cn">✗ You have to ask</td><td class="cn">✗ No coordination</td></tr>
+          <tr><td class="fn">Onboarding guide for beginners</td><td class="cy2 cf">✓ 7-tab guide</td><td class="cn">✗ Assumes you know</td><td class="cn">✗ Steep learning</td></tr>
+          <tr>
+            <td class="fn" style="font-weight:700;color:#fff">Monthly cost</td>
+            <td class="cf"><span class="cprice cpf">₹0 / month</span></td>
+            <td><span class="cprice cpe">₹30,000–₹1,00,000</span></td>
+            <td><span class="cprice cpe">₹9,000–₹15,000</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="stories" style="background:#07070f;border-top:1px solid var(--border);padding:96px 24px">
+  <div class="con">
+    <div class="sl">Real stories</div>
+    <h2 class="st">Real businesses. Real results.</h2>
+    <p class="ss">These are the kinds of businesses FirstCustomer is built for — starting from scratch, no marketing budget, no technical background.</p>
+    <div class="tgrid">
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"I had zero marketing knowledge. The SEO Guide explained everything step by step. Within 3 weeks one of my pages moved from position 67 to <strong>position 9</strong>. That page now gets 120 free visitors a month."</div>
+        <div class="tau"><div class="tav" style="background:rgba(129,140,248,.15)">🌿</div><div><div class="tn">Priya K.</div><div class="tr">Ayurvedic herb library, Pune</div><div class="ttag">Rank Tracker win</div></div></div>
+      </div>
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"Lead Finder found someone literally writing 'need resume help for interview next week.' I replied in an hour with the AI outreach. We talked. <strong>She paid ₹2,200 the same day.</strong> My first paid client in 5 months of trying."</div>
+        <div class="tau"><div class="tav" style="background:rgba(251,191,36,.15)">🧑‍💼</div><div><div class="tn">Arjun M.</div><div class="tr">Resume writer, Bengaluru</div><div class="ttag">First client win</div></div></div>
+      </div>
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"Content Studio writes a full SEO article in 30 seconds. I used to spend 3 hours on one post and still wasn't sure if it was optimised. Now I publish 3 articles a week. <strong>Google traffic tripled in 6 weeks.</strong>"</div>
+        <div class="tau"><div class="tav" style="background:rgba(244,114,182,.15)">👩‍🏫</div><div><div class="tn">Sneha R.</div><div class="tr">UPSC coaching creator, Delhi</div><div class="ttag">Content win</div></div></div>
+      </div>
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"Signal Hunter found 4 people on Reddit talking about needing an Excel trainer in the same week. Replied to all 4, personalised the AI drafts slightly, <strong>got 2 paid sessions booked.</strong> Would have taken weeks to find manually."</div>
+        <div class="tau"><div class="tav" style="background:rgba(96,165,250,.15)">💻</div><div><div class="tn">Rohit T.</div><div class="tr">Excel trainer, Mumbai</div><div class="ttag">Signal Hunter win</div></div></div>
+      </div>
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"I changed one YouTube title using the AI Optimizer. From 'Ayurveda tips' to 'Top 5 Ayurvedic Herbs for Diabetes India 2025.' Views went from 80 to <strong>3,400 in a month.</strong> Same video. Just a better title."</div>
+        <div class="tau"><div class="tav" style="background:rgba(52,211,153,.15)">🎥</div><div><div class="tn">Deepa V.</div><div class="tr">Ayurveda YouTuber, Chennai</div><div class="ttag">YouTube win</div></div></div>
+      </div>
+      <div class="tc">
+        <div class="tst">★★★★★</div>
+        <div class="tq">"I'm not technical at all. The onboarding guide held my hand through every step. Within one week I was tracking 20 keywords, published 2 SEO articles, sent outreach to 6 leads. <strong>I felt in control for the first time.</strong>"</div>
+        <div class="tau"><div class="tav" style="background:rgba(251,146,60,.15)">🧑‍🍳</div><div><div class="tn">Meena S.</div><div class="tr">Home chef, Hyderabad</div><div class="ttag">Beginner win</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="padding:96px 24px;text-align:center">
+  <div class="con">
+    <div class="sl" style="text-align:center">Pricing</div>
+    <h2 class="st" style="text-align:center">No subscription. No paywall. No catch.</h2>
+    <p class="ss" style="text-align:center;margin:0 auto">Every feature, every tool, every AI output. Free. Forever.</p>
+    <div class="pcard">
+      <div class="pbadge">✓ Free forever — no credit card required</div>
+      <div class="pamt"><sup>₹</sup>0</div>
+      <div class="pper">per month, forever</div>
+      <div class="psub">The only cost is your Anthropic API key for AI features.<br>New accounts get free credits. Typical usage under ₹150/month.</div>
+      <div class="pfeats">
+        <div class="pf">Signal Hunter — unlimited scans</div>
+        <div class="pf">Rank Tracker — unlimited keywords</div>
+        <div class="pf">Article Writer — SEO articles</div>
+        <div class="pf">Social Posts — all 4 platforms</div>
+        <div class="pf">Email Campaign generator</div>
+        <div class="pf">Ad Copy — Google + Meta</div>
+        <div class="pf">Lead Finder — unlimited searches</div>
+        <div class="pf">Lead CRM pipeline</div>
+        <div class="pf">YouTube Studio — all tools</div>
+        <div class="pf">SEO Guide — all 8 lessons</div>
+        <div class="pf">Full glossary — 80+ terms</div>
+        <div class="pf">Smart dashboard + AI memory</div>
+        <div class="pf">7-tab onboarding guide</div>
+        <div class="pf">No account or sign-up needed</div>
+      </div>
+      <a class="btn-xl" href="https://signals.convertshorts.com" target="_blank" style="margin:0 auto">Open FirstCustomer — it's free →</a>
+      <div class="anote"><strong style="color:var(--text)">About the Anthropic API key:</strong> The AI features use Claude by Anthropic. Get your key free at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> — new accounts receive free credits. Typical small-business usage: ₹50–₹150/month. Your key is stored only in your browser, never shared.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="fq-sec">
+  <div class="con">
+    <div class="sl">FAQ</div>
+    <h2 class="st">Every question answered honestly</h2>
+    <div class="fqcols">
+      <div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Do I need to create an account? <span class="arr">▼</span></button><div class="fqa">No account, no email, no sign-up. Open the tool, add your API key, fill in your profile and you're ready. All data saves in your browser's local storage.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">What is an Anthropic API key and where do I get one? <span class="arr">▼</span></button><div class="fqa">Anthropic makes Claude, the AI powering all writing and analysis. Get a free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. New accounts get free credits. For normal small-business use, costs under ₹150/month.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Who is FirstCustomer built for? <span class="arr">▼</span></button><div class="fqa">Anyone growing a business online without a marketing budget: Indian small businesses, freelancers, solopreneurs, coaches, consultants, local service businesses, e-commerce stores, and YouTube creators.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">How quickly will I see results from SEO? <span class="arr">▼</span></button><div class="fqa">Easy keywords (4+ words) reach page 1 in 4–8 weeks. Medium keywords (3 words) take 2–4 months. Lead Finder results are immediate — find and contact real leads within your first hour.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">I have zero SEO knowledge. Can I still use this? <span class="arr">▼</span></button><div class="fqa">Yes — it's built for exactly this situation. The 7-tab onboarding explains every feature. The SEO Guide teaches concepts. The smart dashboard tells you what one thing to do next. Every Tips button gives word-for-word instructions.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Is my data safe? Where is it stored? <span class="arr">▼</span></button><div class="fqa">Everything — keywords, leads, content, API keys, profile — is stored in your browser's localStorage. Nothing goes to any server except direct API calls to Anthropic, SerpAPI, and Reddit. Your keys never leave your device.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">What if I clear my browser data? <span class="arr">▼</span></button><div class="fqa">Clearing browser data would delete saved keywords and leads. Regularly export leads to CSV (one click in Lead Finder) and note your tracked keywords. Export monthly as a backup.</div></div>
+      </div>
+      <div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Does Lead Finder work specifically for Indian businesses? <span class="arr">▼</span></button><div class="fqa">Yes. The search algorithm detects India-related inputs and adds India-specific queries automatically. It searches r/india, r/IndiaBusiness, r/indianbusiness. The AI outreach is written for Indian context.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Can I use this to rank a brand new website? <span class="arr">▼</span></button><div class="fqa">Absolutely — this is exactly where the keyword difficulty system is most valuable. New sites should only target Easy keywords (4+ words) initially. The tool tells you which keywords, what pages to create, and what to write. First page-1 ranking typically in 8 weeks.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Will this replace an SEO agency? <span class="arr">▼</span></button><div class="fqa">For most small businesses starting out — yes. Agencies add value at scale: large sites, complex technical SEO, link-building. If your goal is your first 10–100 customers and your budget is limited, FirstCustomer gives you everything you need for free.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Does YouTube Studio work for Hindi-language channels? <span class="arr">▼</span></button><div class="fqa">Yes. Specify Hindi in your video topic or description and the AI generates optimised Hindi titles, descriptions, and tags. Trending videos from YouTube India include Hindi-language content.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">Can I use this on mobile? <span class="arr">▼</span></button><div class="fqa">Yes — the tool is responsive. Signal Hunter, Lead Finder, and SEO Guide work well on mobile. Rank Tracker and Content Studio are more comfortable on a larger screen for reading and copying content.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">How do I get Google Search Console data for Rank Tracker? <span class="arr">▼</span></button><div class="fqa">1. Go to search.google.com/search-console and verify your website (free, 10 min). 2. Click "Search results" → set 3-month range → Export → CSV. 3. In Rank Tracker, click "Import GSC CSV" and upload. All positions populate automatically.</div></div>
+        <div class="fqi"><button class="fqq" onclick="fq(this)">What if Signal Hunter finds no results for my product? <span class="arr">▼</span></button><div class="fqa">The tool searches pain, not service names. If results are sparse, it shows clickable alternative searches and specific subreddit suggestions for your industry. You can also use Lead Finder's platform quick-search buttons for LinkedIn, Twitter, and Google.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="fcta">
+  <div class="glow" style="top:-80px;opacity:.7"></div>
+  <div class="sl" style="text-align:center">Get started</div>
+  <h2>Your first customer is<br>already out there.</h2>
+  <p>They're searching on Google right now. They're posting about their problem on Reddit. They're watching YouTube videos on your topic. FirstCustomer helps you find them — and helps them find you.</p>
+  <a class="btn-xl" href="https://signals.convertshorts.com" target="_blank">Open FirstCustomer free →</a>
+  <div class="ftrust">
+    <span>No account needed</span>
+    <span>No credit card</span>
+    <span>6 tools included</span>
+    <span>Opens in your browser instantly</span>
+    <span>Free forever</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftop">
+    <div>
+      <div class="flogo">First<span>Customer</span></div>
+      <div class="fdesc">The free all-in-one tool for small businesses and creators to rank on Google, find leads, and get their first customer online. No agency. No fluff.</div>
+    </div>
+    <div class="fcol">
+      <h4>Tools</h4>
+      <a href="https://signals.convertshorts.com" target="_blank">Signal Hunter</a>
+      <a href="https://signals.convertshorts.com" target="_blank">Rank Tracker</a>
+      <a href="https://signals.convertshorts.com" target="_blank">Content Studio</a>
+      <a href="https://signals.convertshorts.com" target="_blank">Lead Finder</a>
+      <a href="https://signals.convertshorts.com" target="_blank">YouTube Studio</a>
+      <a href="https://signals.convertshorts.com" target="_blank">SEO Guide</a>
+    </div>
+    <div class="fcol">
+      <h4>Resources</h4>
+      <a href="https://signals.convertshorts.com" target="_blank">SEO Guide</a>
+      <a href="https://signals.convertshorts.com" target="_blank">Full Glossary</a>
+      <a href="https://console.anthropic.com" target="_blank">Get API key</a>
+      <a href="https://search.google.com/search-console" target="_blank">Google Search Console</a>
+      <a href="https://serpapi.com" target="_blank">SerpAPI (auto rank check)</a>
+    </div>
+    <div class="fcol">
+      <h4>Built for</h4>
+      <a href="#">Small businesses India</a>
+      <a href="#">Freelancers</a>
+      <a href="#">YouTube creators</a>
+      <a href="#">Coaches &amp; consultants</a>
+      <a href="#">Solopreneurs</a>
+      <a href="#">Local service businesses</a>
+    </div>
+  </div>
+  <div class="fbot">
+    <div class="fcopy">© 2025 FirstCustomer. Built for Indian businesses. Free forever.</div>
+    <div class="fbadges">
+      <div class="fbadge">🇮🇳 India-optimised</div>
+      <div class="fbadge">🤖 Powered by Claude AI</div>
+      <div class="fbadge">🔒 Data stays in your browser</div>
+      <div class="fbadge">💚 Free forever</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function fq(btn){
+  const a=btn.nextElementSibling;
+  const open=btn.classList.contains('open');
+  document.querySelectorAll('.fqq.open').forEach(b=>{b.classList.remove('open');b.nextElementSibling.classList.remove('open')});
+  if(!open){btn.classList.add('open');a.classList.add('open')}
+}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
+  })
+});
+</script>
+</body>
+</html>
