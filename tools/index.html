@@ -19,6 +19,7 @@
   --text:#d0d0d8;--muted:#666;--dim:#3a3a3a;
   --purple:#6c63ff;--purple2:#a78bfa;
   --green:#22c55e;--red:#ef4444;--amber:#fbbf24;
+  --card:#111116;--muted2:#888;--purple-d:rgba(108,99,255,.8);--pink:#f472b6;--yellow:#fbbf24;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
@@ -748,6 +749,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="top-nav-btn" id="nav-content" onclick="switchPage('content')" style="color:#f472b6">✍️ Content Studio</button>
   <button class="top-nav-btn" id="nav-leads" onclick="switchPage('leads')" style="color:#34d399">🎯 Lead Finder</button>
   <button class="top-nav-btn" id="nav-guide" onclick="switchPage('guide')" style="color:#818cf8">📖 SEO Guide</button>
+  <button class="top-nav-btn" id="nav-localGigs" onclick="switchPage('localGigs')" style="color:#a78bfa">🏘️ Local Gigs</button>
 </nav>
 
 <!-- ═══════════════════════════════════════════ -->
@@ -2268,7 +2270,57 @@ free resume template,18,890,2.0%,14.1"></textarea>
 
 </div>
 </div><!-- /page-guide -->
-
+<div class="page" id="page-localGigs">
+  <div style="max-width:860px;margin:0 auto;padding:24px 16px 60px">
+  <div style="margin-bottom:20px">
+    <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">🏘️ Local Gigs</h2>
+    <p style="color:var(--muted);font-size:13px">Find freelance opportunities nearby — scan Reddit for people needing digital services, or find local businesses with weak online presence to pitch.</p>
+  </div>
+  <!-- Mode toggle -->
+  <div style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content">
+    <button id="lgModeRedditBtn" onclick="lgSetMode('reddit')" style="background:var(--purple);color:#fff;border:none;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer">📡 Reddit Gig Finder</button>
+    <button id="lgModeBizBtn" onclick="lgSetMode('biz')" style="background:var(--bg3);color:var(--muted);border:none;border-left:1px solid var(--border);padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer">🏪 Business Finder</button>
+  </div>
+  <!-- Shared: City input -->
+  <div style="margin-bottom:18px">
+    <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">YOUR CITY</label>
+    <input id="lgCity" placeholder="e.g. Hyderabad, Pune, Coimbatore" style="width:100%;max-width:360px;background:#0c0c14;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;box-sizing:border-box">
+  </div>
+  <!-- MODE 1: Reddit UI -->
+  <div id="lgRedditUI">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">SELECT SERVICES TO SCAN FOR</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <button onclick="lgSelectAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">Select all</button>
+      <button onclick="lgClearAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">Clear</button>
+    </div>
+    <div id="lgServices" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:18px"></div>
+    <button id="lgScanBtn" onclick="lgScan()" class="btn btn-primary">🔍 Scan Reddit</button>
+  </div>
+  <!-- MODE 2: Business Finder UI -->
+  <div id="lgBizUI" style="display:none">
+    <div style="background:#111122;border:1px solid #2d2d5f;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#818cf8">
+      ⚠️ Requires <strong style="color:#fff">Google API key</strong> with <strong style="color:#fff">Places API (New)</strong> enabled → <button onclick="openSettings()" style="background:none;border:none;color:#a78bfa;cursor:pointer;font-size:12px;text-decoration:underline">⚙️ Add key</button> · In Google Cloud Console, enable "Places API (New)" (not the old Places API).
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">BUSINESS CATEGORY</label>
+      <select id="lgBizCategory" style="background:#0c0c14;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;min-width:240px">
+        <option>restaurant</option><option>salon</option><option>gym</option><option>clinic</option>
+        <option>dental clinic</option><option>pharmacy</option><option>hotel</option><option>school</option>
+        <option>coaching centre</option><option>bakery</option><option>boutique</option><option>hardware store</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">FILTER: SHOW BUSINESSES WITH</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterNoWebsite" checked> No website</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterLowReviews" checked> Fewer than 20 reviews</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterLowRating" checked> Rating below 3.5</label>
+    </div>
+    <button id="lgBizScanBtn" onclick="lgFindBusinesses()" class="btn btn-primary">🔍 Find Businesses</button>
+  </div>
+  <!-- Results -->
+  <div id="lgResults" style="margin-top:24px"></div>
+</div>
+</div>
 <style>
 .guide-nav-pill { background:#111122;border:1px solid #2d2d5f;color:#818cf8;border-radius:20px;padding:5px 14px;font-size:12px;text-decoration:none;transition:all .15s; }
 .guide-nav-pill:hover { background:#1a0a2e;border-color:#818cf8; }
@@ -4808,6 +4860,7 @@ function switchPage(page){
     if(addBtn) addBtn.style.display=isSignal?"inline-flex":"none";
     if(scanBtn) scanBtn.style.display=(isSignal&&PRODUCTS.length>0)?"inline-flex":"none";
     if(page==="signal") renderDashboard();
+    if(page==="localGigs") lgInit();
     if(page==="rank") profileAutoFill("rank");
     if(page==="leads"){
       lfRenderSaved();
@@ -5415,6 +5468,257 @@ Format each section clearly with a header like TITLE:, DESCRIPTION:, TAGS:, HOOK
   }
   btn.textContent="✨ Generate with AI"; btn.disabled=false;
 }
+  // ─────────────────────────────────────────────
+// LOCAL GIGS
+// ─────────────────────────────────────────────
+let lgCurrentMode = 'reddit';
+
+function lgSetMode(mode){
+  lgCurrentMode = mode;
+  const isReddit = mode === 'reddit';
+  document.getElementById('lgRedditUI').style.display = isReddit ? 'block' : 'none';
+  document.getElementById('lgBizUI').style.display   = isReddit ? 'none'  : 'block';
+  document.getElementById('lgModeRedditBtn').style.background = isReddit ? 'var(--purple)' : 'var(--bg3)';
+  document.getElementById('lgModeRedditBtn').style.color      = isReddit ? '#fff' : 'var(--muted)';
+  document.getElementById('lgModeBizBtn').style.background    = isReddit ? 'var(--bg3)' : 'var(--purple)';
+  document.getElementById('lgModeBizBtn').style.color         = isReddit ? 'var(--muted)' : '#fff';
+  document.getElementById('lgResults').innerHTML = '';
+}
+const LG_SERVICES = [
+  { id:'webdesign',  label:'Web Design',      queries:['need website','website designer','build website for me'] },
+  { id:'seo',        label:'SEO',             queries:['need SEO help','rank on Google','SEO consultant'] },
+  { id:'logo',       label:'Logo / Branding', queries:['need logo design','logo designer','brand identity'] },
+  { id:'social',     label:'Social Media',    queries:['social media manager','manage instagram','social media help'] },
+  { id:'content',    label:'Content Writing', queries:['content writer','need blog posts','copywriter'] },
+  { id:'video',      label:'Video Editing',   queries:['video editor','edit my video','reels editor'] },
+  { id:'ads',        label:'Google/Meta Ads', queries:['run Facebook ads','Google ads help','paid ads manager'] },
+  { id:'wordpress',  label:'WordPress',       queries:['WordPress help','fix my WordPress','WordPress developer'] },
+  { id:'shopify',    label:'Shopify',         queries:['Shopify store','Shopify developer','setup Shopify'] },
+  { id:'photo',      label:'Photography',     queries:['product photographer','need photos taken','photo editing'] },
+  { id:'chatbot',    label:'Chatbot / AI',    queries:['need chatbot','AI for my business','automate whatsapp'] },
+  { id:'email',      label:'Email Marketing', queries:['email marketing help','mailchimp setup','newsletter design'] },
+];
+function lgInit(){
+  const grid = document.getElementById('lgServices');
+  if(!grid || grid.children.length > 0) return;
+  grid.innerHTML = LG_SERVICES.map(s => `
+    <label style="display:flex;align-items:center;gap:8px;background:#0c0c14;border:1px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:12px;color:var(--muted)">
+      <input type="checkbox" id="lgsvc_${s.id}" checked style="accent-color:var(--purple)">
+      ${s.label}
+    </label>`).join('');
+}
+function lgSelectAll(){ LG_SERVICES.forEach(s=>{ const el=document.getElementById('lgsvc_'+s.id); if(el) el.checked=true; }); }
+function lgClearAll(){  LG_SERVICES.forEach(s=>{ const el=document.getElementById('lgsvc_'+s.id); if(el) el.checked=false; }); }
+async function lgScan(){
+  const city = (document.getElementById('lgCity').value||'').trim();
+  if(!city){ alert('Enter your city first.'); return; }
+  const selected = LG_SERVICES.filter(s=>{ const el=document.getElementById('lgsvc_'+s.id); return el&&el.checked; });
+  if(!selected.length){ alert('Select at least one service.'); return; }
+  const btn = document.getElementById('lgScanBtn');
+  btn.textContent='⏳ Scanning…'; btn.disabled=true;
+  const out = document.getElementById('lgResults');
+  out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Scanning Reddit for gigs in ${city}…</div></div>`;
+  const seen = new Set();
+  const results = [];
+  for(const svc of selected){
+    for(const q of svc.queries.slice(0,2)){
+      const query = `${q} ${city}`;
+      try{
+        const base = `https://www.reddit.com/search.json?q=${encodeURIComponent(query)}&sort=new&limit=5&t=month`;
+        const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(base)}`;
+        const r = await fetch(proxy,{signal:AbortSignal.timeout(8000)});
+        const data = await r.json();
+        (data?.data?.children||[]).forEach(p=>{
+          const d = p.data;
+          if(!d.title||seen.has(d.url)) return;
+          seen.add(d.url);
+          results.push({
+            title:d.title, snippet:(d.selftext||'').slice(0,300),
+            url:`https://reddit.com${d.permalink}`,
+            author:d.author||'', subreddit:d.subreddit||'',
+            score:d.score||0, comments:d.num_comments||0,
+            created_utc:d.created_utc||0,
+            service:svc.label, serviceId:svc.id
+          });
+        });
+      }catch{}
+      await sleep(300);
+    }
+  }
+  let scored = results.map(p=>({ ...p, relevance: lgAutoScore(p, city, selected) }))
+    .sort((a,b)=>b.relevance-a.relevance).slice(0,20);
+  if(anthropicKey && scored.length){
+    const top12 = scored.slice(0,12);
+    try{
+      const prompt = `Score these Reddit posts for local freelance gig potential in ${city}. Rate each 1-10 (10=clear paying gig). Reply ONLY with a JSON array of numbers in order.\nPosts:\n${top12.map((p,i)=>`${i+1}. [${p.service}] "${p.title}" — ${p.snippet.slice(0,100)}`).join('\n')}`;
+      const r = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:200,messages:[{role:'user',content:prompt}]})
+      });
+      const data = await r.json();
+      const text = data.content?.[0]?.text||'';
+      const nums = JSON.parse(text.match(/\[[\d,\s]+\]/)?.[0]||'[]');
+      nums.forEach((n,i)=>{ if(top12[i]) top12[i].relevance=n; });
+      scored = [...top12,...scored.slice(12)].sort((a,b)=>b.relevance-a.relevance);
+    }catch{}
+  }
+  btn.textContent='🔍 Scan Reddit'; btn.disabled=false;
+  if(!scored.length){
+    out.innerHTML=`<div class="empty">No results found for ${city}. Try a larger nearby city or select more services.</div>`;
+    return;
+  }
+  out.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Found <strong style="color:#34d399">${scored.length} potential gigs</strong> near ${city}</div>`
+    + scored.map((p,i)=>lgCard(p,i)).join('');
+}
+function lgCard(p, idx){
+  const ago = lgTimeAgo(p.created_utc);
+  const scoreColor = p.relevance>=7?'var(--green)':p.relevance>=4?'var(--amber)':'var(--muted)';
+  return `<div class="lf-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="lf-platform-tag lf-platform-reddit">r/${p.subreddit}</span>
+        <span style="background:#1a0a2e;color:var(--purple2);border-radius:8px;padding:1px 8px;font-size:10px;font-weight:700">${p.service}</span>
+        <span style="font-size:11px;color:#444">${ago}</span>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:${scoreColor}">Score: ${p.relevance}/10</span>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4">${p.title.replace(/</g,'&lt;')}</div>
+    ${p.snippet?`<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px">${p.snippet.replace(/</g,'&lt;')}${p.snippet.length>=300?'…':''}</div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="${p.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">View post ↗</a>
+      <button onclick="lgDraft(${idx},this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✨ Draft Outreach</button>
+    </div>
+    <div id="lgdraft_${idx}" style="display:none;margin-top:10px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:12px;font-size:12px;color:#e2e8f0;line-height:1.7;white-space:pre-wrap"></div>
+  </div>`;
+}
+async function lgDraft(idx, btn){
+  if(!anthropicKey){ openSettings(); return; }
+  const cards = document.querySelectorAll('#lgResults .lf-card');
+  const card = cards[idx];
+  const titleEl = card?.querySelector('div[style*="font-weight:600"]');
+  const title = titleEl?.innerText||'';
+  const box = document.getElementById('lgdraft_'+idx);
+  const orig = btn.innerHTML;
+  btn.innerHTML='<span class="cs-spinner"></span>'; btn.disabled=true;
+  box.style.display='block'; box.textContent='Writing outreach…';
+  try{
+    const prompt=`Someone posted on Reddit: "${title}"\n\nWrite a short, friendly outreach message (3-4 sentences) from a local freelancer offering to help. Be genuine, reference their specific need, offer one helpful tip upfront, then mention your services. End with a soft call to action.`;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await r.json();
+    box.textContent=data.content?.[0]?.text||'No response.';
+  }catch(e){ box.textContent='Failed: '+e.message; }
+  btn.innerHTML=orig; btn.disabled=false;
+}
+async function lgFindBusinesses(){
+  const city = (document.getElementById('lgCity').value||'').trim();
+  const category = (document.getElementById('lgBizCategory').value||'').trim();
+  if(!city){ alert('Enter your city first.'); return; }
+  if(!googleKey){ alert('Add your Google API key in ⚙️ Keys first.'); openSettings(); return; }
+  const filterNoWebsite = document.getElementById('lgFilterNoWebsite').checked;
+  const filterLowReviews = document.getElementById('lgFilterLowReviews').checked;
+  const filterLowRating  = document.getElementById('lgFilterLowRating').checked;
+  const btn = document.getElementById('lgBizScanBtn');
+  btn.textContent='⏳ Searching…'; btn.disabled=true;
+  const out = document.getElementById('lgResults');
+  out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Searching for ${category}s in ${city}…</div></div>`;
+  try{
+    const res = await fetch('https://places.googleapis.com/v1/places:searchText',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Goog-Api-Key':googleKey,
+        'X-Goog-FieldMask':'places.id,places.displayName,places.websiteUri,places.rating,places.userRatingCount,places.formattedAddress,places.nationalPhoneNumber'
+      },
+      body:JSON.stringify({ textQuery:`${category} in ${city} India`, languageCode:'en', maxResultCount:20 })
+    });
+    const data = await res.json();
+    if(data.error){ out.innerHTML=`<div class="empty">Google API error: ${data.error.message}<br><br>Make sure "Places API (New)" is enabled in your Google Cloud Console.</div>`; btn.textContent='🔍 Find Businesses'; btn.disabled=false; return; }
+    const places = data.places||[];
+    if(!places.length){ out.innerHTML=`<div class="empty">No ${category}s found in ${city}.</div>`; btn.textContent='🔍 Find Businesses'; btn.disabled=false; return; }
+    let targets = places.filter(p=>{
+      if(filterNoWebsite && !p.websiteUri) return true;
+      if(filterLowReviews && (p.userRatingCount||0) < 20) return true;
+      if(filterLowRating  && (p.rating||0) > 0 && (p.rating||0) < 3.5) return true;
+      return false;
+    });
+    if(!targets.length) targets = places;
+    out.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Found <strong style="color:#34d399">${targets.length} businesses</strong> in ${city}</div>`
+      + targets.map((p,i)=>lgBizCard(p, city, category, i)).join('');
+  }catch(e){
+    out.innerHTML=`<div class="empty">Request failed: ${e.message}</div>`;
+  }
+  btn.textContent='🔍 Find Businesses'; btn.disabled=false;
+}
+function lgBizCard(p, city, category, idx){
+  const name = p.displayName?.text||'Unknown';
+  const addr = p.formattedAddress||city;
+  const rating = p.rating||0;
+  const reviews = p.userRatingCount||0;
+  const website = p.websiteUri||'';
+  const phone = p.nationalPhoneNumber||'';
+  const issues = [];
+  if(!website) issues.push('No website');
+  if(reviews < 20) issues.push(`Only ${reviews} reviews`);
+  if(rating>0&&rating<3.5) issues.push(`Low rating ${rating}⭐`);
+  const issueStr = issues.join(', ');
+  const uid = 'lbc_'+Math.random().toString(36).slice(2);
+  return `<div class="lf-card">
+    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px">${name.replace(/</g,'&lt;')}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${addr.replace(/</g,'&lt;')}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      ${issues.map(i=>`<span style="background:#1a0a0a;border:1px solid #3a1010;color:#f87171;border-radius:8px;padding:2px 9px;font-size:10px;font-weight:700">${i}</span>`).join('')}
+      ${rating>0?`<span style="background:#111;border:1px solid #333;color:#888;border-radius:8px;padding:2px 9px;font-size:10px">${rating}⭐ · ${reviews} reviews</span>`:''}
+      ${website?`<a href="${website}" target="_blank" style="background:#0a1a0a;border:1px solid #1a3a1a;color:#34d399;border-radius:8px;padding:2px 9px;font-size:10px;text-decoration:none">🌐 Has website</a>`:''}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${phone?`<a href="tel:${phone}" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">📞 ${phone}</a>`:''}
+      <button id="${uid}" onclick="lgDraftEmail('${name.replace(/\\/g,'\\\\').replace(/'/g,'\\&apos;')}','${addr.replace(/\\/g,'\\\\').replace(/'/g,'\\&apos;')}','${issueStr}','${category}','${uid}',this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✨ Draft Cold Email</button>
+    </div>
+    <div id="${uid}_out" style="display:none;margin-top:10px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:12px;font-size:12px;color:#e2e8f0;line-height:1.7;white-space:pre-wrap"></div>
+  </div>`;
+}
+async function lgDraftEmail(name, addr, issues, category, uid, btn){
+  if(!anthropicKey){ openSettings(); return; }
+  const box = document.getElementById(uid+'_out');
+  const orig = btn.innerHTML;
+  btn.innerHTML='<span class="cs-spinner"></span>'; btn.disabled=true;
+  box.style.display='block'; box.textContent='Writing cold email…';
+  try{
+    const prompt=`Write a short, friendly cold outreach email to a local ${category} business.\nBusiness: ${name}\nLocation: ${addr}\nIssues identified: ${issues}\n\nFrom a local digital marketing freelancer. Under 120 words. Reference their specific issue. Offer one concrete benefit. End with a soft CTA. Subject line first, then email body.`;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:350,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await r.json();
+    box.textContent=data.content?.[0]?.text||'No response.';
+  }catch(e){ box.textContent='Failed: '+e.message; }
+  btn.innerHTML=orig; btn.disabled=false;
+}
+function lgAutoScore(p, city, selected){
+  const text=(p.title+' '+p.snippet).toLowerCase();
+  const cityLow=city.toLowerCase();
+  let s=0;
+  if(text.includes(cityLow)||text.includes('local')) s+=3;
+  if(/need|looking for|want|hire|help|recommend|suggest/i.test(text)) s+=2;
+  if(/urgent|asap|immediately|budget|pay|cost|price/i.test(text)) s+=2;
+  if(p.snippet.length>100) s+=1;
+  if((p.comments||0)>=3) s+=1;
+  return Math.min(Math.max(s,1),10);
+}
+function lgTimeAgo(utc){
+  if(!utc) return '';
+  const diff=(Date.now()/1000)-utc;
+  if(diff<3600) return Math.floor(diff/60)+'m ago';
+  if(diff<86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+document.addEventListener('DOMContentLoaded', lgInit);
 </script>
 </body>
 </html>
