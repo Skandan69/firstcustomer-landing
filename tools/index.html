@@ -5509,42 +5509,45 @@ function lgInit(){
 }
 function lgSelectAll(){ LG_SERVICES.forEach(s=>{ const el=document.getElementById('lgsvc_'+s.id); if(el) el.checked=true; }); }
 function lgClearAll(){  LG_SERVICES.forEach(s=>{ const el=document.getElementById('lgsvc_'+s.id); if(el) el.checked=false; }); }
-async function lgScan(){
-  const city = (document.getElementById('lgCity').value||'').trim();
-  if(!city){ alert('Enter your city first.'); return; }
-  const selected = LG_SERVICES.filter(s=>{ const el=document.getElementById('lgsvc_'+s.id); return el&&el.checked; });
-  if(!selected.length){ alert('Select at least one service.'); return; }
-  const btn = document.getElementById('lgScanBtn');
-  btn.textContent='⏳ Scanning…'; btn.disabled=true;
-  const out = document.getElementById('lgResults');
-  out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Scanning Reddit for gigs in ${city}…</div></div>`;
-  const seen = new Set();
-  const results = [];
+let lgGoogleResults = [];
+ async function lgScan(){
+  const city=(document.getElementById('lgCity').value||'').trim();
+  if(!city){alert('Enter your city first.');return;}
+  const gkey=localStorage.getItem('fc_goog');
+  const gcx=localStorage.getItem('fc_gcx');
+  if(!gkey||!gcx){alert('Add your Google API key + CX ID in ⚙️ Keys first.');openSettings();return;}
+  const selected=LG_SERVICES.filter((_,i)=>{const el=document.getElementById(`lgSvc_${i}`);return el&&el.checked;});
+  if(!selected.length){alert('Select at least one service.');return;}
+  const btn=document.getElementById('lgScanBtn');
+  btn.textContent='⏳ Scanning…';btn.disabled=true;
+  const out=document.getElementById('lgResults');
+  lgGoogleResults=[];
+  out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Searching Google for gigs in ${city}…</div></div>`;
+  const all=[];
+  let q=0;
   for(const svc of selected){
-    for(const q of svc.queries.slice(0,2)){
-      const query = `${q} ${city}`;
-      try{
-        const base = `https://www.reddit.com/search.json?q=${encodeURIComponent(query)}&sort=new&limit=5&t=month`;
-        const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(base)}`;
-        const r = await fetch(proxy,{signal:AbortSignal.timeout(8000)});
-        const data = await r.json();
-        (data?.data?.children||[]).forEach(p=>{
-          const d = p.data;
-          if(!d.title||seen.has(d.url)) return;
-          seen.add(d.url);
-          results.push({
-            title:d.title, snippet:(d.selftext||'').slice(0,300),
-            url:`https://reddit.com${d.permalink}`,
-            author:d.author||'', subreddit:d.subreddit||'',
-            score:d.score||0, comments:d.num_comments||0,
-            created_utc:d.created_utc||0,
-            service:svc.label, serviceId:svc.id
-          });
-        });
-      }catch{}
-      await sleep(300);
-    }
+    if(q>=10)break;
+    const query=`"need ${svc.label.toLowerCase()}" OR "looking for ${svc.label.toLowerCase()}" "${city}" -job -hiring`;
+    try{
+      const r=await Promise.race([
+        fetch(`https://www.googleapis.com/customsearch/v1?key=${gkey}&cx=${gcx}&q=${encodeURIComponent(query)}&num=10&dateRestrict=m6`),
+        new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
+      ]);
+      const d=await r.json();
+      if(d.error){if(d.error.code===429){out.innerHTML=`<div class="empty">Google quota hit (100/day free). Try tomorrow.</div>`;break;}continue;}
+      if(d.items)d.items.forEach(item=>all.push({...item,_service:svc.label}));
+      q++;
+    }catch(e){console.warn(e);}
+    out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Searched ${q}/${Math.min(selected.length,10)} services in ${city}…</div></div>`;
+    await sleep(300);
   }
+  const seen=new Set();
+  lgGoogleResults=all.filter(r=>{if(seen.has(r.link))return false;seen.add(r.link);return true;});
+  if(!lgGoogleResults.length){out.innerHTML=`<div class="empty">No results found. Try a bigger city name or fewer filters.</div>`;btn.textContent='🔍 Scan for Gigs';btn.disabled=false;return;}
+  out.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Found <strong style="color:#34d399">${lgGoogleResults.length} leads</strong> across the web for ${city}</div>`
+    +lgGoogleResults.map((r,i)=>lgGoogCard(r,city,i)).join('');
+  btn.textContent='🔍 Scan for Gigs';btn.disabled=false;
+}
   let scored = results.map(p=>({ ...p, relevance: lgAutoScore(p, city, selected) }))
     .sort((a,b)=>b.relevance-a.relevance).slice(0,20);
   if(anthropicKey && scored.length){
@@ -5571,48 +5574,42 @@ async function lgScan(){
   out.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Found <strong style="color:#34d399">${scored.length} potential gigs</strong> near ${city}</div>`
     + scored.map((p,i)=>lgCard(p,i)).join('');
 }
-function lgCard(p, idx){
-  const ago = lgTimeAgo(p.created_utc);
-  const scoreColor = p.relevance>=7?'var(--green)':p.relevance>=4?'var(--amber)':'var(--muted)';
-  return `<div class="lf-card">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span class="lf-platform-tag lf-platform-reddit">r/${p.subreddit}</span>
-        <span style="background:#1a0a2e;color:var(--purple2);border-radius:8px;padding:1px 8px;font-size:10px;font-weight:700">${p.service}</span>
-        <span style="font-size:11px;color:#444">${ago}</span>
+function lgGoogCard(r,city,idx){
+  const uid='lgg_'+Math.random().toString(36).slice(2);
+  let domain=r.link;try{domain=new URL(r.link).hostname.replace('www.','');}catch(e){}
+  return `<div class="signal-card" id="${uid}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+      <div style="flex:1;min-width:0">
+        <span style="font-size:11px;color:var(--purple);font-weight:600;text-transform:uppercase">${r._service}</span>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-top:4px;line-height:1.4">${r.title}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${domain}</div>
       </div>
-      <span style="font-size:12px;font-weight:700;color:${scoreColor}">Score: ${p.relevance}/10</span>
+      <a href="${r.link}" target="_blank" style="font-size:11px;color:var(--purple);white-space:nowrap">Open →</a>
     </div>
-    <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4">${p.title.replace(/</g,'&lt;')}</div>
-    ${p.snippet?`<div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px">${p.snippet.replace(/</g,'&lt;')}${p.snippet.length>=300?'…':''}</div>`:''}
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a href="${p.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">View post ↗</a>
-      <button onclick="lgDraft(${idx},this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✨ Draft Outreach</button>
-    </div>
-    <div id="lgdraft_${idx}" style="display:none;margin-top:10px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:12px;font-size:12px;color:#e2e8f0;line-height:1.7;white-space:pre-wrap"></div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;line-height:1.5">${r.snippet||''}</div>
+    <button onclick="lgDraftGoogle(${idx},'${uid}',this)" style="background:var(--purple);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500">✍️ Draft Pitch</button>
+    <div id="${uid}_reply" style="margin-top:12px"></div>
   </div>`;
 }
-async function lgDraft(idx, btn){
-  if(!anthropicKey){ openSettings(); return; }
-  const cards = document.querySelectorAll('#lgResults .lf-card');
-  const card = cards[idx];
-  const titleEl = card?.querySelector('div[style*="font-weight:600"]');
-  const title = titleEl?.innerText||'';
-  const box = document.getElementById('lgdraft_'+idx);
-  const orig = btn.innerHTML;
-  btn.innerHTML='<span class="cs-spinner"></span>'; btn.disabled=true;
-  box.style.display='block'; box.textContent='Writing outreach…';
+async function lgDraftGoogle(idx,uid,btn){
+  const r=lgGoogleResults[idx];
+  const antK=localStorage.getItem('fc_ant');
+  const city=document.getElementById('lgCity').value;
+  if(!r||!antK){btn.textContent='Add Anthropic key';return;}
+  btn.textContent='⏳ Drafting…';btn.disabled=true;
+  const replyDiv=document.getElementById(uid+'_reply');
   try{
-    const prompt=`Someone posted on Reddit: "${title}"\n\nWrite a short, friendly outreach message (3-4 sentences) from a local freelancer offering to help. Be genuine, reference their specific need, offer one helpful tip upfront, then mention your services. End with a soft call to action.`;
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:prompt}]})
+      headers:{'Content-Type':'application/json','x-api-key':antK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:`You are a freelancer in ${city}. Someone is looking for ${r._service} help:\nTitle: ${r.title}\nContext: ${r.snippet}\n\nWrite a short 3-4 sentence pitch: show you understand their need, mention relevant experience, offer help without being salesy, end with a CTA. Keep it casual.`}]})
     });
-    const data=await r.json();
-    box.textContent=data.content?.[0]?.text||'No response.';
-  }catch(e){ box.textContent='Failed: '+e.message; }
-  btn.innerHTML=orig; btn.disabled=false;
+    const d=await res.json();
+    const text=d.content?.[0]?.text||'Could not draft.';
+    replyDiv.innerHTML=`<div style="background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:12px;font-size:12px;line-height:1.6;color:var(--text);white-space:pre-wrap">${text}</div>
+    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)" style="margin-top:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer">📋 Copy</button>`;
+  }catch(e){replyDiv.innerHTML=`<div style="color:var(--amber);font-size:12px">Error: ${e.message}</div>`;}
+  btn.textContent='✍️ Draft Pitch';btn.disabled=false;
 }
 async function lgFindBusinesses(){
   const city = (document.getElementById('lgCity').value||'').trim();
