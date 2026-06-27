@@ -5516,7 +5516,7 @@ let lgGoogleResults = [];
   const gkey=localStorage.getItem('fc_goog');
   const gcx=localStorage.getItem('fc_gcx');
   if(!gkey||!gcx){alert('Add your Google API key + CX ID in ⚙️ Keys first.');openSettings();return;}
-  const selected=LG_SERVICES.filter((_,i)=>{const el=document.getElementById(`lgSvc_${i}`);return el&&el.checked;});
+  const selected=LG_SERVICES.filter(s=>{const el=document.getElementById('lgsvc_'+s.id);return el&&el.checked;});
   if(!selected.length){alert('Select at least one service.');return;}
   const btn=document.getElementById('lgScanBtn');
   btn.textContent='⏳ Scanning…';btn.disabled=true;
@@ -5548,32 +5548,7 @@ let lgGoogleResults = [];
     +lgGoogleResults.map((r,i)=>lgGoogCard(r,city,i)).join('');
   btn.textContent='🔍 Scan for Gigs';btn.disabled=false;
 }
-  let scored = results.map(p=>({ ...p, relevance: lgAutoScore(p, city, selected) }))
-    .sort((a,b)=>b.relevance-a.relevance).slice(0,20);
-  if(anthropicKey && scored.length){
-    const top12 = scored.slice(0,12);
-    try{
-      const prompt = `Score these Reddit posts for local freelance gig potential in ${city}. Rate each 1-10 (10=clear paying gig). Reply ONLY with a JSON array of numbers in order.\nPosts:\n${top12.map((p,i)=>`${i+1}. [${p.service}] "${p.title}" — ${p.snippet.slice(0,100)}`).join('\n')}`;
-      const r = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:200,messages:[{role:'user',content:prompt}]})
-      });
-      const data = await r.json();
-      const text = data.content?.[0]?.text||'';
-      const nums = JSON.parse(text.match(/\[[\d,\s]+\]/)?.[0]||'[]');
-      nums.forEach((n,i)=>{ if(top12[i]) top12[i].relevance=n; });
-      scored = [...top12,...scored.slice(12)].sort((a,b)=>b.relevance-a.relevance);
-    }catch{}
-  }
-  btn.textContent='🔍 Scan Reddit'; btn.disabled=false;
-  if(!scored.length){
-    out.innerHTML=`<div class="empty">No results found for ${city}. Try a larger nearby city or select more services.</div>`;
-    return;
-  }
-  out.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:14px">Found <strong style="color:#34d399">${scored.length} potential gigs</strong> near ${city}</div>`
-    + scored.map((p,i)=>lgCard(p,i)).join('');
-}
+ 
 function lgGoogCard(r,city,idx){
   const uid='lgg_'+Math.random().toString(36).slice(2);
   let domain=r.link;try{domain=new URL(r.link).hostname.replace('www.','');}catch(e){}
