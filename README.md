@@ -16,6 +16,8 @@ FirstCustomer is a framework-free HTML/CSS/JavaScript application. The root land
 
 Set `GOOGLE_PLACES_API_KEY` in Vercel and in `.env.local` for local Vercel development. Never prefix it with `VITE_`, `NEXT_PUBLIC_`, or otherwise expose it to browser code.
 
+The variable must be enabled separately for every Vercel environment that needs it (Preview and/or Production). After adding or changing it, redeploy the branch because existing deployments do not receive newly added variables retroactively. The API logs only whether the variable exists; it never logs its value.
+
 ### Google Cloud checklist
 
 1. Create or select a Google Cloud project with billing enabled.

@@ -25,8 +25,18 @@ test('rejects unsupported request bodies', () => { assert.equal(validateRequestB
 test('returns a safe no-key configuration error', async () => {
   const previous = process.env.GOOGLE_PLACES_API_KEY; delete process.env.GOOGLE_PLACES_API_KEY;
   const response = mockResponse(); await searchHandler({ method: 'POST', body: { location: 'Hyderabad', category: '', radiusKm: 5 }, headers: {}, socket: {} }, response);
-  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_NOT_CONFIGURED', message: 'Business search is not configured yet.' } });
+  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_NOT_CONFIGURED', message: 'GOOGLE_PLACES_API_KEY is not configured for this Vercel deployment environment.' } });
   if (previous) process.env.GOOGLE_PLACES_API_KEY = previous;
+});
+
+test('returns Google\'s exact error message without exposing credentials', async () => {
+  const previousKey = process.env.GOOGLE_PLACES_API_KEY; const previousFetch = global.fetch;
+  process.env.GOOGLE_PLACES_API_KEY = 'test-key-not-returned';
+  global.fetch = async () => ({ ok: false, status: 403, json: async () => ({ error: { status: 'PERMISSION_DENIED', message: 'Places API (New) has not been enabled for this project.' } }) });
+  const response = mockResponse(); await searchHandler({ method: 'POST', body: { location: 'Hyderabad', category: '', radiusKm: 5 }, headers: { 'content-type': 'application/json', 'x-forwarded-for': 'test-google-error' }, socket: {} }, response);
+  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_PERMISSION_DENIED', message: 'Places API (New) has not been enabled for this project.', provider: 'google_places', providerStatus: 'PERMISSION_DENIED' } });
+  assert.equal(JSON.stringify(response.body).includes('test-key-not-returned'), false);
+  global.fetch = previousFetch; if (previousKey) process.env.GOOGLE_PLACES_API_KEY = previousKey; else delete process.env.GOOGLE_PLACES_API_KEY;
 });
 
 function mockResponse() { return { statusCode: 200, body: null, headers: {}, setHeader(key, value) { this.headers[key] = value; }, status(code) { this.statusCode = code; return this; }, json(body) { this.body = body; return this; } }; }

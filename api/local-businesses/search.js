@@ -11,6 +11,7 @@ const FIELD_MASK = [
 ].join(',');
 
 module.exports = async function handler(req, res) {
+  console.info('[local-business-search] route reached', { method: req.method, hasGooglePlacesKey: Boolean(process.env.GOOGLE_PLACES_API_KEY) });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Use POST for business searches.'); }
   const contentType = String(req.headers?.['content-type'] || '').toLowerCase();
   if (contentType && !contentType.includes('application/json')) return sendError(res, 400, 'INVALID_BODY', 'Send a valid JSON request body.');
@@ -18,7 +19,10 @@ module.exports = async function handler(req, res) {
   if (!validation.ok) return res.status(validation.error.code === 'REQUEST_TOO_LARGE' ? 413 : 400).json({ error: validation.error });
   if (!allowRequest(clientIp(req))) return sendError(res, 429, 'PLACES_QUOTA_EXCEEDED', 'Too many searches. Please wait a minute and try again.');
   const key = process.env.GOOGLE_PLACES_API_KEY;
-  if (!key) return sendError(res, 503, 'PLACES_NOT_CONFIGURED', 'Business search is not configured yet.');
+  if (!key) {
+    console.warn('[local-business-search] configuration missing', { environmentVariable: 'GOOGLE_PLACES_API_KEY', exists: false });
+    return sendError(res, 503, 'PLACES_NOT_CONFIGURED', 'GOOGLE_PLACES_API_KEY is not configured for this Vercel deployment environment.');
+  }
 
   const { location, category, radiusKm, pageToken } = validation.value;
   const googleBody = { textQuery: category ? `${category} in ${location}` : `businesses in ${location}`, languageCode: 'en', maxResultCount: MAX_RESULTS };
@@ -34,9 +38,11 @@ module.exports = async function handler(req, res) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const mapped = mapGoogleError(response.status, data.error?.status, Boolean(pageToken));
-      console.error('[local-business-search]', { httpStatus: response.status, upstreamStatus: data.error?.status, code: mapped.code });
-      return sendError(res, mapped.status, mapped.code, mapped.message);
+      const googleMessage = typeof data.error?.message === 'string' && data.error.message.trim() ? data.error.message.trim() : mapped.message;
+      console.error('[local-business-search] Google Places error', { httpStatus: response.status, upstreamStatus: data.error?.status || 'UNKNOWN', code: mapped.code, googleMessage });
+      return sendError(res, mapped.status, mapped.code, googleMessage, { provider: 'google_places', providerStatus: data.error?.status || null });
     }
+    console.info('[local-business-search] Google Places response received', { ok: true, placeCount: Array.isArray(data.places) ? data.places.length : 0, hasNextPage: Boolean(data.nextPageToken) });
     const businesses = dedupeBusinesses((data.places || []).slice(0, MAX_RESULTS).map(normalisePlace));
     return res.status(200).json({ businesses, nextPageToken: data.nextPageToken || null });
   } catch (error) {
@@ -53,7 +59,7 @@ function mapGoogleError(httpStatus, upstreamStatus, paginating) {
   return { status: 502, code: 'SEARCH_FAILED', message: 'Google Places is temporarily unavailable. Please try again.' };
 }
 
-function sendError(res, status, code, message) { return res.status(status).json({ error: { code, message } }); }
+function sendError(res, status, code, message, metadata) { return res.status(status).json({ error: { code, message, ...(metadata || {}) } }); }
 function clientIp(req) { return String(req.headers?.['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim(); }
 function allowRequest(ip, now = Date.now()) { for (const [key, bucket] of requestBuckets) if (now - bucket.startedAt > WINDOW_MS) requestBuckets.delete(key); const bucket = requestBuckets.get(ip); if (!bucket || now - bucket.startedAt > WINDOW_MS) { requestBuckets.set(ip, { startedAt: now, count: 1 }); return true; } bucket.count += 1; return bucket.count <= MAX_REQUESTS_PER_WINDOW; }
 
