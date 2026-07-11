@@ -1,0 +1,13 @@
+const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+const safeUrl = (value = '') => { try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
+const phoneDigits = (value = '') => String(value).replace(/\D/g, '');
+
+export function renderBusinessCard(business) {
+  const website = safeUrl(business.website); const maps = safeUrl(business.googleMapsUrl); const phone = business.internationalPhone || business.phone; const digits = phoneDigits(phone);
+  const websiteLabel = website ? 'Website Available — Not Audited' : 'No Website';
+  const websiteClass = website ? 'unknown' : 'no-website';
+  return `<article class="lbf-card"><div class="lbf-card-head"><div><h3>${escapeHtml(business.name || 'Unnamed business')}</h3><div class="lbf-category">${escapeHtml(business.category || 'Local business')}</div></div><div class="lbf-rating">${business.rating === null ? 'No rating' : `${escapeHtml(business.rating)} ★ · ${escapeHtml(business.reviewCount)} reviews`}</div></div><div class="lbf-meta"><div>${escapeHtml(business.address || 'Address unavailable')}</div><div>${phone ? escapeHtml(phone) : 'No public phone'}</div><div>${website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(business.website)}</a>` : 'No website'}</div></div><div class="lbf-badges"><span class="lbf-badge ${websiteClass}">${websiteLabel}</span>${business.businessStatus ? `<span class="lbf-badge operational">${escapeHtml(formatStatus(business.businessStatus))}</span>` : ''}</div><div class="lbf-actions">${maps ? `<a class="lbf-action primary" href="${escapeHtml(maps)}" target="_blank" rel="noopener">Google Maps</a>` : ''}${digits ? `<a class="lbf-action" href="tel:${digits}">Call</a><a class="lbf-action" href="https://wa.me/${digits}" target="_blank" rel="noopener">WhatsApp</a>` : ''}<button class="lbf-action" disabled title="Coming next">Save Lead · Coming next</button><button class="lbf-action" disabled title="Coming next">Audit Website</button><button class="lbf-action" disabled title="Coming next">Generate Preview</button></div></article>`;
+}
+
+export function renderState(type, title, message) { return `<div class="lbf-state">${type === 'loading' ? '<div class="lbf-spinner"></div>' : '<div class="lbf-state-icon">⌖</div>'}<h3>${escapeHtml(title)}</h3><p>${escapeHtml(message)}</p></div>`; }
+function formatStatus(value) { return String(value).toLowerCase().replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()); }
