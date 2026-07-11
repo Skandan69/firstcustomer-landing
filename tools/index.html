@@ -298,6 +298,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .seo-checks{grid-template-columns:1fr}
 }
 </style>
+<link rel="stylesheet" href="/assets/css/local-business-finder.css">
 </head>
 <body>
 
@@ -749,7 +750,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="top-nav-btn" id="nav-content" onclick="switchPage('content')" style="color:#f472b6">✍️ Content Studio</button>
   <button class="top-nav-btn" id="nav-leads" onclick="switchPage('leads')" style="color:#34d399">🎯 Lead Finder</button>
   <button class="top-nav-btn" id="nav-guide" onclick="switchPage('guide')" style="color:#818cf8">📖 SEO Guide</button>
-  <button class="top-nav-btn" id="nav-localGigs" onclick="switchPage('localGigs')" style="color:#a78bfa">🏘️ Local Gigs</button>
+  <button class="top-nav-btn" id="nav-localGigs" onclick="switchPage('localGigs')" style="color:#635bdb">Local Business Finder</button>
 </nav>
 
 <!-- ═══════════════════════════════════════════ -->
@@ -2271,55 +2272,20 @@ free resume template,18,890,2.0%,14.1"></textarea>
 </div>
 </div><!-- /page-guide -->
 <div class="page" id="page-localGigs">
-  <div style="max-width:860px;margin:0 auto;padding:24px 16px 60px">
-  <div style="margin-bottom:20px">
-    <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">🏘️ Local Gigs</h2>
-    <p style="color:var(--muted);font-size:13px">Find freelance opportunities nearby — scan Reddit for people needing digital services, or find local businesses with weak online presence to pitch.</p>
-  </div>
-  <!-- Mode toggle -->
-  <div style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;width:fit-content">
-    <button id="lgModeRedditBtn" onclick="lgSetMode('reddit')" style="background:var(--purple);color:#fff;border:none;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer">📡 Reddit Gig Finder</button>
-    <button id="lgModeBizBtn" onclick="lgSetMode('biz')" style="background:var(--bg3);color:var(--muted);border:none;border-left:1px solid var(--border);padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer">🏪 Business Finder</button>
-  </div>
-  <!-- Shared: City input -->
-  <div style="margin-bottom:18px">
-    <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">YOUR CITY</label>
-    <input id="lgCity" placeholder="e.g. Hyderabad, Pune, Coimbatore" style="width:100%;max-width:360px;background:#0c0c14;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;box-sizing:border-box">
-  </div>
-  <!-- MODE 1: Reddit UI -->
-  <div id="lgRedditUI">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">SELECT SERVICES TO SCAN FOR</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-      <button onclick="lgSelectAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">Select all</button>
-      <button onclick="lgClearAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">Clear</button>
-    </div>
-    <div id="lgServices" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:18px"></div>
-    <button id="lgScanBtn" onclick="lgScan()" class="btn btn-primary">🔍 Scan Reddit</button>
-  </div>
-  <!-- MODE 2: Business Finder UI -->
-  <div id="lgBizUI" style="display:none">
-    <div style="background:#111122;border:1px solid #2d2d5f;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#818cf8">
-      ⚠️ Requires <strong style="color:#fff">Google API key</strong> with <strong style="color:#fff">Places API (New)</strong> enabled → <button onclick="openSettings()" style="background:none;border:none;color:#a78bfa;cursor:pointer;font-size:12px;text-decoration:underline">⚙️ Add key</button> · In Google Cloud Console, enable "Places API (New)" (not the old Places API).
-    </div>
-    <div style="margin-bottom:14px">
-      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">BUSINESS CATEGORY</label>
-      <select id="lgBizCategory" style="background:#0c0c14;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;min-width:240px">
-        <option>restaurant</option><option>salon</option><option>gym</option><option>clinic</option>
-        <option>dental clinic</option><option>pharmacy</option><option>hotel</option><option>school</option>
-        <option>coaching centre</option><option>bakery</option><option>boutique</option><option>hardware store</option>
-      </select>
-    </div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">FILTER: SHOW BUSINESSES WITH</div>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px">
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterNoWebsite" checked> No website</label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterLowReviews" checked> Fewer than 20 reviews</label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer"><input type="checkbox" id="lgFilterLowRating" checked> Rating below 3.5</label>
-    </div>
-    <button id="lgBizScanBtn" onclick="lgFindBusinesses()" class="btn btn-primary">🔍 Find Businesses</button>
-  </div>
-  <!-- Results -->
-  <div id="lgResults" style="margin-top:24px"></div>
-</div>
+  <main class="lbf-shell">
+    <header class="lbf-hero"><div><div class="lbf-eyebrow">FirstCustomer</div><h2>Local Business Finder</h2><p>Discover local businesses, evaluate their online presence, and identify the strongest opportunities to contact.</p></div><div class="lbf-pill">Secure Google Places search</div></header>
+    <form class="lbf-panel" id="lbfSearchForm">
+      <div class="lbf-search-grid">
+        <div class="lbf-field"><label for="lbfLocation">Location</label><input id="lbfLocation" name="location" required maxlength="120" placeholder="e.g. Malkajgiri, Hyderabad" autocomplete="address-level2"></div>
+        <div class="lbf-field"><label for="lbfCategory">Business category <span class="lbf-optional">(optional)</span></label><input id="lbfCategory" name="category" maxlength="80" placeholder="e.g. salon, clinic, bakery"></div>
+        <div class="lbf-field"><label for="lbfRadius">Radius</label><select id="lbfRadius" name="radiusKm"><option value="2">2 km</option><option value="5" selected>5 km</option><option value="10">10 km</option><option value="20">20 km</option></select></div>
+        <button class="lbf-search-btn" id="lbfSearchButton" type="submit">Find Local Businesses</button>
+      </div>
+    </form>
+    <section class="lbf-stats" aria-label="Result summary"><div class="lbf-stat"><div class="lbf-stat-label">Businesses found</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">No website</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Website needs review</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Phone available</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Average rating</div><div class="lbf-stat-value" data-stat>—</div></div></section>
+    <section class="lbf-filter-bar" id="lbfFilters" aria-label="Business filters"><div class="lbf-filter-tabs"><button class="lbf-filter-btn active" type="button" data-filter="website:all">All businesses</button><button class="lbf-filter-btn" type="button" data-filter="website:none">No website</button><button class="lbf-filter-btn" type="button" data-filter="website:available">Website available</button><button class="lbf-filter-btn" type="button" data-filter="website:unreachable">Website unreachable</button><button class="lbf-filter-btn" type="button" data-filter="rating:4">Rating 4.0+</button><button class="lbf-filter-btn" type="button" data-filter="rating:4.5">Rating 4.5+</button><button class="lbf-filter-btn" type="button" data-filter="reviews:20">20+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="reviews:50">50+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="phone:true">Phone available</button></div><select class="lbf-filter-select" id="lbfCategoryFilter" aria-label="Filter by business category"><option value="">All categories</option></select><select class="lbf-filter-select" id="lbfSort" aria-label="Sort businesses"><option value="opportunity">Sort: Opportunity</option><option value="rating">Sort: Rating</option><option value="reviews">Sort: Review count</option><option value="name">Sort: Business name</option></select></section>
+    <section class="lbf-results" id="lbfResults" aria-live="polite"></section>
+  </main>
 </div>
 <style>
 .guide-nav-pill { background:#111122;border:1px solid #2d2d5f;color:#818cf8;border-radius:20px;padding:5px 14px;font-size:12px;text-decoration:none;transition:all .15s; }
@@ -4848,6 +4814,7 @@ function csCopyText(btn, encoded){
 // ─────────────────────────────────────────────
 function switchPage(page){
   try{
+    document.body.classList.toggle("local-business-page",page==="localGigs");
     document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
     document.querySelectorAll(".top-nav-btn").forEach(b=>b.classList.remove("active"));
     const pg=document.getElementById("page-"+page);
@@ -5590,7 +5557,6 @@ async function lgFindBusinesses(){
   const city = (document.getElementById('lgCity').value||'').trim();
   const category = (document.getElementById('lgBizCategory').value||'').trim();
   if(!city){ alert('Enter your city first.'); return; }
-  if(!googleKey){ alert('Add your Google API key in ⚙️ Keys first.'); openSettings(); return; }
   const filterNoWebsite = document.getElementById('lgFilterNoWebsite').checked;
   const filterLowReviews = document.getElementById('lgFilterLowReviews').checked;
   const filterLowRating  = document.getElementById('lgFilterLowRating').checked;
@@ -5599,18 +5565,14 @@ async function lgFindBusinesses(){
   const out = document.getElementById('lgResults');
   out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Searching for ${category}s in ${city}…</div></div>`;
   try{
-    const res = await fetch('https://places.googleapis.com/v1/places:searchText',{
+    const res = await fetch('/api/local-businesses/search',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'X-Goog-Api-Key':googleKey,
-        'X-Goog-FieldMask':'places.id,places.displayName,places.websiteUri,places.rating,places.userRatingCount,places.formattedAddress,places.nationalPhoneNumber'
-      },
-      body:JSON.stringify({ textQuery:`${category} in ${city} India`, languageCode:'en', maxResultCount:20 })
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ location:city, category, radiusKm:5 })
     });
     const data = await res.json();
     if(data.error){ out.innerHTML=`<div class="empty">Google API error: ${data.error.message}<br><br>Make sure "Places API (New)" is enabled in your Google Cloud Console.</div>`; btn.textContent='🔍 Find Businesses'; btn.disabled=false; return; }
-    const places = data.places||[];
+    const places = data.businesses||[];
     if(!places.length){ out.innerHTML=`<div class="empty">No ${category}s found in ${city}.</div>`; btn.textContent='🔍 Find Businesses'; btn.disabled=false; return; }
     let targets = places.filter(p=>{
       if(filterNoWebsite && !p.websiteUri) return true;
@@ -5692,5 +5654,6 @@ function lgTimeAgo(utc){
 }
 document.addEventListener('DOMContentLoaded', lgInit);
 </script>
+<script type="module" src="/assets/js/local-business/local-business-finder.js"></script>
 </body>
 </html>
