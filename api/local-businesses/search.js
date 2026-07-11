@@ -1,25 +1,61 @@
+const { dedupeBusinesses, normalisePlace, validateRequestBody } = require('./core');
+
 const MAX_RESULTS = 20;
-const ALLOWED_RADII = new Set([2, 5, 10, 20]);
+const WINDOW_MS = 60_000;
+const MAX_REQUESTS_PER_WINDOW = 20;
+const requestBuckets = new Map();
+const FIELD_MASK = [
+  'places.id', 'places.displayName', 'places.primaryType', 'places.types', 'places.rating', 'places.userRatingCount',
+  'places.formattedAddress', 'places.nationalPhoneNumber', 'places.internationalPhoneNumber', 'places.websiteUri',
+  'places.businessStatus', 'places.googleMapsUri', 'places.location', 'nextPageToken'
+].join(',');
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ code: 'METHOD_NOT_ALLOWED', message: 'Use POST for business searches.' }); }
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Use POST for business searches.'); }
+  const contentType = String(req.headers?.['content-type'] || '').toLowerCase();
+  if (contentType && !contentType.includes('application/json')) return sendError(res, 400, 'INVALID_BODY', 'Send a valid JSON request body.');
+  const validation = validateRequestBody(req.body);
+  if (!validation.ok) return res.status(validation.error.code === 'REQUEST_TOO_LARGE' ? 413 : 400).json({ error: validation.error });
+  if (!allowRequest(clientIp(req))) return sendError(res, 429, 'PLACES_QUOTA_EXCEEDED', 'Too many searches. Please wait a minute and try again.');
   const key = process.env.GOOGLE_PLACES_API_KEY;
-  if (!key) return res.status(503).json({ code: 'CONFIGURATION_ERROR', message: 'Business search is not configured.' });
-  const body = typeof req.body === 'string' ? safeJson(req.body) : (req.body || {});
-  const location = cleanText(body.location, 120); const category = cleanText(body.category, 80); const radiusKm = Number(body.radiusKm || 5);
-  if (!location) return res.status(400).json({ code: 'VALIDATION_ERROR', message: 'Enter a location to search.' });
-  if (!ALLOWED_RADII.has(radiusKm)) return res.status(400).json({ code: 'VALIDATION_ERROR', message: 'Choose a supported search radius.' });
+  if (!key) return sendError(res, 503, 'PLACES_NOT_CONFIGURED', 'Business search is not configured yet.');
 
-  // TODO: Add per-IP/user rate limiting before expanding public usage.
+  const { location, category, radiusKm, pageToken } = validation.value;
+  const googleBody = { textQuery: category ? `${category} in ${location}` : `businesses in ${location}`, languageCode: 'en', maxResultCount: MAX_RESULTS };
+  if (pageToken) googleBody.pageToken = pageToken;
+  // radiusKm is validated and retained in the public contract. Text Search interprets the named location;
+  // a strict radius requires a later geocoding step and locationBias circle.
+  void radiusKm;
+
   try {
-    const response = await fetch('https://places.googleapis.com/v1/places:searchText', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': key, 'X-Goog-FieldMask': 'places.id,places.displayName,places.primaryTypeDisplayName,places.types,places.rating,places.userRatingCount,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.businessStatus,places.googleMapsUri,nextPageToken' }, body: JSON.stringify({ textQuery: `${category ? `${category} in ` : 'businesses in '}${location}`, languageCode: 'en', maxResultCount: MAX_RESULTS }) });
-    const data = await response.json();
-    if (!response.ok) { console.error('[places-search]', response.status, data.error?.status); return res.status(response.status === 429 ? 429 : 502).json({ code: response.status === 429 ? 'RATE_LIMITED' : 'UPSTREAM_ERROR', message: response.status === 429 ? 'Search is busy. Please try again shortly.' : 'The business search service is temporarily unavailable.' }); }
-    return res.status(200).json({ businesses: (data.places || []).slice(0, MAX_RESULTS).map(normalisePlace), nextPageToken: data.nextPageToken || null });
-  } catch (error) { console.error('[places-search]', error); return res.status(500).json({ code: 'SERVICE_ERROR', message: 'The business search service is temporarily unavailable.' }); }
+    const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': key, 'X-Goog-FieldMask': FIELD_MASK }, body: JSON.stringify(googleBody)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const mapped = mapGoogleError(response.status, data.error?.status, Boolean(pageToken));
+      console.error('[local-business-search]', { httpStatus: response.status, upstreamStatus: data.error?.status, code: mapped.code });
+      return sendError(res, mapped.status, mapped.code, mapped.message);
+    }
+    const businesses = dedupeBusinesses((data.places || []).slice(0, MAX_RESULTS).map(normalisePlace));
+    return res.status(200).json({ businesses, nextPageToken: data.nextPageToken || null });
+  } catch (error) {
+    console.error('[local-business-search]', { name: error.name, message: error.message });
+    return sendError(res, 502, 'SEARCH_FAILED', 'Business search is temporarily unavailable. Please try again.');
+  }
 };
 
-function normalisePlace(place) { return { id: place.id || '', name: place.displayName?.text || '', category: place.primaryTypeDisplayName?.text || humanise(place.types?.[0]) || '', rating: Number.isFinite(place.rating) ? place.rating : null, reviewCount: Number(place.userRatingCount || 0), address: place.formattedAddress || '', phone: place.internationalPhoneNumber || place.nationalPhoneNumber || '', website: place.websiteUri || '', websiteStatus: place.websiteUri ? 'unknown' : 'unknown', businessStatus: place.businessStatus || '', googleMapsUrl: place.googleMapsUri || '' }; }
-function cleanText(value, max) { return typeof value === 'string' ? value.trim().replace(/[\u0000-\u001f]/g, '').slice(0, max) : ''; }
-function humanise(value = '') { return value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()); }
-function safeJson(value) { try { return JSON.parse(value); } catch { return {}; } }
+function mapGoogleError(httpStatus, upstreamStatus, paginating) {
+  if (httpStatus === 429 || upstreamStatus === 'RESOURCE_EXHAUSTED') return { status: 429, code: 'PLACES_QUOTA_EXCEEDED', message: 'Search quota has been reached. Please try again later.' };
+  if (httpStatus === 403 || ['PERMISSION_DENIED', 'FAILED_PRECONDITION'].includes(upstreamStatus)) return { status: 503, code: 'PLACES_PERMISSION_DENIED', message: 'Business search is unavailable because Google Places access needs attention.' };
+  if (httpStatus === 400 && paginating) return { status: 400, code: 'INVALID_PAGE_TOKEN', message: 'That page has expired. Start a new search to continue.' };
+  if (httpStatus === 400 || upstreamStatus === 'INVALID_ARGUMENT') return { status: 400, code: 'INVALID_LOCATION', message: 'Enter a valid location and try again.' };
+  return { status: 502, code: 'SEARCH_FAILED', message: 'Google Places is temporarily unavailable. Please try again.' };
+}
+
+function sendError(res, status, code, message) { return res.status(status).json({ error: { code, message } }); }
+function clientIp(req) { return String(req.headers?.['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim(); }
+function allowRequest(ip, now = Date.now()) { for (const [key, bucket] of requestBuckets) if (now - bucket.startedAt > WINDOW_MS) requestBuckets.delete(key); const bucket = requestBuckets.get(ip); if (!bucket || now - bucket.startedAt > WINDOW_MS) { requestBuckets.set(ip, { startedAt: now, count: 1 }); return true; } bucket.count += 1; return bucket.count <= MAX_REQUESTS_PER_WINDOW; }
+
+module.exports.FIELD_MASK = FIELD_MASK;
+module.exports.mapGoogleError = mapGoogleError;

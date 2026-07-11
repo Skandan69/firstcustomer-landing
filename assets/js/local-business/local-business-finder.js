@@ -1,37 +1,43 @@
 import { searchLocalBusinesses } from './business-service.js';
-import { DEFAULT_FILTERS, filterBusinesses } from './business-filters.js';
+import { DEFAULT_FILTERS, filterBusinesses } from './business-filters.mjs';
 import { renderBusinessCard, renderState } from './business-renderer.js';
 
-const state = { businesses: [], filters: { ...DEFAULT_FILTERS } };
+const state = { businesses: [], filters: { ...DEFAULT_FILTERS }, criteria: null, nextPageToken: null };
 const $ = (selector) => document.querySelector(selector);
 
 function init() {
-  const form = $('#lbfSearchForm'); if (!form) return;
-  form.addEventListener('submit', handleSearch);
+  if (!$('#lbfSearchForm')) return;
+  $('#lbfSearchForm').addEventListener('submit', handleSearch);
+  $('#lbfLoadMore').addEventListener('click', handleLoadMore);
   $('#lbfFilters').addEventListener('click', handleFilterClick);
   $('#lbfCategoryFilter').addEventListener('change', (event) => { state.filters.category = event.target.value; renderResults(); });
+  $('#lbfStatusFilter').addEventListener('change', (event) => { state.filters.businessStatus = event.target.value; renderResults(); });
   $('#lbfSort').addEventListener('change', (event) => { state.filters.sort = event.target.value; renderResults(); });
-  renderResults('empty'); updateStats([]);
+  renderResults('empty'); updateStats();
 }
 
 async function handleSearch(event) {
-  event.preventDefault(); const location = $('#lbfLocation').value.trim();
-  if (!location) { $('#lbfLocation').focus(); return; }
-  const button = $('#lbfSearchButton'); button.disabled = true; button.textContent = 'Searching…';
+  event.preventDefault(); const location = $('#lbfLocation').value.trim(); if (!location) { $('#lbfLocation').focus(); return; }
+  state.criteria = { location, category: $('#lbfCategory').value.trim(), radiusKm: Number($('#lbfRadius').value) };
+  setSearchBusy(true); $('#lbfSearchContext').textContent = state.criteria.category ? `Targeted search for “${state.criteria.category}” near ${location}.` : 'Showing businesses Google identifies for this location. Use a category to run a more targeted search.';
   $('#lbfResults').innerHTML = renderState('loading', 'Finding local businesses', `Searching around ${location}.`);
   try {
-    const result = await searchLocalBusinesses({ location, category: $('#lbfCategory').value.trim(), radiusKm: Number($('#lbfRadius').value) });
-    state.businesses = result.businesses; state.filters = { ...DEFAULT_FILTERS }; resetControls(); populateCategories(); updateStats(state.businesses); renderResults(state.businesses.length ? 'results' : 'no-results');
-  } catch (error) {
-    console.error('[Local Business Finder]', error.code, error.detail || error.message);
-    const configured = error.code !== 'CONFIGURATION_ERROR';
-    $('#lbfResults').innerHTML = renderState('error', configured ? 'Search temporarily unavailable' : 'Business search needs configuration', configured ? 'Please try again shortly. If the problem continues, contact support.' : 'The secure business search service has not been configured yet.');
-  } finally { button.disabled = false; button.textContent = 'Find Local Businesses'; }
+    const result = await searchLocalBusinesses(state.criteria);
+    state.businesses = dedupe(result.businesses); state.nextPageToken = result.nextPageToken; state.filters = { ...DEFAULT_FILTERS };
+    resetControls(); refreshDerivedUi(); renderResults(state.businesses.length ? 'results' : 'no-results');
+  } catch (error) { renderFriendlyError(error); }
+  finally { setSearchBusy(false); }
+}
+
+async function handleLoadMore() {
+  if (!state.nextPageToken || !state.criteria) return; const button = $('#lbfLoadMore'); button.disabled = true; button.textContent = 'Loading…';
+  try { const result = await searchLocalBusinesses({ ...state.criteria, pageToken: state.nextPageToken }); state.businesses = dedupe([...state.businesses, ...result.businesses]); state.nextPageToken = result.nextPageToken; refreshDerivedUi(); renderResults(); }
+  catch (error) { renderFriendlyError(error, true); }
+  finally { button.disabled = false; button.textContent = 'Load More Businesses'; updateLoadMore(); }
 }
 
 function handleFilterClick(event) {
-  const button = event.target.closest('[data-filter]'); if (!button) return;
-  const [key, value] = button.dataset.filter.split(':');
+  const button = event.target.closest('[data-filter]'); if (!button) return; const [key, value] = button.dataset.filter.split(':');
   if (key === 'website') state.filters.website = value;
   else if (key === 'rating') state.filters.rating = state.filters.rating === Number(value) ? 0 : Number(value);
   else if (key === 'reviews') state.filters.reviews = state.filters.reviews === Number(value) ? 0 : Number(value);
@@ -39,13 +45,16 @@ function handleFilterClick(event) {
   document.querySelectorAll(`[data-filter^="${key}:"]`).forEach((item) => item.classList.toggle('active', key === 'website' ? item === button : item === button && Boolean(state.filters[key]))); renderResults();
 }
 
-function renderResults(mode = 'results') {
-  const container = $('#lbfResults'); if (!container) return;
-  if (mode === 'empty') { container.innerHTML = renderState('empty', 'Discover businesses near you', 'Enter a location to find local and privately owned businesses. Adding a category is optional.'); return; }
-  const businesses = filterBusinesses(state.businesses, state.filters);
-  container.innerHTML = businesses.length ? businesses.map(renderBusinessCard).join('') : renderState('no-results', 'No matching businesses', state.businesses.length ? 'Try removing one or more filters.' : 'Try a broader location or leave the category blank.');
-}
-function updateStats(items) { const rated = items.filter((b) => Number(b.rating)); const values = [items.length, items.filter((b) => !b.website).length, items.filter((b) => b.website && b.websiteStatus !== 'available').length, items.filter((b) => b.phone).length, rated.length ? (rated.reduce((sum, b) => sum + Number(b.rating), 0) / rated.length).toFixed(1) : '—']; document.querySelectorAll('[data-stat]').forEach((el, i) => { el.textContent = values[i]; }); }
-function populateCategories() { const select = $('#lbfCategoryFilter'); const categories = [...new Set(state.businesses.map((b) => b.category).filter(Boolean))].sort(); select.innerHTML = '<option value="">All categories</option>' + categories.map((c) => `<option value="${c.replace(/"/g, '&quot;')}">${c.replace(/</g, '&lt;')}</option>`).join(''); }
-function resetControls() { document.querySelectorAll('[data-filter]').forEach((button) => button.classList.toggle('active', button.dataset.filter === 'website:all')); $('#lbfCategoryFilter').value = ''; $('#lbfSort').value = 'opportunity'; }
+function renderResults(mode = 'results') { const container = $('#lbfResults'); if (mode === 'empty') { container.innerHTML = renderState('empty', 'Discover businesses near you', 'Enter a location to find local and privately owned businesses. Adding a category is optional.'); return; } const businesses = filterBusinesses(state.businesses, state.filters); container.innerHTML = businesses.length ? businesses.map(renderBusinessCard).join('') : renderState('no-results', 'No matching businesses', state.businesses.length ? 'Try removing one or more filters.' : 'No businesses were returned. Try a broader location or leave the category blank.'); }
+function renderFriendlyError(error, pagination = false) { console.error('[Local Business Finder]', error.code, error.message); const messages = { PLACES_NOT_CONFIGURED: ['Business search needs configuration', 'The secure Google Places service has not been configured yet.'], PLACES_PERMISSION_DENIED: ['Google Places access needs attention', 'Places API (New), billing, or key permissions must be checked by the site administrator.'], PLACES_QUOTA_EXCEEDED: ['Search limit reached', 'Please wait and try again later.'], INVALID_LOCATION: ['Check the location', 'Enter a valid town, neighbourhood, or city and try again.'], INVALID_PAGE_TOKEN: ['This page expired', 'Start a new search to retrieve fresh results.'], NETWORK_ERROR: ['Connection problem', 'Check your connection and try again.'], TIMEOUT: ['Search timed out', 'Google Places took too long to respond. Please try again.'] }; const [title, message] = messages[error.code] || ['Search temporarily unavailable', 'Please try again shortly.']; if (pagination && state.businesses.length) { $('#lbfPaginationMessage').textContent = message; state.nextPageToken = null; updateLoadMore(); } else { $('#lbfResults').innerHTML = renderState('error', title, message); } }
+function refreshDerivedUi() { populateSelect('#lbfCategoryFilter', 'All categories', state.businesses.map((b) => b.category)); populateSelect('#lbfStatusFilter', 'All business statuses', state.businesses.map((b) => b.businessStatus), formatStatus); updateStats(); updateLoadMore(); }
+function updateStats() { const rated = state.businesses.filter((b) => b.rating !== null); const values = [state.businesses.length, state.businesses.filter((b) => !b.website).length, state.businesses.filter((b) => b.website).length, state.businesses.filter((b) => b.phone || b.internationalPhone).length, rated.length ? (rated.reduce((sum, b) => sum + b.rating, 0) / rated.length).toFixed(1) : '—']; document.querySelectorAll('[data-stat]').forEach((el, index) => { el.textContent = values[index]; }); }
+function updateLoadMore() { $('#lbfLoadMore').hidden = !state.nextPageToken; if (state.nextPageToken) $('#lbfPaginationMessage').textContent = 'More Google Places results are available.'; }
+function populateSelect(selector, label, values, formatter = (value) => value) { const select = $(selector); const current = select.value; const unique = [...new Set(values.filter(Boolean))].sort(); select.innerHTML = `<option value="">${label}</option>` + unique.map((value) => `<option value="${escapeAttribute(value)}">${escapeText(formatter(value))}</option>`).join(''); select.value = unique.includes(current) ? current : ''; }
+function resetControls() { document.querySelectorAll('[data-filter]').forEach((button) => button.classList.toggle('active', button.dataset.filter === 'website:all')); $('#lbfCategoryFilter').value = ''; $('#lbfStatusFilter').value = ''; $('#lbfSort').value = 'website-opportunity'; }
+function setSearchBusy(busy) { const button = $('#lbfSearchButton'); button.disabled = busy; button.textContent = busy ? 'Searching…' : 'Find Local Businesses'; if (busy) { state.nextPageToken = null; updateLoadMore(); } }
+function dedupe(items) { const seen = new Set(); return items.filter((item) => { const key = item.id || `${item.name}|${item.address}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
+function formatStatus(value) { return value.toLowerCase().replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()); }
+function escapeAttribute(value) { return String(value).replace(/[&"]/g, (c) => c === '&' ? '&amp;' : '&quot;'); }
+function escapeText(value) { return String(value).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 document.addEventListener('DOMContentLoaded', init);
