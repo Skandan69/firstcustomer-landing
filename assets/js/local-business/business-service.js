@@ -11,7 +11,7 @@ export async function searchLocalBusinesses(criteria) {
     const response = await fetch(LOCAL_BUSINESS_CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(criteria), signal: controller.signal });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) throw new BusinessSearchError(payload.error?.message || 'The business search service is unavailable.', payload.error?.code || 'SEARCH_FAILED');
-    return { businesses: Array.isArray(payload.businesses) ? payload.businesses : [], nextPageToken: payload.nextPageToken || null };
+    return { businesses: Array.isArray(payload.businesses) ? payload.businesses : [], nextPageToken: payload.nextPageToken || null, provider: payload.provider || null, notice: payload.notice || '', fallback: payload.fallback || null };
   } catch (error) {
     if (error instanceof BusinessSearchError) throw error;
     if (error.name === 'AbortError') throw new BusinessSearchError('The search took too long. Please try again.', 'TIMEOUT');
