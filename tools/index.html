@@ -1200,6 +1200,9 @@ free resume template,18,890,2.0%,14.1"></textarea>
     <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">🎯 Lead Finder</h2>
     <p style="color:var(--muted);font-size:13px">Find people actively asking for what you offer — on Reddit, LinkedIn, Twitter, Quora and more. Generate a personalised outreach message for each one in one click.</p>
   </div>
+  <div style="margin:-8px 0 20px;padding:11px 13px;border:1px solid #1d4f3d;background:#08261d;border-radius:9px;color:#a7f3d0;font-size:12px;line-height:1.5">
+    Lead Finder AI now uses FirstCustomer's secure server provider. Any Anthropic key already saved in this browser is retained for unmigrated legacy tools, but Lead Finder no longer sends it directly to Anthropic.
+  </div>
 
   <!-- Search panel -->
   <div style="background:#0c0c14;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
@@ -2332,6 +2335,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
 .guide-faq.open .guide-faq-arrow { transform:rotate(180deg); }
 </style>
 
+<script src="/assets/js/security/safe-ui.js"></script>
 <script>
 // ─────────────────────────────────────────────
 // STATE
@@ -4123,14 +4127,12 @@ async function lfSearch(){
   const out = document.getElementById("lfResults");
   document.getElementById("lfCount").textContent="";
 
-  // Wave 1: AI queries (if key set) or smart defaults
+  // Wave 1: secure server-side AI queries, with smart defaults as fallback
   let wave1Queries = lfDefaultQueries(svc, cust).slice(0,5);
-  if(anthropicKey){
-    try{
-      const aiQ = await lfAIQueries(svc, cust);
-      if(aiQ.length) wave1Queries = aiQ.concat(lfDefaultQueries(svc,cust)).slice(0,6);
-    }catch{}
-  }
+  try{
+    const aiQ = await lfAIQueries(svc, cust);
+    if(aiQ.length) wave1Queries = aiQ.concat(lfDefaultQueries(svc,cust)).slice(0,6);
+  }catch{}
 
   const allResults = [];
   const seen = new Set();
@@ -4151,7 +4153,7 @@ async function lfSearch(){
   // Wave 2: If still empty, try core keyword only (broadest fallback)
   if(!allResults.length){
     const core = lfCore(svc);
-    out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Widening search for "${core}"…</div></div>`;
+    out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Widening search for "${FCSecurity.escapeHtml(core)}"…</div></div>`;
     const fallbacks=[core, `need ${core}`, `${core} recommendation`, `${core} freelance`];
     for(const q of fallbacks){
       addResults(await lfRedditSearch(q));
@@ -4168,7 +4170,7 @@ async function lfSearch(){
     out.innerHTML=`
       <div style="background:#0c0c14;border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">🔍</div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">No Reddit results found for "${svc}"</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">No Reddit results found for "${FCSecurity.escapeHtml(svc)}"</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Reddit didn't return posts for these search terms. Try one of these fixes:</div>
         <div style="display:grid;gap:8px;text-align:left;margin-bottom:20px">
           <div style="background:#111122;border-radius:8px;padding:12px;font-size:12px;color:var(--muted)">
@@ -4210,14 +4212,12 @@ Rules:
 Examples for "resume writing": need resume help, job application failing, resume getting rejected, ATS resume tips, career advice job search
 
 Reply with ONLY 6 queries, one per line, no numbers, no explanation.`;
-  const r = await fetch("https://api.anthropic.com/v1/messages",{
+  const data = await FCSecurity.fetchJson("/api/legacy/anthropic/messages",{
     method:"POST",
-    headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:120,messages:[{role:"user",content:prompt}]})
+    timeoutMs:20000,
+    body:JSON.stringify({purpose:"lead_queries",prompt})
   });
-  if(!r.ok) return [];
-  const data=await r.json();
-  return (data.content?.[0]?.text||"").split("\n").map(s=>s.trim()).filter(s=>s.length>3).slice(0,4);
+  return (data.text||"").split("\n").map(s=>s.trim()).filter(s=>s.length>3).slice(0,4);
 }
 
 async function lfRedditSearch(query){
@@ -4262,28 +4262,31 @@ function lfAge(utc){
 
 function lfRenderResults(leads, svc){
   const out = document.getElementById("lfResults");
-  out.innerHTML = `
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">
-      Found <strong style="color:#34d399">${leads.length} potential leads</strong> on Reddit. Click <strong style="color:#fff">✍️ Write Outreach</strong> to get a personalised message for any lead.
-    </div>
-    ${leads.map((lead,i)=>`
-    <div class="lf-card" id="lfcard${i}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span class="lf-platform-tag lf-platform-reddit">r/${lead.subreddit||"reddit"}</span>
-          <span style="font-size:11px;color:#444">${lead.age}</span>
-          <span style="font-size:11px;color:#444">↑${lead.score} · ${lead.comments} comments</span>
-        </div>
-        <div style="display:flex;gap:6px">
-          <a href="${lead.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">View post ↗</a>
-          <button onclick="lfWriteOutreach(${i},'${svc.replace(/'/g,"\\'")}',this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✍️ Write Outreach</button>
-          <button onclick="lfSaveLead(${i})" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer" id="lfsave${i}">+ Save</button>
-        </div>
-      </div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4">${lead.title}</div>
-      ${lead.snippet?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${lead.snippet}${lead.snippet.length>=300?"…":""}</div>`:""}
-      <div id="lfoutreach${i}" class="lf-outreach-box"></div>
-    </div>`).join("")}`;
+  out.replaceChildren();
+  const summary=document.createElement("div");
+  summary.style.cssText="font-size:12px;color:var(--muted);margin-bottom:14px";
+  FCSecurity.setText(summary,`Found ${leads.length} potential leads on Reddit. Use Write Outreach to get a personalised message.`);
+  out.appendChild(summary);
+  leads.forEach((lead,i)=>{
+    const card=document.createElement("div"); card.className="lf-card"; card.id=`lfcard${i}`;
+    const top=document.createElement("div"); top.style.cssText="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px";
+    const meta=document.createElement("div"); meta.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap";
+    const platform=document.createElement("span"); platform.className="lf-platform-tag lf-platform-reddit"; FCSecurity.setText(platform,`r/${lead.subreddit||"reddit"}`);
+    const age=document.createElement("span"); age.style.cssText="font-size:11px;color:#444"; FCSecurity.setText(age,lead.age);
+    const stats=document.createElement("span"); stats.style.cssText="font-size:11px;color:#444"; FCSecurity.setText(stats,`↑${Number(lead.score)||0} · ${Number(lead.comments)||0} comments`);
+    meta.append(platform,age,stats);
+    const actions=document.createElement("div"); actions.style.cssText="display:flex;gap:6px";
+    const view=document.createElement("a"); view.style.cssText="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none"; FCSecurity.setText(view,"View post ↗");
+    if(!FCSecurity.secureExternalLink(view,lead.url)) view.hidden=true;
+    const write=document.createElement("button"); write.style.cssText="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600"; FCSecurity.setText(write,"✍️ Write Outreach"); write.addEventListener("click",()=>lfWriteOutreach(i,svc,write));
+    const save=document.createElement("button"); save.id=`lfsave${i}`; save.style.cssText="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer"; FCSecurity.setText(save,"+ Save"); save.addEventListener("click",()=>lfSaveLead(i));
+    actions.append(view,write,save); top.append(meta,actions);
+    const title=document.createElement("div"); title.style.cssText="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4"; FCSecurity.setText(title,lead.title);
+    card.append(top,title);
+    if(lead.snippet){const snippet=document.createElement("div"); snippet.style.cssText="font-size:12px;color:var(--muted);line-height:1.6"; FCSecurity.setText(snippet,lead.snippet+(lead.snippet.length>=300?"…":"")); card.appendChild(snippet);}
+    const outreach=document.createElement("div"); outreach.id=`lfoutreach${i}`; outreach.className="lf-outreach-box"; card.appendChild(outreach);
+    out.appendChild(card);
+  });
 }
 
 async function lfWriteOutreach(idx, svc, btn){
@@ -4291,14 +4294,8 @@ async function lfWriteOutreach(idx, svc, btn){
   if(!lead) return;
   const box = document.getElementById("lfoutreach"+idx);
 
-  if(!anthropicKey){
-    box.style.display="block";
-    box.innerHTML=`<span style="color:#f87171">⚠️ Add your Anthropic API key in ⚙️ Settings to generate outreach messages.</span>`;
-    return;
-  }
-
-  const orig=btn.innerHTML;
-  btn.innerHTML=`<span class="cs-spinner"></span>`; btn.disabled=true;
+  const orig=btn.textContent;
+  btn.textContent="Writing…"; btn.disabled=true;
   box.style.display="block";
   box.textContent="Writing personalised outreach…";
 
@@ -4330,37 +4327,36 @@ LINKEDIN DM:
 [DM here]`;
 
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
+    const data=await FCSecurity.fetchJson("/api/legacy/anthropic/messages",{
       method:"POST",
-      headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:400,messages:[{role:"user",content:prompt}]})
+      timeoutMs:20000,
+      body:JSON.stringify({purpose:"lead_outreach",prompt})
     });
-    const data=await r.json();
-    const text=data.content?.[0]?.text||"Failed to generate.";
+    const text=data.text||"Failed to generate.";
 
     const redditMatch=text.match(/REDDIT REPLY:\n([\s\S]*?)(?:LINKEDIN DM:|$)/);
     const linkedinMatch=text.match(/LINKEDIN DM:\n([\s\S]*?)$/);
     const redditText=(redditMatch?.[1]||text).trim();
     const linkedinText=(linkedinMatch?.[1]||"").trim();
 
-    box.innerHTML=`
-      <div style="margin-bottom:10px">
-        <div style="font-size:10px;color:#ff6314;font-weight:700;margin-bottom:5px">📮 REDDIT REPLY — paste as a comment on their post</div>
-        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lfrt${idx}">${redditText}</div>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('lfrt${idx}').innerText).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy Reddit reply',1800)})" class="cs-copy-btn" style="margin-top:6px">Copy Reddit reply</button>
-      </div>
-      ${linkedinText?`<div style="border-top:1px solid #1a3a1a;padding-top:10px;margin-top:4px">
-        <div style="font-size:10px;color:#60a5fa;font-weight:700;margin-bottom:5px">💼 LINKEDIN DM — find them on LinkedIn and send this</div>
-        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lflk${idx}">${linkedinText}</div>
-        <button onclick="navigator.clipboard.writeText(document.getElementById('lflk${idx}').innerText).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy LinkedIn DM',1800)})" class="cs-copy-btn" style="margin-top:6px">Copy LinkedIn DM</button>
-      </div>`:""}`;
+    box.replaceChildren();
+    const addMessage=(label,value,color,copyLabel)=>{
+      const section=document.createElement("div"); section.style.cssText=box.children.length?"border-top:1px solid #1a3a1a;padding-top:10px;margin-top:4px":"margin-bottom:10px";
+      const heading=document.createElement("div"); heading.style.cssText=`font-size:10px;color:${color};font-weight:700;margin-bottom:5px`; FCSecurity.setText(heading,label);
+      const content=document.createElement("div"); content.style.cssText="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7"; FCSecurity.setText(content,value);
+      const copy=document.createElement("button"); copy.className="cs-copy-btn"; copy.style.marginTop="6px"; FCSecurity.setText(copy,copyLabel);
+      copy.addEventListener("click",()=>navigator.clipboard.writeText(value).then(()=>{copy.textContent="✓ Copied!";setTimeout(()=>copy.textContent=copyLabel,1800);}));
+      section.append(heading,content,copy); box.appendChild(section);
+    };
+    addMessage("📮 REDDIT REPLY — paste as a comment on their post",redditText,"#ff6314","Copy Reddit reply");
+    if(linkedinText) addMessage("💼 LINKEDIN DM — find them on LinkedIn and send this",linkedinText,"#60a5fa","Copy LinkedIn DM");
 
     // Auto-save after generating outreach
     lfSaveLead(idx, redditText);
   }catch(e){
-    box.textContent="Failed: "+e.message;
+    box.textContent=FCSecurity.userSafeError(e);
   }
-  btn.innerHTML=orig; btn.disabled=false;
+  btn.textContent=orig; btn.disabled=false;
 }
 
 function lfSaveLead(idx, outreachText){
@@ -4412,27 +4408,34 @@ function lfRenderSaved(){
     el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">No saved leads yet. Search above and click "+ Save" on any lead.</div>`;
     return;
   }
-  el.innerHTML=lfSaved.map((lead,i)=>`
+  el.innerHTML=lfSaved.map((lead,i)=>{
+    const safeLink=FCSecurity.safeUrl(lead.url);
+    const platform=FCSecurity.escapeHtml(lead.platform);
+    const status=FCSecurity.escapeHtml(lead.status);
+    const age=FCSecurity.escapeHtml(lead.age||"");
+    const title=FCSecurity.escapeHtml(lead.title);
+    const outreach=FCSecurity.escapeHtml((lead.outreach||"").slice(0,80));
+    return `
     <div style="background:#0c0c14;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:10px;background:#2d1a0a;color:#ff6314;border-radius:8px;padding:1px 7px;font-weight:700">${lead.platform}</span>
-            <span style="font-size:10px;background:${(LF_STATUS_COLORS[lead.status]||"#444")+"22"};color:${LF_STATUS_COLORS[lead.status]||"#888"};border-radius:8px;padding:1px 8px;font-weight:700">${lead.status}</span>
-            <span style="font-size:10px;color:#444">${lead.age||""}</span>
+            <span style="font-size:10px;background:#2d1a0a;color:#ff6314;border-radius:8px;padding:1px 7px;font-weight:700">${platform}</span>
+            <span style="font-size:10px;background:${(LF_STATUS_COLORS[lead.status]||"#444")+"22"};color:${LF_STATUS_COLORS[lead.status]||"#888"};border-radius:8px;padding:1px 8px;font-weight:700">${status}</span>
+            <span style="font-size:10px;color:#444">${age}</span>
           </div>
-          <a href="${lead.url}" target="_blank" style="font-size:12px;font-weight:600;color:#fff;text-decoration:none;line-height:1.4;display:block;margin-bottom:4px">${lead.title}</a>
-          ${lead.outreach?`<div style="font-size:11px;color:#444;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lead.outreach.slice(0,80)}…</div>`:""}
+          ${safeLink?`<a href="${safeLink}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#fff;text-decoration:none;line-height:1.4;display:block;margin-bottom:4px">${title}</a>`:`<div style="font-size:12px;font-weight:600;color:#fff">${title}</div>`}
+          ${lead.outreach?`<div style="font-size:11px;color:#444;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${outreach}…</div>`:""}
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">
           <select onchange="lfUpdateStatus(${i},this.value)" class="lf-status-select">
             ${["New","Contacted","Replied","Won ✓","Not interested"].map(s=>`<option${s===lead.status?" selected":""}>${s}</option>`).join("")}
           </select>
-          <a href="${lead.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:11px;text-decoration:none">View ↗</a>
+          ${safeLink?`<a href="${safeLink}" target="_blank" rel="noopener noreferrer" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:11px;text-decoration:none">View ↗</a>`:""}
           <button onclick="lfDeleteLead(${i})" style="background:#111122;border:1px solid #3a1010;color:#f87171;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">✕</button>
         </div>
       </div>
-    </div>`).join("");
+    </div>`;}).join("");
 }
 
 function lfExport(){

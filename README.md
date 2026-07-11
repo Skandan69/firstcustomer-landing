@@ -1,5 +1,9 @@
 # FirstCustomer
 
+## Secure legacy providers
+
+Lead Finder AI uses the server-side `POST /api/legacy/anthropic/messages` route. Configure `ANTHROPIC_API_KEY` in the matching Vercel environment; the value is never returned to browser code. Existing browser-saved Anthropic keys are retained for unmigrated legacy tools, but Lead Finder no longer sends them to Anthropic. See `docs/SECURE_PROVIDER_MIGRATION.md` for the complete migration inventory and remaining risks.
+
 FirstCustomer is a framework-free HTML/CSS/JavaScript application. The root landing page links to the application at `/tools`; Vercel serves static assets and functions under `api/`.
 
 ## Local Business Finder Architecture Notes
