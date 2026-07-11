@@ -1,5 +1,6 @@
 const ALLOWED_RADII = new Set([2, 5, 10, 20]);
 const LIMITS = Object.freeze({ bodyBytes: 4096, location: 120, category: 80, pageToken: 2048 });
+const PROVIDERS = new Set(['auto', 'google', 'open_data']);
 
 function validateRequestBody(rawBody) {
   if (rawBody === null || rawBody === undefined) return invalid('INVALID_BODY', 'Send a valid JSON request body.');
@@ -16,26 +17,13 @@ function validateRequestBody(rawBody) {
   const radiusKm = body.radiusKm === undefined ? 5 : Number(body.radiusKm);
   if (!ALLOWED_RADII.has(radiusKm)) return invalid('INVALID_RADIUS', 'Choose a radius of 2, 5, 10, or 20 km.');
   if (body.pageToken !== undefined && (typeof body.pageToken !== 'string' || body.pageToken.length > LIMITS.pageToken)) return invalid('INVALID_PAGE_TOKEN', 'The next page is no longer available. Start a new search.');
-  return { ok: true, value: { location: clean(body.location), category: clean(body.category || ''), radiusKm, pageToken: clean(body.pageToken || '') } };
-}
-
-function normalisePlace(place = {}) {
-  const website = stringValue(place.websiteUri);
-  return {
-    id: stringValue(place.id), name: stringValue(place.displayName?.text), category: humanise(place.primaryType || place.types?.[0] || ''),
-    types: Array.isArray(place.types) ? place.types.filter((type) => typeof type === 'string') : [], rating: Number.isFinite(place.rating) ? place.rating : null,
-    reviewCount: Number.isFinite(place.userRatingCount) ? place.userRatingCount : 0, address: stringValue(place.formattedAddress), phone: stringValue(place.nationalPhoneNumber),
-    internationalPhone: stringValue(place.internationalPhoneNumber), website, websiteStatus: website ? 'not_checked' : 'no_website', businessStatus: stringValue(place.businessStatus),
-    googleMapsUrl: stringValue(place.googleMapsUri), latitude: numberOrNull(place.location?.latitude), longitude: numberOrNull(place.location?.longitude)
-  };
+  const provider = body.provider === undefined ? 'auto' : body.provider;
+  if (typeof provider !== 'string' || !PROVIDERS.has(provider)) return invalid('INVALID_PROVIDER', 'Choose Auto, Google, or Open Data.');
+  return { ok: true, value: { location: clean(body.location), category: clean(body.category || ''), radiusKm, pageToken: clean(body.pageToken || ''), provider } };
 }
 
 function dedupeBusinesses(items) { const seen = new Set(); return items.filter((item) => { const key = item.id || `${item.name}|${item.address}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
 function invalid(code, message) { return { ok: false, error: { code, message } }; }
 function isPlainObject(value) { return Boolean(value) && typeof value === 'object' && !Array.isArray(value); }
 function clean(value) { return String(value).trim().replace(/[\u0000-\u001f]/g, ''); }
-function stringValue(value) { return typeof value === 'string' ? value : ''; }
-function numberOrNull(value) { return Number.isFinite(value) ? value : null; }
-function humanise(value) { return stringValue(value).replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()); }
-
-module.exports = { LIMITS, dedupeBusinesses, normalisePlace, validateRequestBody };
+module.exports = { LIMITS, dedupeBusinesses, validateRequestBody };

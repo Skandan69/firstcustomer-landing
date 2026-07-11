@@ -10,6 +10,16 @@ FirstCustomer is a framework-free HTML/CSS/JavaScript application. The root land
 - The browser calls only `POST /api/local-businesses/search`. Google Places credentials never enter the Local Business Finder browser code.
 - Legacy features still store user-entered API keys and application data in localStorage. Those calls should be migrated behind server routes separately.
 
+## Business Discovery provider architecture
+
+The browser always calls `POST /api/local-businesses/search` and consumes one provider-independent business model. It never calls Google, Nominatim, or Overpass directly.
+
+- **Auto:** attempts Google Places first. Configuration, billing, permission, quota, or temporary Google failures fall back to OpenStreetMap. A response contains only one provider and includes a visible fallback notice.
+- **Google:** uses Places API (New) only and supports Google pagination, ratings, and review counts.
+- **Open Data:** geocodes the entered location with Nominatim, then searches the selected radius with Overpass. It returns OpenStreetMap tags and public contact details when contributors supplied them.
+
+Open Data results do not contain Google ratings, review counts, or business status. Phone, address, opening hours, and website coverage can be incomplete. Category filtering operates on available OSM names and tags.
+
 ## Local Business Finder setup
 
 ### Required environment variable
@@ -33,7 +43,7 @@ Use `vercel dev` so static files and the API route run together. Then call:
 ```sh
 curl -X POST http://localhost:3000/api/local-businesses/search \
   -H "Content-Type: application/json" \
-  -d '{"location":"Malkajgiri, Hyderabad","category":"","radiusKm":5}'
+  -d '{"location":"Malkajgiri, Hyderabad","category":"","radiusKm":5,"provider":"auto"}'
 ```
 
 Run the lightweight test suite with `npm test`.
@@ -44,5 +54,6 @@ Run the lightweight test suite with `npm test`.
 - Radius values are validated and retained in the API contract. Places Text Search interprets the named location; enforcing a precise radius will require a later geocoding step and `locationBias` circle.
 - Results are normalised to a stable internal model. A missing website is `no_website`; a listed website is `not_checked`. The UI never labels a site broken, outdated, or poor before an audit.
 - Google pagination tokens are passed through the server. The browser appends pages, removes duplicate place IDs, and recalculates summary metrics across the complete loaded set.
-- The in-memory per-IP throttle is best-effort per warm serverless instance. Durable production limits require Redis, Vercel KV, or another persistent store.
+- Nominatim requests use an identifying User-Agent, a per-instance one-request-per-second gate, and a 24-hour geocode cache. Overpass results are cached for 10 minutes and time out gracefully.
+- All caches and the per-IP throttle are best-effort per warm serverless instance. Durable production caching and rate limits require Redis, Vercel KV, or another persistent store. Public OpenStreetMap services are suitable as a development fallback, not unlimited high-volume infrastructure.
 - A future sprint will add a server-side website-audit engine. AI scoring and website generation are intentionally not part of this foundation.
