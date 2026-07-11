@@ -7,8 +7,8 @@ export function filterBusinesses(businesses, filters) {
     if (filters.website === 'available' && !hasWebsite) return false;
     if (filters.rating && (business.rating === null || business.rating < filters.rating)) return false;
     if (filters.reviews && (business.reviewCount === null || business.reviewCount < filters.reviews)) return false;
-    if (filters.phone && !(business.phone || business.internationalPhone)) return false;
-    if (filters.source && business.source !== filters.source) return false;
+    if (filters.phone && !business.phone) return false;
+    if (filters.source && business.provider !== filters.source) return false;
     if (filters.category && business.category !== filters.category) return false;
     if (filters.businessStatus && business.businessStatus !== filters.businessStatus) return false;
     return true;
