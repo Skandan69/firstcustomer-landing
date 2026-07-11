@@ -1,0 +1,14 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.FCSecurity=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  function text(value){return value===null||value===undefined?'':String(value);}
+  function escapeHtml(value){return text(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
+  function setText(element,value){if(element)element.textContent=text(value);return element;}
+  function safeUrl(value){try{const url=new URL(text(value),typeof location!=='undefined'?location.origin:'https://firstcustomer.in');return['http:','https:'].includes(url.protocol)?url.href:'';}catch{return'';}}
+  function safePhone(value){const raw=text(value).trim();if(!/^\+?[0-9 ()-]{7,24}$/.test(raw))return'';const digits=raw.replace(/\D/g,'');return digits.length>=7&&digits.length<=15?(raw.startsWith('+')?`+${digits}`:digits):'';}
+  function phoneUrl(value){const phone=safePhone(value);return phone?`tel:${phone}`:'';}
+  function whatsAppUrl(value){const phone=safePhone(value);const digits=phone.replace(/\D/g,'');return digits?`https://wa.me/${digits}`:'';}
+  function setSafeAttribute(element,name,value){if(!element)return false;const allowed=new Set(['id','class','title','aria-label','role']);if(!allowed.has(name))return false;element.setAttribute(name,text(value));return true;}
+  function secureExternalLink(anchor,value){const url=safeUrl(value);if(!anchor||!url)return false;anchor.href=url;anchor.target='_blank';anchor.rel='noopener noreferrer';return true;}
+  async function fetchJson(url,options={}){const timeoutMs=Number(options.timeoutMs)||15000;const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeoutMs);try{const response=await fetch(url,{...options,timeoutMs:undefined,signal:controller.signal,headers:{'Content-Type':'application/json',...(options.headers||{})}});const payload=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(payload.error?.message||'The request failed. Please try again.');error.code=payload.error?.code||'REQUEST_FAILED';error.status=response.status;throw error;}return payload;}catch(error){if(error.name==='AbortError'){const timeout=new Error('The request took too long. Please try again.');timeout.code='TIMEOUT';throw timeout;}throw error;}finally{clearTimeout(timer);}}
+  function userSafeError(error){const known={TIMEOUT:'The request took too long. Please try again.',NETWORK_ERROR:'Check your connection and try again.',LEGACY_PROVIDER_NOT_CONFIGURED:'Secure Lead Finder AI is not configured yet. Please contact the site administrator.'};return known[error?.code]||text(error?.message)||'Something went wrong. Please try again.';}
+  return{text,escapeHtml,setText,safeUrl,safePhone,phoneUrl,whatsAppUrl,setSafeAttribute,secureExternalLink,fetchJson,userSafeError};
+});
