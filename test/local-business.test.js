@@ -25,8 +25,13 @@ test('rejects unsupported request bodies', () => { assert.equal(validateRequestB
 test('returns a safe no-key configuration error', async () => {
   const previous = process.env.GOOGLE_PLACES_API_KEY; delete process.env.GOOGLE_PLACES_API_KEY;
   const response = mockResponse(); await searchHandler({ method: 'POST', body: { location: 'Hyderabad', category: '', radiusKm: 5 }, headers: {}, socket: {} }, response);
-  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_NOT_CONFIGURED', message: 'GOOGLE_PLACES_API_KEY is not configured for this Vercel deployment environment.' } });
+  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_ENV_NOT_INJECTED', message: 'This deployment did not receive a non-empty GOOGLE_PLACES_API_KEY. Redeploy after enabling the variable for the Preview environment.' } });
   if (previous) process.env.GOOGLE_PLACES_API_KEY = previous;
+});
+
+test('classifies Google billing and API enablement failures', () => {
+  assert.equal(searchHandler.mapGoogleError(403, 'PERMISSION_DENIED', 'This API method requires billing to be enabled.').code, 'PLACES_BILLING_REQUIRED');
+  assert.equal(searchHandler.mapGoogleError(403, 'PERMISSION_DENIED', 'Places API has not been enabled in project 123.').code, 'PLACES_API_NOT_ENABLED');
 });
 
 test('returns Google\'s exact error message without exposing credentials', async () => {
@@ -34,8 +39,20 @@ test('returns Google\'s exact error message without exposing credentials', async
   process.env.GOOGLE_PLACES_API_KEY = 'test-key-not-returned';
   global.fetch = async () => ({ ok: false, status: 403, json: async () => ({ error: { status: 'PERMISSION_DENIED', message: 'Places API (New) has not been enabled for this project.' } }) });
   const response = mockResponse(); await searchHandler({ method: 'POST', body: { location: 'Hyderabad', category: '', radiusKm: 5 }, headers: { 'content-type': 'application/json', 'x-forwarded-for': 'test-google-error' }, socket: {} }, response);
-  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_PERMISSION_DENIED', message: 'Places API (New) has not been enabled for this project.', provider: 'google_places', providerStatus: 'PERMISSION_DENIED' } });
+  assert.equal(response.statusCode, 503); assert.deepEqual(response.body, { error: { code: 'PLACES_API_NOT_ENABLED', message: 'Places API (New) has not been enabled for this project.', provider: 'google_places', providerStatus: 'PERMISSION_DENIED' } });
   assert.equal(JSON.stringify(response.body).includes('test-key-not-returned'), false);
+  global.fetch = previousFetch; if (previousKey) process.env.GOOGLE_PLACES_API_KEY = previousKey; else delete process.env.GOOGLE_PLACES_API_KEY;
+});
+
+test('endpoint returns normalized businesses when Google accepts the request', async () => {
+  const previousKey = process.env.GOOGLE_PLACES_API_KEY; const previousFetch = global.fetch;
+  process.env.GOOGLE_PLACES_API_KEY = ' test-key-with-surrounding-space ';
+  global.fetch = async (_url, options) => {
+    assert.equal(options.headers['X-Goog-Api-Key'], 'test-key-with-surrounding-space');
+    return { ok: true, status: 200, json: async () => ({ places: [{ id: 'live-1', displayName: { text: 'Test Business' }, primaryType: 'local_business' }] }) };
+  };
+  const response = mockResponse(); await searchHandler({ method: 'POST', body: { location: 'Malkajgiri, Hyderabad', category: '', radiusKm: 5 }, headers: { 'content-type': 'application/json', 'x-forwarded-for': 'test-success' }, socket: {} }, response);
+  assert.equal(response.statusCode, 200); assert.equal(response.body.businesses[0].name, 'Test Business');
   global.fetch = previousFetch; if (previousKey) process.env.GOOGLE_PLACES_API_KEY = previousKey; else delete process.env.GOOGLE_PLACES_API_KEY;
 });
 

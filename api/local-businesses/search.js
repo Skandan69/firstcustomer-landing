@@ -11,17 +11,15 @@ const FIELD_MASK = [
 ].join(',');
 
 module.exports = async function handler(req, res) {
-  console.info('[local-business-search] route reached', { method: req.method, hasGooglePlacesKey: Boolean(process.env.GOOGLE_PLACES_API_KEY) });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Use POST for business searches.'); }
   const contentType = String(req.headers?.['content-type'] || '').toLowerCase();
   if (contentType && !contentType.includes('application/json')) return sendError(res, 400, 'INVALID_BODY', 'Send a valid JSON request body.');
   const validation = validateRequestBody(req.body);
   if (!validation.ok) return res.status(validation.error.code === 'REQUEST_TOO_LARGE' ? 413 : 400).json({ error: validation.error });
   if (!allowRequest(clientIp(req))) return sendError(res, 429, 'PLACES_QUOTA_EXCEEDED', 'Too many searches. Please wait a minute and try again.');
-  const key = process.env.GOOGLE_PLACES_API_KEY;
+  const key = typeof process.env.GOOGLE_PLACES_API_KEY === 'string' ? process.env.GOOGLE_PLACES_API_KEY.trim() : '';
   if (!key) {
-    console.warn('[local-business-search] configuration missing', { environmentVariable: 'GOOGLE_PLACES_API_KEY', exists: false });
-    return sendError(res, 503, 'PLACES_NOT_CONFIGURED', 'GOOGLE_PLACES_API_KEY is not configured for this Vercel deployment environment.');
+    return sendError(res, 503, 'PLACES_ENV_NOT_INJECTED', 'This deployment did not receive a non-empty GOOGLE_PLACES_API_KEY. Redeploy after enabling the variable for the Preview environment.');
   }
 
   const { location, category, radiusKm, pageToken } = validation.value;
@@ -37,8 +35,8 @@ module.exports = async function handler(req, res) {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const mapped = mapGoogleError(response.status, data.error?.status, Boolean(pageToken));
-      const googleMessage = typeof data.error?.message === 'string' && data.error.message.trim() ? data.error.message.trim() : mapped.message;
+      const googleMessage = typeof data.error?.message === 'string' && data.error.message.trim() ? data.error.message.trim() : 'Google Places rejected the request without an error message.';
+      const mapped = mapGoogleError(response.status, data.error?.status, googleMessage, Boolean(pageToken));
       console.error('[local-business-search] Google Places error', { httpStatus: response.status, upstreamStatus: data.error?.status || 'UNKNOWN', code: mapped.code, googleMessage });
       return sendError(res, mapped.status, mapped.code, googleMessage, { provider: 'google_places', providerStatus: data.error?.status || null });
     }
@@ -51,7 +49,10 @@ module.exports = async function handler(req, res) {
   }
 };
 
-function mapGoogleError(httpStatus, upstreamStatus, paginating) {
+function mapGoogleError(httpStatus, upstreamStatus, googleMessage = '', paginating = false) {
+  if (/billing|billing account|account verification/i.test(googleMessage)) return { status: 503, code: 'PLACES_BILLING_REQUIRED', message: googleMessage };
+  if (/not been (used|enabled)|api.*not enabled|access not configured/i.test(googleMessage)) return { status: 503, code: 'PLACES_API_NOT_ENABLED', message: googleMessage };
+  if (/api key not valid|invalid api key|key.*restricted|requests from referer/i.test(googleMessage)) return { status: 503, code: 'PLACES_KEY_REJECTED', message: googleMessage };
   if (httpStatus === 429 || upstreamStatus === 'RESOURCE_EXHAUSTED') return { status: 429, code: 'PLACES_QUOTA_EXCEEDED', message: 'Search quota has been reached. Please try again later.' };
   if (httpStatus === 403 || ['PERMISSION_DENIED', 'FAILED_PRECONDITION'].includes(upstreamStatus)) return { status: 503, code: 'PLACES_PERMISSION_DENIED', message: 'Business search is unavailable because Google Places access needs attention.' };
   if (httpStatus === 400 && paginating) return { status: 400, code: 'INVALID_PAGE_TOKEN', message: 'That page has expired. Start a new search to continue.' };
