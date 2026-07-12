@@ -22,7 +22,7 @@ function validateRequestBody(rawBody) {
   return { ok: true, value: { location: clean(body.location), category: clean(body.category || ''), radiusKm, pageToken: clean(body.pageToken || ''), provider } };
 }
 
-function dedupeBusinesses(items) { const seen = new Set(); return items.filter((item) => { const key = item.id || `${item.name}|${item.address}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
+function dedupeBusinesses(items) { const seen = new Set(); return items.filter((item) => { const key = item.provider&&item.providerId?`${item.provider}:${item.providerId}`:`${item.name}|${item.address}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
 function invalid(code, message) { return { ok: false, error: { code, message } }; }
 function isPlainObject(value) { return Boolean(value) && typeof value === 'object' && !Array.isArray(value); }
 function clean(value) { return String(value).trim().replace(/[\u0000-\u001f]/g, ''); }

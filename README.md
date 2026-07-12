@@ -1,5 +1,16 @@
 # FirstCustomer
 
+## Persistence foundation
+
+Sprint 3 adds server-only Supabase persistence for businesses, saved leads, search history, saved searches, lead notes, and activity events. Apply `supabase/migrations/202607120001_persistence_foundation.sql`, then configure these Vercel variables for both Preview and Production:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+The service-role key is used only by Vercel functions and must never use a `VITE_`, `NEXT_PUBLIC_`, or other browser-exposed prefix. Row-level security is enabled with no public policies. Until authentication is introduced, records are scoped to an anonymous UUID stored as `fc_workspace_id` in the browser. Clearing browser storage or changing devices creates a different workspace.
+
+The canonical business model is implemented in `api/local-businesses/business-model.js` and is shared by Google Places, OpenStreetMap, and persistence.
+
 FirstCustomer is a framework-free HTML/CSS/JavaScript application. The root landing page links to the application at `/tools`; Vercel serves static assets and functions under `api/`.
 
 ## Local Business Finder Architecture Notes
