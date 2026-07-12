@@ -11,6 +11,14 @@ The service-role key is used only by Vercel functions and must never use a `VITE
 
 The canonical business model is implemented in `api/local-businesses/business-model.js` and is shared by Google Places, OpenStreetMap, and persistence.
 
+## Google Analytics 4
+
+GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
+
+Track supported product events with `analytics.track('save_lead', { source: 'local_business_finder' })`. Supported events are `page_view`, `business_search`, `save_lead`, `remove_lead`, `save_search`, `generate_audit`, `generate_website`, and `proposal_generated`. Event calls are exception-safe and become harmless no-ops if analytics initialization is unavailable.
+
+Never include business names, phone numbers, email addresses, addresses, website URLs, notes, workspace IDs, exact search locations, or other personal data in analytics properties.
+
 FirstCustomer is a framework-free HTML/CSS/JavaScript application. The root landing page links to the application at `/tools`; Vercel serves static assets and functions under `api/`.
 
 ## Local Business Finder Architecture Notes

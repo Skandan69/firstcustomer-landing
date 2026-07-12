@@ -4,14 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FirstCustomer — Signal Hunter</title>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2XKD7CSJF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-Z2XKD7CSJF');
-</script>
+<script defer src="/assets/js/analytics.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -4376,6 +4369,7 @@ function lfSaveLead(idx, outreachText){
     outreach:outreachText||"", status:"New", savedAt:Date.now()
   });
   localStorage.setItem("fc_leads",JSON.stringify(lfSaved));
+  window.analytics?.track("save_lead",{source:String(lead.platform||"legacy").toLowerCase()});
   const btn=document.getElementById("lfsave"+idx);
   if(btn){ btn.textContent="✓ Saved"; btn.style.color="#34d399"; btn.disabled=true; }
   lfRenderSaved();
@@ -4391,15 +4385,18 @@ function lfUpdateStatus(idx, status){
 }
 
 function lfDeleteLead(idx){
-  lfSaved.splice(idx,1);
+  const removed=lfSaved.splice(idx,1)[0];
   localStorage.setItem("fc_leads",JSON.stringify(lfSaved));
+  window.analytics?.track("remove_lead",{source:String(removed?.platform||"legacy").toLowerCase()});
   lfRenderSaved();
 }
 
 function lfClearSaved(){
   if(!confirm("Clear all saved leads?")) return;
+  const removedCount=lfSaved.length;
   lfSaved=[];
   localStorage.setItem("fc_leads","[]");
+  if(removedCount)window.analytics?.track("remove_lead",{source:"bulk",lead_count:removedCount});
   lfRenderSaved();
 }
 
