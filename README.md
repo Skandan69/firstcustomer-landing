@@ -11,6 +11,20 @@ The service-role key is used only by Vercel functions and must never use a `VITE
 
 The canonical business model is implemented in `api/local-businesses/business-model.js` and is shared by Google Places, OpenStreetMap, and persistence.
 
+## Website Intelligence Engine
+
+Sprint 4 adds a rule-based, server-side website audit for businesses that publish a website URL. The browser calls only `POST /api/website-audits`; the Vercel function validates the target, blocks private-network and nonstandard-port requests, follows at most five safe redirects, limits response size, and applies timeouts. It fetches the main page plus `robots.txt` and `sitemap.xml` with an identifying FirstCustomer user agent.
+
+The engine is modular:
+
+- `api/website-intelligence/fetcher.js` handles public-URL safety, redirects, timeouts, and bounded downloads.
+- `api/website-intelligence/parser.js` detects health, SEO, conversion, trust, and basic accessibility signals without executing website scripts.
+- `api/website-intelligence/scoring.js` produces a transparent opportunity score and recommendations. A higher opportunity score means more important gaps were detected; the complementary health score shows the current foundation.
+- `api/website-intelligence/audit.js` orchestrates public-file checks, parsing, and scoring.
+- `api/website-intelligence/repository.js` stores and retrieves audit summaries through server-only Supabase access.
+
+Apply `supabase/migrations/202607130001_website_intelligence.sql` before deploying the feature. Audits are scoped to the anonymous local workspace and reused for 24 hours. The **Refresh audit** action explicitly bypasses that recent-audit cache. The audit is a fast structural inspection, not a full browser crawl: it does not execute JavaScript, measure Core Web Vitals, validate every schema object, inspect certificate expiry, or crawl secondary pages.
+
 ## Google Analytics 4
 
 GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
