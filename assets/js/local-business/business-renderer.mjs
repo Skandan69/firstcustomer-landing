@@ -39,7 +39,24 @@ export function renderWebsiteAudit(audit, cached, key) {
 }
 
 export function renderState(type, title, message) { return `<div class="lbf-state">${type === 'loading' ? '<div class="lbf-spinner"></div>' : '<div class="lbf-state-icon">⌖</div>'}<h3>${escapeHtml(title)}</h3><p>${escapeHtml(message)}</p></div>`; }
-export function businessNoResultsMessage(criteria={},categoryMatch=null){if(!criteria.category)return'No businesses were returned. Try a nearby location or a larger radius.';if(categoryMatch?.bestEffort)return`No confident Open Data matches were found for “${criteria.category}”. Try a suggested category or another location.`;return`No relevant ${categoryMatch?.label||criteria.category} results were found in this area. Zero relevant results are shown instead of unrelated places.`;}
+export function businessNoResultsMessage(criteria={},categoryMatch=null){if(criteria.provider==='google')return'Google Places returned no matching businesses. Try a nearby location, another category, or a larger radius.';if(criteria.provider==='open_data'&&!criteria.category)return'Open Data returned no matching businesses. Try a nearby location or a larger radius.';if(!criteria.category)return'No businesses were returned. Try a nearby location or a larger radius.';if(categoryMatch?.bestEffort)return`No confident Open Data matches were found for “${criteria.category}”. Try a suggested category or another location.`;return`No relevant ${categoryMatch?.label||criteria.category} results were found in this area. Zero relevant results are shown instead of unrelated places.`;}
+
+export function providerErrorPresentation(error={}){
+  const messages={
+    GOOGLE_PERMISSION_DENIED:['Google Places permission denied','Check the key project, API restrictions, and Places API (New) access.'],
+    GOOGLE_BILLING_REQUIRED:['Google Places billing unavailable','Check the Google Cloud billing account and billing linkage.'],
+    GOOGLE_API_KEY_REJECTED:['Google Places API key rejected','Check the deployed key and its Google API restrictions.'],
+    GOOGLE_QUOTA_EXCEEDED:['Google Places quota exceeded','Try again later or review the Google Cloud quota.'],
+    GOOGLE_API_NOT_ENABLED:['Google Places API unavailable','Enable Places API (New) in the deployed key project.'],
+    GOOGLE_NOT_CONFIGURED:['Google Places is not configured','Add GOOGLE_PLACES_API_KEY to this deployment.'],
+    OPEN_DATA_TIMEOUT:['Open Data timed out','Open Data search timed out. Please try again.'],
+    AUTO_FALLBACK_FAILED:['Business providers unavailable',error.message||'Google Places failed and the Open Data fallback was also unavailable.']
+  };
+  if(messages[error.code])return{title:messages[error.code][0],message:messages[error.code][1]};
+  if(error.requestedProvider==='google'||error.provider==='google')return{title:'Google Places unavailable',message:error.message||'Google Places could not complete this search.'};
+  if(error.requestedProvider==='open_data'||error.provider==='open_data')return{title:'Open Data unavailable',message:error.message||'Open Data could not complete this search.'};
+  return{title:'Search temporarily unavailable',message:error.message||'Please try again shortly.'};
+}
 function renderAuditState(state, key) {
   if (!state) return '';
   if (state.status === 'loading') return '<section class="lbf-intelligence lbf-audit-loading" role="status"><div class="lbf-spinner"></div><p>Inspecting the website and checking public files…</p></section>';
