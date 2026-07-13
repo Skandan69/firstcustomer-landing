@@ -11,6 +11,20 @@ The service-role key is used only by Vercel functions and must never use a `VITE
 
 The canonical business model is implemented in `api/local-businesses/business-model.js` and is shared by Google Places, OpenStreetMap, and persistence.
 
+## Website Intelligence Engine
+
+Sprint 4 adds a rule-based, server-side website audit for businesses that publish a website URL. The browser calls only `POST /api/website-audits`; the Vercel function validates the target, blocks private-network and nonstandard-port requests, follows at most five safe redirects, limits response size, and applies timeouts. It fetches the main page plus `robots.txt` and `sitemap.xml` with an identifying FirstCustomer user agent.
+
+The engine is modular:
+
+- `server/website-intelligence/fetcher.js` handles public-URL safety, redirects, timeouts, and bounded downloads.
+- `server/website-intelligence/parser.js` detects health, SEO, conversion, trust, and basic accessibility signals without executing website scripts.
+- `server/website-intelligence/scoring.js` produces a transparent opportunity score and recommendations. A higher opportunity score means more important gaps were detected; the complementary health score shows the current foundation.
+- `server/website-intelligence/audit.js` orchestrates public-file checks, parsing, and scoring.
+- `server/website-intelligence/repository.js` stores and retrieves audit summaries through server-only Supabase access. Keeping helpers outside `api/` ensures Vercel deploys only the public route as a Serverless Function.
+
+Apply `supabase/migrations/202607130001_website_intelligence.sql` before deploying the feature. Audits are scoped to the anonymous local workspace and reused for 24 hours. The **Refresh audit** action explicitly bypasses that recent-audit cache. The audit is a fast structural inspection, not a full browser crawl: it does not execute JavaScript, measure Core Web Vitals, validate every schema object, inspect certificate expiry, or crawl secondary pages.
+
 ## Google Analytics 4
 
 GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
@@ -38,6 +52,14 @@ The browser always calls `POST /api/local-businesses/search` and consumes one pr
 - **Open Data:** geocodes the entered location with Nominatim, then searches the selected radius with Overpass. It returns OpenStreetMap tags and public contact details when contributors supplied them.
 
 Open Data results do not contain Google ratings, review counts, or business status. Phone, address, opening hours, and website coverage can be incomplete. Category filtering operates on available OSM names and tags.
+
+### Category relevance contract
+
+`shared/business-categories.json` is the single category registry used by Google search-term construction, OpenStreetMap tag queries, result classification, and browser autocomplete. Recognized categories query only their mapped OSM tags across nodes, ways, and relations. Every targeted Open Data result is then checked again against the raw OSM tags or a strong, non-excluded business-name keyword before normalization.
+
+The previous provider-local alias table could not enforce relevance across the full request path: unmapped input was converted into speculative values for multiple OSM namespaces, post-filtering inferred relevance from normalized names/types instead of retaining raw match evidence, and the UI received no matched-category or confidence metadata. Auto fallback preserved the category string, but there was no shared contract proving that returned records matched it. The v2 Open Data cache key, exact tag registry, mandatory post-query classifier, and match metadata close that gap. Targeted searches now prefer zero results to unrelated points of interest.
+
+Custom categories never trigger an all-POI query. They use conservative name filtering in Overpass and must pass the same post-query keyword threshold. The UI labels these searches as best effort because OpenStreetMap coverage is not complete.
 
 ## Local Business Finder setup
 
@@ -87,6 +109,6 @@ Legacy paid keys already stored by older browser versions are not silently delet
 - Radius values are validated and retained in the API contract. Places Text Search interprets the named location; enforcing a precise radius will require a later geocoding step and `locationBias` circle.
 - Results are normalised to a stable internal model. A missing website is `no_website`; a listed website is `not_checked`. The UI never labels a site broken, outdated, or poor before an audit.
 - Google pagination tokens are passed through the server. The browser appends pages, removes duplicate place IDs, and recalculates summary metrics across the complete loaded set.
-- Nominatim requests use an identifying User-Agent, a per-instance one-request-per-second gate, and a 24-hour geocode cache. Overpass results are cached for 10 minutes and time out gracefully.
+- Nominatim requests use an identifying User-Agent, a per-instance one-request-per-second gate, and a 24-hour geocode cache. Overpass results are cached for 10 minutes, use a bounded 22-second failover window across current HTTPS mirrors, and time out gracefully before the browser request deadline. The currently responsive `gall.openstreetmap.de` backend is used as the documented round-robin outage workaround; the retired `overpass.kumi.systems` hostname is not used.
 - All caches and the per-IP throttle are best-effort per warm serverless instance. Durable production caching and rate limits require Redis, Vercel KV, or another persistent store. Public OpenStreetMap services are suitable as a development fallback, not unlimited high-volume infrastructure.
 - A future sprint will add a server-side website-audit engine. AI scoring and website generation are intentionally not part of this foundation.
