@@ -67,6 +67,20 @@ curl -X POST http://localhost:3000/api/local-businesses/search \
 
 Run the lightweight test suite with `npm test`.
 
+## Tool-suite provider configuration
+
+Paid provider credentials are server-side only. The browser reads boolean readiness from `GET /api/tool-suite?action=configuration` and never receives secret values. The tool-suite actions share one function so the project remains deployable within Vercel Hobby's function limit.
+
+- `ANTHROPIC_API_KEY` — Content Studio and optional Signal/Lead AI assistance
+- `ANTHROPIC_MODEL` — optional model override
+- `SERPAPI_KEY` — automatic Rank Tracker position checks
+- `YOUTUBE_API_KEY` — live YouTube research and trending data
+- `GOOGLE_SEARCH_API_KEY` plus `GOOGLE_SEARCH_ENGINE_ID` (or `GOOGLE_SEARCH_CX`) — optional Signal Hunter Google results
+- `GOOGLE_PLACES_API_KEY` — Google Local Business Finder
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` — persistence
+
+Legacy paid keys already stored by older browser versions are not silently deleted, but current code never reads or transmits them. See `docs/TOOL_SUITE_STATUS.md` for exact tool readiness and limitations.
+
 ### Behaviour and limitations
 
 - Category is optional. Without it, the query is `businesses in {location}`; Google decides which representative businesses to return. This is not an exhaustive directory of every business in the area.
