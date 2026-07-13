@@ -8,15 +8,14 @@ export function renderBusinessCard(business, auditState = null) {
   const phone = business.phone;
   const digits = phoneDigits(phone);
   const sourceLabel = business.provider === 'google' ? 'Google Places' : 'OpenStreetMap';
-  const rating = business.rating === null ? 'Not available' : `${escapeHtml(business.rating)} ★`;
-  const reviews = business.reviewCount === null ? 'Not available' : `${escapeHtml(business.reviewCount)} reviews`;
+  const ratingSummary = business.provider === 'openstreetmap' ? 'Rating unavailable from Open Data' : business.rating === null ? 'Rating not available' : `${escapeHtml(business.rating)} ★${business.reviewCount === null ? '' : ` · ${escapeHtml(business.reviewCount)} reviews`}`;
   const key = `${business.provider}:${business.providerId}`;
   const hasAudit = Boolean(auditState);
   const websiteBadge = auditState?.status === 'ready' ? `Website Health ${auditState.audit.healthScore}/100` : 'Website Available — Not Audited';
   return `<article class="lbf-card${hasAudit ? ' lbf-card-auditing' : ''}">
-    <div class="lbf-card-head"><div><h3>${escapeHtml(business.name || 'Unnamed business')}</h3><div class="lbf-category">${escapeHtml(business.category || 'Local business')}</div></div><div class="lbf-rating">${rating} · ${reviews}</div></div>
+    <div class="lbf-card-head"><div><h3>${escapeHtml(business.name || 'Unnamed business')}</h3><div class="lbf-category">${escapeHtml(business.category || 'Local business')}</div></div><div class="lbf-rating">${ratingSummary}</div></div>
     <div class="lbf-meta"><div>${escapeHtml(business.address || 'Address unavailable')}</div><div>${phone ? escapeHtml(phone) : 'No public phone'}</div><div>${website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(business.website)}</a>` : 'No website'}</div>${business.openingHours ? `<div>Opening hours: ${escapeHtml(business.openingHours)}</div>` : ''}</div>
-    <div class="lbf-badges"><span class="lbf-badge lbf-source-badge">${sourceLabel}</span><span class="lbf-badge ${auditState?.status === 'ready' ? 'available' : website ? 'unknown' : 'no-website'}">${website ? escapeHtml(websiteBadge) : 'No Website'}</span>${business.businessStatus ? `<span class="lbf-badge operational">${escapeHtml(formatStatus(business.businessStatus))}</span>` : ''}</div>
+    <div class="lbf-badges"><span class="lbf-badge lbf-source-badge">${sourceLabel}</span>${business.matchedCategory ? `<span class="lbf-badge lbf-match-badge" title="${escapeHtml(business.matchReason || '')}">Matched: ${escapeHtml(business.category || business.matchedCategory)}${business.matchConfidence === null || business.matchConfidence === undefined ? '' : ` · ${Math.round(Number(business.matchConfidence) * 100)}%`}</span>` : ''}<span class="lbf-badge ${auditState?.status === 'ready' ? 'available' : website ? 'unknown' : 'no-website'}">${website ? escapeHtml(websiteBadge) : 'No Website'}</span>${business.businessStatus ? `<span class="lbf-badge operational">${escapeHtml(formatStatus(business.businessStatus))}</span>` : ''}</div>
     <div class="lbf-actions">${sourceUrl ? `<a class="lbf-action primary" data-view-business="${escapeHtml(key)}" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">View source</a>` : ''}${digits ? `<a class="lbf-action" href="tel:${digits}">Call</a><a class="lbf-action" href="https://wa.me/${digits}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ''}<button class="lbf-action" type="button" data-save-business="${escapeHtml(key)}">Save Lead</button><button class="lbf-action" type="button" data-audit-business="${escapeHtml(key)}" ${website ? '' : 'disabled title="No website is available to audit"'}>${auditState?.status === 'loading' ? 'Auditing…' : auditState?.status === 'ready' ? 'View Website Intelligence' : 'Audit Website'}</button></div>
     ${renderAuditState(auditState, key)}
   </article>`;
@@ -40,6 +39,7 @@ export function renderWebsiteAudit(audit, cached, key) {
 }
 
 export function renderState(type, title, message) { return `<div class="lbf-state">${type === 'loading' ? '<div class="lbf-spinner"></div>' : '<div class="lbf-state-icon">⌖</div>'}<h3>${escapeHtml(title)}</h3><p>${escapeHtml(message)}</p></div>`; }
+export function businessNoResultsMessage(criteria={},categoryMatch=null){if(!criteria.category)return'No businesses were returned. Try a nearby location or a larger radius.';if(categoryMatch?.bestEffort)return`No confident Open Data matches were found for “${criteria.category}”. Try a suggested category or another location.`;return`No relevant ${categoryMatch?.label||criteria.category} results were found in this area. Zero relevant results are shown instead of unrelated places.`;}
 function renderAuditState(state, key) {
   if (!state) return '';
   if (state.status === 'loading') return '<section class="lbf-intelligence lbf-audit-loading" role="status"><div class="lbf-spinner"></div><p>Inspecting the website and checking public files…</p></section>';

@@ -53,6 +53,14 @@ The browser always calls `POST /api/local-businesses/search` and consumes one pr
 
 Open Data results do not contain Google ratings, review counts, or business status. Phone, address, opening hours, and website coverage can be incomplete. Category filtering operates on available OSM names and tags.
 
+### Category relevance contract
+
+`shared/business-categories.json` is the single category registry used by Google search-term construction, OpenStreetMap tag queries, result classification, and browser autocomplete. Recognized categories query only their mapped OSM tags across nodes, ways, and relations. Every targeted Open Data result is then checked again against the raw OSM tags or a strong, non-excluded business-name keyword before normalization.
+
+The previous provider-local alias table could not enforce relevance across the full request path: unmapped input was converted into speculative values for multiple OSM namespaces, post-filtering inferred relevance from normalized names/types instead of retaining raw match evidence, and the UI received no matched-category or confidence metadata. Auto fallback preserved the category string, but there was no shared contract proving that returned records matched it. The v2 Open Data cache key, exact tag registry, mandatory post-query classifier, and match metadata close that gap. Targeted searches now prefer zero results to unrelated points of interest.
+
+Custom categories never trigger an all-POI query. They use conservative name filtering in Overpass and must pass the same post-query keyword threshold. The UI labels these searches as best effort because OpenStreetMap coverage is not complete.
+
 ## Local Business Finder setup
 
 ### Required environment variable

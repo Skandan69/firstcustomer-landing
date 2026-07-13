@@ -2249,7 +2249,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
     <form class="lbf-panel" id="lbfSearchForm">
       <div class="lbf-search-grid lbf-search-grid-provider">
         <div class="lbf-field"><label for="lbfLocation">Location</label><input id="lbfLocation" name="location" required maxlength="120" placeholder="e.g. Malkajgiri, Hyderabad" autocomplete="address-level2"></div>
-        <div class="lbf-field"><label for="lbfCategory">Business category <span class="lbf-optional">(optional)</span></label><input id="lbfCategory" name="category" maxlength="80" placeholder="Optional — dentist, restaurant, plumber, salon..."></div>
+        <div class="lbf-field"><label for="lbfCategory">Business category <span class="lbf-optional">(optional)</span></label><input id="lbfCategory" name="category" maxlength="80" list="lbfCategorySuggestions" placeholder="Optional — dentist, restaurant, plumber, salon..." aria-describedby="lbfCategoryMode"><datalist id="lbfCategorySuggestions"></datalist><small class="lbf-category-mode" id="lbfCategoryMode">Choose a suggested category for the strongest Open Data matching, or enter a custom category.</small></div>
         <div class="lbf-field"><label for="lbfRadius">Radius</label><select id="lbfRadius" name="radiusKm"><option value="2">2 km</option><option value="5" selected>5 km</option><option value="10">10 km</option><option value="20">20 km</option></select></div>
         <div class="lbf-field"><label for="lbfProvider">Data source</label><select id="lbfProvider" name="provider"><option value="auto" selected>Auto</option><option value="google">Google</option><option value="open_data">Open Data</option></select></div>
         <button class="lbf-search-btn" id="lbfSearchButton" type="submit">Find Local Businesses</button>
