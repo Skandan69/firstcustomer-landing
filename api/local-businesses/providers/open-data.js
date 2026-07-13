@@ -1,5 +1,9 @@
 const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
-const OVERPASS_ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
+const OVERPASS_ENDPOINTS = [
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass-api.de/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+];
 const USER_AGENT = 'FirstCustomer-BusinessDiscovery/1.0 (https://www.firstcustomer.in/)';
 const { normalizeBusiness } = require('../business-model');
 const { normalizeCategoryText, resolveCategory, significantTerms } = require('../../../server/business-categories');
@@ -17,10 +21,13 @@ async function searchOpenData(criteria, options = {}) {
   if (cached) return cached;
   const query = buildOverpassQuery(geocode.latitude, geocode.longitude, radiusMeters, criteria.category);
   const endpoints = options.overpassEndpoint ? [options.overpassEndpoint] : OVERPASS_ENDPOINTS;
+  const retryDeadline = Date.now() + (options.overpassTotalTimeoutMs || 22_000);
   let response; let lastError;
   for (const endpoint of endpoints) {
+    const remainingMs = retryDeadline - Date.now();
+    if (remainingMs <= 0) break;
     try {
-      response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT }, body: `data=${encodeURIComponent(query)}` }, options.overpassTimeoutMs || 12_000);
+      response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT }, body: `data=${encodeURIComponent(query)}` }, Math.min(options.overpassTimeoutMs || 8_000, remainingMs));
       if (response.ok) break;
       lastError = providerError(response.status === 429 ? 'OPEN_DATA_RATE_LIMITED' : 'OPEN_DATA_UNAVAILABLE', `Open Data provider returned HTTP ${response.status}.`, response.status === 429 ? 429 : 502);
     } catch (error) {
@@ -162,4 +169,4 @@ function text(value) { return typeof value === 'string' ? value : ''; }
 function numberOrNull(value) { if (value === null || value === undefined || value === '') return null; return Number.isFinite(Number(value)) ? Number(value) : null; }
 function humanise(value) { return text(value).replace(/_/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase()); }
 
-module.exports = { buildOverpassQuery, categoryClauses, classifyOsmElement, dedupe, filterAndRankElements, haversine, matchesCategory, normaliseOsmElement, searchOpenData, withinRadius, _cache: cache };
+module.exports = { buildOverpassQuery, categoryClauses, classifyOsmElement, dedupe, filterAndRankElements, haversine, matchesCategory, normaliseOsmElement, searchOpenData, withinRadius, OVERPASS_ENDPOINTS, _cache: cache };

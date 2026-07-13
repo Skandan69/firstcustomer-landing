@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { categories, resolveCategory } = require('../server/business-categories');
-const { buildOverpassQuery, classifyOsmElement, dedupe, filterAndRankElements, normaliseOsmElement, _cache } = require('../api/local-businesses/providers/open-data');
+const { buildOverpassQuery, classifyOsmElement, dedupe, filterAndRankElements, normaliseOsmElement, OVERPASS_ENDPOINTS, searchOpenData, _cache } = require('../api/local-businesses/providers/open-data');
 const { discoverBusinesses } = require('../api/local-businesses/providers');
 
 const CENTER = { latitude: 17.45, longitude: 78.53 };
@@ -21,6 +21,34 @@ test('recognized categories generate exact node, way, and relation Overpass tags
   assert.match(query, /relation\(around:5000,17\.45,78\.53\)\["name"\]\["amenity"="dentist"\]/);
   assert.doesNotMatch(query, /\["name"\]\["amenity"\]/);
   assert.doesNotMatch(query, /library|college|bus_station|police|stadium|hostel|theatre/);
+});
+
+test('Open Data uses current HTTPS Overpass mirrors and no obsolete Kumi hostname', () => {
+  assert.ok(OVERPASS_ENDPOINTS.length >= 2);
+  assert.ok(OVERPASS_ENDPOINTS.every((endpoint) => endpoint.startsWith('https://')));
+  assert.ok(OVERPASS_ENDPOINTS.includes('https://overpass.private.coffee/api/interpreter'));
+  assert.ok(OVERPASS_ENDPOINTS.every((endpoint) => !endpoint.includes('overpass.kumi.systems')));
+});
+
+test('Open Data mirror retries respect the total retry deadline', async () => {
+  _cache.clear();
+  const oldFetch = global.fetch;
+  global.fetch = async (url, options = {}) => {
+    if (String(url).includes('nominatim')) return response([{ lat: '17.45', lon: '78.53', display_name: 'Malkajgiri' }]);
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(resolve, 100);
+      options.signal?.addEventListener('abort', () => { clearTimeout(timer); reject(Object.assign(new Error('aborted'), { name: 'AbortError' })); });
+    });
+    return response({ elements: [] });
+  };
+  const startedAt = Date.now();
+  try {
+    await assert.rejects(
+      searchOpenData({ location: 'Retry Deadline Regression', category: 'dentist', radiusKm: 5 }, { overpassTimeoutMs: 15, overpassTotalTimeoutMs: 40 }),
+      (error) => error.code === 'OPEN_DATA_TIMEOUT'
+    );
+    assert.ok(Date.now() - startedAt < 200, 'retry deadline should bound mirror failover');
+  } finally { global.fetch = oldFetch; }
 });
 
 test('dentist matching accepts exact dental tags and named dental clinics', () => {
