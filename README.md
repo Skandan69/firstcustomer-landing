@@ -17,11 +17,11 @@ Sprint 4 adds a rule-based, server-side website audit for businesses that publis
 
 The engine is modular:
 
-- `api/website-intelligence/fetcher.js` handles public-URL safety, redirects, timeouts, and bounded downloads.
-- `api/website-intelligence/parser.js` detects health, SEO, conversion, trust, and basic accessibility signals without executing website scripts.
-- `api/website-intelligence/scoring.js` produces a transparent opportunity score and recommendations. A higher opportunity score means more important gaps were detected; the complementary health score shows the current foundation.
-- `api/website-intelligence/audit.js` orchestrates public-file checks, parsing, and scoring.
-- `api/website-intelligence/repository.js` stores and retrieves audit summaries through server-only Supabase access.
+- `server/website-intelligence/fetcher.js` handles public-URL safety, redirects, timeouts, and bounded downloads.
+- `server/website-intelligence/parser.js` detects health, SEO, conversion, trust, and basic accessibility signals without executing website scripts.
+- `server/website-intelligence/scoring.js` produces a transparent opportunity score and recommendations. A higher opportunity score means more important gaps were detected; the complementary health score shows the current foundation.
+- `server/website-intelligence/audit.js` orchestrates public-file checks, parsing, and scoring.
+- `server/website-intelligence/repository.js` stores and retrieves audit summaries through server-only Supabase access. Keeping helpers outside `api/` ensures Vercel deploys only the public route as a Serverless Function.
 
 Apply `supabase/migrations/202607130001_website_intelligence.sql` before deploying the feature. Audits are scoped to the anonymous local workspace and reused for 24 hours. The **Refresh audit** action explicitly bypasses that recent-audit cache. The audit is a fast structural inspection, not a full browser crawl: it does not execute JavaScript, measure Core Web Vitals, validate every schema object, inspect certificate expiry, or crawl secondary pages.
 

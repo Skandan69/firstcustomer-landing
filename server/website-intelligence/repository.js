@@ -1,4 +1,4 @@
-const db = require('../persistence/supabase');
+const db = require('../../api/persistence/supabase');
 const RECENT_AUDIT_MS = 24 * 60 * 60 * 1000;
 
 async function findRecent(workspaceId, website, now = Date.now()) {

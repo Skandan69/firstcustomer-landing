@@ -1,10 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { analyseHtml } = require('../api/website-intelligence/parser');
-const { scoreAudit } = require('../api/website-intelligence/scoring');
-const { auditWebsite } = require('../api/website-intelligence/audit');
-const { isPrivateAddress, validatePublicUrl } = require('../api/website-intelligence/fetcher');
-const repository = require('../api/website-intelligence/repository');
+const { analyseHtml } = require('../server/website-intelligence/parser');
+const { scoreAudit } = require('../server/website-intelligence/scoring');
+const { auditWebsite } = require('../server/website-intelligence/audit');
+const { isPrivateAddress, validatePublicUrl } = require('../server/website-intelligence/fetcher');
+const repository = require('../server/website-intelligence/repository');
 const handler = require('../api/website-audits');
 
 const WORKSPACE = '123e4567-e89b-42d3-a456-426614174000';
@@ -111,7 +111,7 @@ test('audit route validates methods, JSON, size, workspace, and unsafe URLs', as
 });
 
 test('recent persisted audits are reused unless refresh is explicit', async () => {
-  const engineModule = require('../api/website-intelligence/audit');
+  const engineModule = require('../server/website-intelligence/audit');
   const oldFind = repository.findRecent;
   const oldSave = repository.saveAudit;
   const oldAudit = engineModule.auditWebsite;
