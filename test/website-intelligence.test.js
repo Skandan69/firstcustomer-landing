@@ -1,5 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { analyseHtml } = require('../server/website-intelligence/parser');
 const { scoreAudit } = require('../server/website-intelligence/scoring');
 const { auditWebsite } = require('../server/website-intelligence/audit');
@@ -138,6 +140,17 @@ test('audit rendering escapes website content and exposes refresh control', asyn
   assert.equal(html.includes('<script>'), false);
   assert.match(html, /data-refresh-audit="google:g1"/);
   assert.match(html, /Recent saved audit/);
+});
+
+test('website intelligence migration is rerunnable and service-role only', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '../supabase/migrations/202607130001_website_intelligence.sql'), 'utf8');
+  assert.match(sql, /create table if not exists public\.website_audits/i);
+  assert.match(sql, /create index if not exists website_audits_workspace_idx/i);
+  assert.match(sql, /alter table public\.website_audits enable row level security/i);
+  assert.doesNotMatch(sql, /create\s+policy/i);
+  for (const existing of ['businesses', 'saved_leads', 'search_history', 'saved_searches', 'lead_notes', 'activity_log']) {
+    assert.doesNotMatch(sql, new RegExp(`(?:alter|drop|truncate|delete\\s+from)\\s+(?:table\\s+)?public\\.${existing}`, 'i'));
+  }
 });
 
 function request(method, body) { return { method, body, headers: { 'x-workspace-id': WORKSPACE, 'x-forwarded-for': `audit-test-${Math.random()}` }, socket: {} }; }

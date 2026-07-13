@@ -1,4 +1,4 @@
-create table public.website_audits (
+create table if not exists public.website_audits (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null,
   business_provider text not null default '',
@@ -14,6 +14,6 @@ create table public.website_audits (
   unique(workspace_id, website)
 );
 
-create index website_audits_workspace_idx on public.website_audits(workspace_id, audited_at desc);
+create index if not exists website_audits_workspace_idx on public.website_audits(workspace_id, audited_at desc);
 alter table public.website_audits enable row level security;
 -- No public policies are created. Service-role access remains server-side only.
