@@ -298,35 +298,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- SETTINGS MODAL -->
 <div class="overlay" id="settingsOverlay">
   <div class="modal">
-    <h2>⚙️ API Keys</h2>
-    <div class="modal-desc">Keys stored only in your browser. Never sent anywhere except directly to the APIs.</div>
-    <div class="field">
-      <label>Anthropic API Key <span style="color:#444">(for analysis + response drafting)</span></label>
-      <input type="password" id="anthropicKey" placeholder="sk-ant-api03-..." autocomplete="off">
-      <div id="anthropicStatus"></div>
-      <div class="field-note">→ <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · ~$0.001/response</div>
+    <h2>Provider configuration</h2>
+    <div class="modal-desc">Paid provider credentials are configured securely in Vercel and are never requested or transmitted by this browser.</div>
+    <div class="tool-config-list" id="toolConfigList">
+      <div><strong>Anthropic</strong><span id="anthropicStatus">Checking…</span></div>
+      <div><strong>SerpAPI</strong><span id="serpApiStatus">Checking…</span></div>
+      <div><strong>YouTube Data API</strong><span id="googleStatus">Checking…</span></div>
+      <div><strong>Google Custom Search</strong><span id="googleCXStatus">Checking…</span></div>
+      <div><strong>Google Places</strong><span id="googlePlacesStatus">Checking…</span></div>
+      <div><strong>Supabase</strong><span id="supabaseStatus">Checking…</span></div>
     </div>
-    <div class="field">
-      <label>Google API Key <span style="color:#444">(YouTube + Google Search signals)</span></label>
-      <input type="password" id="googleKey" placeholder="AIza..." autocomplete="off">
-      <div id="googleStatus"></div>
-      <div class="field-note">→ <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> · Enable YouTube Data API v3 &amp; Custom Search API · Free 10k/day</div>
-    </div>
-    <div class="field">
-      <label>Google Custom Search Engine ID <span style="color:#444">(for web-wide Google signals)</span></label>
-      <input type="text" id="googleCX" placeholder="017576662512468239146:omuauf_lfve" autocomplete="off">
-      <div id="googleCXStatus"></div>
-      <div class="field-note">→ <a href="https://programmablesearchengine.google.com/" target="_blank">programmablesearchengine.google.com</a> · Create engine → "Search entire web" → copy the ID (cx=...)</div>
-    </div>
-    <div class="field">
-      <label>SerpAPI Key <span style="color:#444">(auto rank checking — 100 free/month)</span></label>
-      <input type="password" id="serpApiKey" placeholder="Paste your SerpAPI key" autocomplete="off">
-      <div id="serpApiStatus"></div>
-      <div class="field-note">→ <a href="https://serpapi.com" target="_blank">serpapi.com</a> · Sign up free · Get API key · Enables "Auto-check positions" button in Rank Tracker · 100 checks/month free</div>
-    </div>
+    <div class="configuration-migration-note">Existing keys previously saved in this browser are left untouched for backward compatibility, but FirstCustomer no longer transmits them. Configure server variables in Vercel to enable provider-backed actions.</div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeSettings()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+      <button class="btn btn-primary" onclick="closeSettings()">Done</button>
     </div>
   </div>
 </div>
@@ -363,8 +347,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="ob-page" id="obp0">
         <div style="text-align:center;padding:10px 0 20px">
           <div style="font-size:44px;margin-bottom:10px">🛠️</div>
-          <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:6px">FirstCustomer has 6 tools in one</div>
-          <div style="font-size:13px;color:var(--muted)">Each tab does something different. Click a tab above to learn what it does and what you need to do.</div>
+          <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:6px">FirstCustomer has 6 workflows and 1 educational guide</div>
+          <div style="font-size:13px;color:var(--muted)">Provider-backed workflows show Ready or Setup required. Beta tools are labelled clearly.</div>
         </div>
 
         <div style="display:grid;gap:10px;margin-bottom:20px">
@@ -419,13 +403,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
 
         <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:10px;padding:16px;margin-bottom:16px">
-          <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:10px">⚙️ Do this first — takes 2 minutes</div>
-          <div style="display:grid;gap:8px;font-size:12px;color:#ccc;line-height:1.7">
-            <div><span style="color:#22c55e;font-weight:700">1.</span> Click <strong style="color:#fff">⚙️ Keys</strong> button (top right of screen)</div>
-            <div><span style="color:#22c55e;font-weight:700">2.</span> Add your <strong style="color:#fff">Anthropic API key</strong> → this powers all AI features (article writer, reply drafter, outreach generator). Get one free at <a href="https://console.anthropic.com" target="_blank" style="color:#818cf8">console.anthropic.com</a></div>
-            <div><span style="color:#22c55e;font-weight:700">3.</span> Add your <strong style="color:#fff">Google API key</strong> → this powers YouTube Studio features. Get one free at <a href="https://console.developers.google.com" target="_blank" style="color:#818cf8">console.developers.google.com</a></div>
-            <div style="color:#666;font-size:11px;margin-top:4px">🔒 Keys are stored only in your browser. We never see or store them.</div>
-          </div>
+          <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:10px">Start with an available workflow</div>
+          <div style="font-size:12px;color:#ccc;line-height:1.7">Open <strong style="color:#fff">Provider status</strong> to see which server-backed features are ready. Manual Rank Tracker imports, the YouTube SEO scorer, and the SEO Guide work without paid provider keys.</div>
         </div>
       </div>
 
@@ -438,7 +417,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
         <div class="ob-steps">
           <div class="ob-step"><div class="ob-step-n">1</div><div><strong>Click "+ Add Product"</strong> in the top bar → paste your website URL → AI auto-fills your product name, description, target customer and keywords. Or fill the form manually.</div></div>
-          <div class="ob-step"><div class="ob-step-n">2</div><div><strong>Click "🔍 Hunt Signals"</strong> → it scans 7 platforms simultaneously. Takes 20–40 seconds. You'll see a live count as results come in.</div></div>
+          <div class="ob-step"><div class="ob-step-n">2</div><div><strong>Click "🔍 Hunt Signals"</strong> → it scans the available public sources. YouTube and Google Search are included only when their server providers are configured.</div></div>
           <div class="ob-step"><div class="ob-step-n">3</div><div><strong>Read the signal cards.</strong> Each card shows a post from someone who mentioned a problem your product solves. Green = strong match. The snippet shows what they said.</div></div>
           <div class="ob-step"><div class="ob-step-n">4</div><div><strong>Click "✨ Draft Reply"</strong> → AI writes a reply that addresses their specific question and naturally introduces your product. It reads what they actually said — not a template.</div></div>
           <div class="ob-step"><div class="ob-step-n">5</div><div><strong>Click "View post ↗"</strong> → opens the original post → paste the reply there → come back and click <strong>"Posted ✓"</strong> to track it. The tool learns what kinds of signals work best over time.</div></div>
@@ -481,7 +460,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div style="font-size:12px;color:var(--muted)">4 tools for growing a YouTube channel: find trending videos, research keywords, score your video SEO, and generate AI-optimised titles/descriptions/tags.</div>
         </div>
         <div style="background:#1a0a0a;border:1px solid #3a1010;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#f87171">
-          ⚠️ <strong>Requires Google API key</strong> → click ⚙️ Keys (top right) → add your Google API key. Free at <a href="https://console.developers.google.com" target="_blank" style="color:#818cf8">console.developers.google.com</a> — enable YouTube Data API v3.
+          <strong>Setup required for live data:</strong> configure YOUTUBE_API_KEY in Vercel. The local SEO scorer remains available without it.
         </div>
         <div class="ob-section-label">THE 4 TOOLS</div>
         <div style="display:grid;gap:10px;margin-bottom:14px">
@@ -513,7 +492,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div style="font-size:12px;color:var(--muted)">Generate everything you need to market your business: SEO articles, social posts, email campaigns, and ad copy — all powered by AI. Keyword in, full content out.</div>
         </div>
         <div style="background:#1a0a1a;border:1px solid #5f1a5f;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#c084fc">
-          ⚠️ <strong>Requires Anthropic API key</strong> → click ⚙️ Keys (top right) → add your key. Free credits available at <a href="https://console.anthropic.com" target="_blank" style="color:#818cf8">console.anthropic.com</a>
+          <strong>Setup required:</strong> configure ANTHROPIC_API_KEY in Vercel. Browser-entered paid keys are not supported.
         </div>
         <div class="ob-section-label">THE 4 TOOLS</div>
         <div style="display:grid;gap:10px;margin-bottom:14px">
@@ -723,13 +702,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="hdr-brand">
     <div>
       <h1>🎯 <em>First</em>Customer <span style="font-size:10px;color:#333;font-weight:400">v5</span></h1>
-      <div class="hdr-sub">Signal hunter · 7 sources · rank tracker · YouTube studio</div>
+      <div class="hdr-sub">6 workflows + 1 guide · provider status shown per tool</div>
     </div>
   </div>
   <div class="hdr-right">
     <div class="learn-pill" onclick="openLearn()">📚 Learned: <strong id="learnCount">0</strong></div>
     <button class="btn btn-ghost" onclick="openOnboard()" style="font-size:11px;padding:6px 10px" title="How it works">❓ Help</button>
-    <button class="btn btn-ghost" onclick="openSettings()">⚙️ Keys</button>
+    <button class="btn btn-ghost" onclick="openSettings()">Provider status</button>
     <button class="btn-add" id="addProdBtn" onclick="openAdd()">＋ Add Product</button>
     <button class="btn btn-primary" id="scanBtn" onclick="runScan()" style="display:none">▶ Scan</button>
   </div>
@@ -842,7 +821,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="welcomeScreen" class="welcome">
       <div class="welcome-icon">🎯</div>
       <h2>Find your first customers</h2>
-      <p>Add your product URL and this tool hunts for people on Reddit, HackerNews, Dev.to, Stack Overflow, Lobste.rs and YouTube who are expressing the exact pain your product solves — top 3 signals from each platform.</p>
+      <p>Add your product and search available public sources for real posts about the pain it solves. Configured YouTube and Google Search sources are labelled separately.</p>
       <div class="welcome-steps">
         <div class="wstep">
           <div class="wstep-n">1</div>
@@ -861,7 +840,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
       <button class="btn btn-primary" style="font-size:14px;padding:11px 24px" onclick="openAdd()">＋ Add Your First Product</button>
-      <p style="margin-top:14px;font-size:11px;color:#333">Works with any SaaS, tool, or side project · Free to use · No data leaves your browser</p>
+      <p style="margin-top:14px;font-size:11px;color:#555">Local workspace data stays in your browser. Provider-backed actions use secure FirstCustomer server routes.</p>
     </div>
   </div>
 </div>
@@ -1032,7 +1011,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
       <span class="help-banner-arrow" id="hbarrow-yt">▼</span>
     </div>
     <div class="help-banner-body" id="hbbody-yt">
-      <div style="font-size:11px;color:#f87171;margin-bottom:10px">⚠️ Needs Google API key → click ⚙️ Keys (top right) → add your Google API key → enable YouTube Data API v3 in Google Console.</div>
+      <div style="font-size:11px;color:#f87171;margin-bottom:10px">Live data requires server-side YOUTUBE_API_KEY configuration. The Video SEO Scorer works locally.</div>
       <div class="help-banner-steps">
         <div class="hb-step"><span class="hb-n">📈</span><span><strong>Trending Videos</strong> — pick a category + region → see what's getting the most views right now. Use this to decide your next video topic.</span></div>
         <div class="hb-step"><span class="hb-n">🔍</span><span><strong>Keyword Research</strong> — type any keyword → see related searches + competition level. Pick low-competition keywords for your videos — easier to rank on YouTube.</span></div>
@@ -1286,7 +1265,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
       <span class="help-banner-arrow" id="hbarrow-content">▼</span>
     </div>
     <div class="help-banner-body" id="hbbody-content">
-      <div style="font-size:11px;color:#f472b6;margin-bottom:10px">⚠️ All tools here need an Anthropic API key → click ⚙️ Keys (top right) to add it. Free at console.anthropic.com</div>
+      <div style="font-size:11px;color:#f472b6;margin-bottom:10px">Content generation requires server-side ANTHROPIC_API_KEY configuration.</div>
       <div class="help-banner-steps">
         <div class="hb-step"><span class="hb-n">📄</span><span><strong>Article Writer</strong> — type a keyword → click Generate → get a full 500-word SEO article + meta tags + social captions. Copy the article → paste on your website as a new page → publish.</span></div>
         <div class="hb-step"><span class="hb-n">📱</span><span><strong>Social Posts</strong> — type a topic, pick your platforms → get ready-to-post captions for Instagram, LinkedIn, WhatsApp and Twitter. Just copy and paste.</span></div>
@@ -1301,7 +1280,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
     <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px">✍️ Content Studio</h2>
     <p style="color:var(--muted);font-size:13px">Generate SEO articles, social posts, email campaigns and ad copy — powered by your Anthropic key. One keyword in, everything you need out.</p>
     <div id="csNoKey" style="display:none;margin-top:10px;padding:10px 14px;background:#1a0a0a;border:1px solid #3a1010;border-radius:8px;font-size:12px;color:#f87171">
-      ⚠️ Add your Anthropic API key in <button onclick="openSettings()" style="background:none;border:none;color:#f472b6;cursor:pointer;font-size:12px;text-decoration:underline">⚙️ Settings</button> to use Content Studio.
+      Setup required: configure ANTHROPIC_API_KEY in Vercel to use Content Studio.
     </div>
   </div>
 
@@ -2027,7 +2006,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
         </div>
         <div class="gloss-card">
           <div class="gloss-term">Auto-check Positions (SerpAPI)</div>
-          <div class="gloss-def">Instead of manually checking each keyword on Google, the auto-check button uses SerpAPI to check all your keyword positions automatically. SerpAPI is a paid service but offers 100 free searches per month — enough to check 100 keywords monthly. Get your free API key at serpapi.com and add it in ⚙️ Keys.</div>
+          <div class="gloss-def">Automatic position checking uses the server-side SerpAPI provider. Configure SERPAPI_KEY in Vercel; manual and Search Console imports remain available without it.</div>
           <div class="gloss-example">Example: You have 20 tracked keywords. Instead of opening Google 20 times and searching each one manually, click Auto-check → all 20 positions are updated automatically in 30 seconds using your SerpAPI key.</div>
         </div>
         <div class="gloss-card">
@@ -2325,22 +2304,33 @@ free resume template,18,890,2.0%,14.1"></textarea>
 .guide-faq-a { font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px;display:none; }
 .guide-faq.open .guide-faq-a { display:block; }
 .guide-faq.open .guide-faq-arrow { transform:rotate(180deg); }
+.tool-status-banner{max-width:960px;margin:14px auto;padding:11px 14px;border:1px solid var(--border);border-radius:9px;background:#10101a;color:var(--muted);font-size:12px;line-height:1.55}
+.tool-status-banner strong{color:#fff}.tool-status-banner.ready{border-color:#1f5130;background:#0a1a10}.tool-status-banner.setup{border-color:#5a4316;background:#1a1408}.tool-status-banner.beta{border-color:#3d326c;background:#121024}
+.tool-nav-badge{font-size:8px;line-height:1;border-radius:8px;padding:3px 5px;margin-left:5px;text-transform:uppercase;letter-spacing:.3px;background:#262638;color:#aaa}
+.tool-nav-badge.ready{background:#13351e;color:#6ee7a0}.tool-nav-badge.setup{background:#40300f;color:#fbbf24}.tool-nav-badge.beta{background:#28204d;color:#c4b5fd}
+.tool-config-list{display:grid;gap:8px;margin:16px 0}.tool-config-list>div{display:flex;justify-content:space-between;gap:14px;background:#111122;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px}.tool-config-list span{color:var(--muted)}
+.configuration-migration-note{font-size:11px;color:#888;line-height:1.6;background:#17130a;border:1px solid #493819;border-radius:8px;padding:10px 12px}
+.tool-disabled{opacity:.55;cursor:not-allowed!important}
 </style>
 
+<script src="/assets/js/tool-suite-runtime.js"></script>
 <script>
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-let anthropicKey = localStorage.getItem("fc_ant") || "";
-let googleKey    = localStorage.getItem("fc_goog") || "";
-let googleCX     = localStorage.getItem("fc_gcx") || "";
-let googleWebCX  = localStorage.getItem("fc_gwcx") || "";
-let serpApiKey   = localStorage.getItem("fc_serp") || "";
+// Legacy browser keys remain stored for backward compatibility, but are never read or transmitted.
+let anthropicKey = "";
+let googleKey    = "";
+let googleCX     = "";
+let googleWebCX  = "";
+let serpApiKey   = "";
+let toolConfiguration = {};
 let feedback     = JSON.parse(localStorage.getItem("fc_fb2") || "{}");
 let postedCount  = parseInt(localStorage.getItem("fc_posts") || "0");
 let scanResults  = {};
 let scanning     = false;
 let sourceCounts = {};
+let sourceHealth = {};
 let pendingProduct = null; // holds analyzed product during review step
 
 // ─────────────────────────────────────────────
@@ -2461,14 +2451,9 @@ Bad: "video converter app". Good: "landscape video for Instagram reels" or "how 
 For subreddits: pick active communities where the ICP asks questions. Resume tool → ["resumes","jobs","cscareerquestions","careerguidance","jobsearchhacks"]. Dev tool → ["programming","webdev","learnprogramming"].`;
 
   try{
-    const r = await fetch("https://api.anthropic.com/v1/messages",{
+    const r = await fetch("/api/tool-suite?action=anthropic",{
       method:"POST",
-      headers:{
-        "x-api-key":anthropicKey,
-        "anthropic-version":"2023-06-01",
-        "content-type":"application/json",
-        "anthropic-dangerous-direct-browser-access":"true"
-      },
+      headers:{"content-type":"application/json"},
       body:JSON.stringify({
         model:"claude-haiku-4-5-20251001",
         max_tokens:1500,
@@ -2657,44 +2642,41 @@ function clearFeedback(){
 // SETTINGS
 // ─────────────────────────────────────────────
 function openSettings(){
-  const ak=document.getElementById("anthropicKey"); if(ak) ak.value=anthropicKey;
-  const gk=document.getElementById("googleKey"); if(gk) gk.value=googleKey;
-  const gc=document.getElementById("googleCX"); if(gc) gc.value=googleCX;
-  const gwc=document.getElementById("googleWebCX"); if(gwc) gwc.value=googleWebCX;
-  const sk=document.getElementById("serpApiKey"); if(sk) sk.value=serpApiKey;
   refreshStatuses();
   document.getElementById("settingsOverlay").classList.add("open");
 }
 function closeSettings(){ document.getElementById("settingsOverlay").classList.remove("open"); }
-function saveSettings(){
-  const ak=document.getElementById("anthropicKey"); if(ak) anthropicKey=ak.value.trim();
-  const gk=document.getElementById("googleKey"); if(gk) googleKey=gk.value.trim();
-  const gc=document.getElementById("googleCX"); if(gc) googleCX=gc.value.trim();
-  const gwc=document.getElementById("googleWebCX"); if(gwc) googleWebCX=gwc.value.trim();
-  const sk=document.getElementById("serpApiKey"); if(sk) serpApiKey=sk.value.trim();
-  localStorage.setItem("fc_ant",anthropicKey);
-  localStorage.setItem("fc_goog",googleKey);
-  localStorage.setItem("fc_gcx",googleCX);
-  localStorage.setItem("fc_gwcx",googleWebCX);
-  localStorage.setItem("fc_serp",serpApiKey);
-  const sb=document.getElementById("rtAutoCheckBtn"); if(sb) sb.style.display=serpApiKey?"inline-flex":"none";
-  closeSettings(); updateNotice();
-}
 function refreshStatuses(){
-  const as=document.getElementById("anthropicStatus");
-  as.className=anthropicKey?"key-ok":"key-no";
-  as.textContent=anthropicKey?"✓ Key saved — AI analysis + drafting enabled":"Not set — manual setup only, no response drafting";
-  const gs=document.getElementById("googleStatus");
-  gs.className=googleKey?"key-ok":"key-no";
-  gs.textContent=googleKey?"✓ Key saved":"Not set — YouTube + Google Search disabled";
-  const cx=document.getElementById("googleCXStatus");
-  if(cx){ cx.className=googleCX?"key-ok":"key-no"; cx.textContent=googleCX?"✓ CX saved — Google Search enabled":"Not set — Google Search signals disabled"; }
-  const wcx=document.getElementById("googleWebCXStatus");
-  if(wcx){ wcx.className=googleWebCX?"key-ok":"key-no"; wcx.textContent=googleWebCX?"✓ Rank-Check CX saved":"Not set"; }
-  const ss=document.getElementById("serpApiStatus");
-  if(ss){ ss.className=serpApiKey?"key-ok":"key-no"; ss.textContent=serpApiKey?"✓ SerpAPI key saved — auto rank checking enabled":"Not set — manual position entry only (free tier: serpapi.com gives 100/month free)"; }
+  const statuses={anthropicStatus:toolConfiguration.anthropicConfigured,serpApiStatus:toolConfiguration.serpApiConfigured,googleStatus:toolConfiguration.youtubeConfigured,googleCXStatus:toolConfiguration.googleSearchConfigured,googlePlacesStatus:toolConfiguration.googlePlacesConfigured,supabaseStatus:toolConfiguration.supabaseConfigured};
+  Object.entries(statuses).forEach(([id,ready])=>{const el=document.getElementById(id);if(el){el.className=ready?"key-ok":"key-no";el.textContent=ready?"Ready":"Setup required";}});
 }
-function updateNotice(){ document.getElementById("noKeyNotice").style.display=anthropicKey?"none":"block"; }
+function updateNotice(){ const notice=document.getElementById("noKeyNotice");notice.style.display=anthropicKey?"none":"block";notice.textContent="AI drafting requires server-side ANTHROPIC_API_KEY configuration. Signal discovery remains available from public sources."; }
+
+async function loadToolSuiteConfiguration(){
+  toolConfiguration=await ToolSuite.loadConfiguration();
+  anthropicKey=toolConfiguration.anthropicConfigured?"server-configured":"";
+  serpApiKey=toolConfiguration.serpApiConfigured?"server-configured":"";
+  googleKey=toolConfiguration.youtubeConfigured?"server-configured":"";
+  googleCX=toolConfiguration.googleSearchConfigured?"server-configured":"";
+  applyToolSuiteStatus();refreshStatuses();updateNotice();
+}
+function applyToolSuiteStatus(){
+  setToolStatus("signal","beta","Beta","Five public source adapters are available. YouTube and Google Search appear only when their server providers are configured.");
+  setToolStatus("rank",toolConfiguration.serpApiConfigured?"ready":"setup",toolConfiguration.serpApiConfigured?"Ready":"Setup required","CSV, paste, and manual tracking work locally. Automatic Google position checks require SERPAPI_KEY.");
+  setToolStatus("yt",toolConfiguration.youtubeConfigured?"ready":"setup",toolConfiguration.youtubeConfigured?"Ready":"Setup required","The SEO scorer works locally. Live video, channel, and trending data require YOUTUBE_API_KEY.");
+  setToolStatus("content",toolConfiguration.anthropicConfigured?"ready":"setup",toolConfiguration.anthropicConfigured?"Ready":"Setup required","Content generation requires server-side ANTHROPIC_API_KEY.");
+  setToolStatus("leads","beta","Beta",toolConfiguration.anthropicConfigured?"Real Reddit discovery and server-side AI query/outreach assistance are available.":"Real Reddit discovery is available. AI query and outreach assistance requires ANTHROPIC_API_KEY.");
+  setToolStatus("guide","ready","Guide","Static educational content — no live website analysis is claimed.");
+  setToolStatus("localGigs","beta","Beta",toolConfiguration.googlePlacesConfigured?"Google Places is configured; Open Data remains an availability-dependent fallback.":"Google Places setup is missing; Auto uses the availability-dependent Open Data fallback.");
+  document.querySelectorAll("#ytpanel-research .btn-primary,#ytpanel-competitors .btn-primary,#ytpanel-trending .btn-primary").forEach(button=>disableForConfiguration(button,!toolConfiguration.youtubeConfigured,"YouTube setup required"));
+  ["cgBtn","spBtn","emBtn","adBtn"].forEach(id=>disableForConfiguration(document.getElementById(id),!toolConfiguration.anthropicConfigured,"Anthropic setup required"));
+  const noKey=document.getElementById("csNoKey");if(noKey){noKey.style.display=toolConfiguration.anthropicConfigured?"none":"block";noKey.textContent="Setup required: configure ANTHROPIC_API_KEY in Vercel to use Content Studio.";}
+}
+function setToolStatus(page,status,label,message){
+  const nav=document.getElementById(`nav-${page}`);if(nav){nav.querySelector(".tool-nav-badge")?.remove();const badge=document.createElement("span");badge.className=`tool-nav-badge ${status}`;badge.textContent=label;nav.appendChild(badge);}
+  const panel=document.getElementById(`page-${page}`);if(panel){let banner=panel.querySelector(":scope > .tool-status-banner");if(!banner){banner=document.createElement("div");panel.prepend(banner);}banner.className=`tool-status-banner ${status}`;banner.innerHTML=`<strong>${ToolSuite.escapeText(label)}</strong> · ${ToolSuite.escapeText(message)}`;}
+}
+function disableForConfiguration(button,disabled,title){if(!button)return;button.disabled=disabled;button.classList.toggle("tool-disabled",disabled);button.title=disabled?title:"";}
 
 // ─────────────────────────────────────────────
 // LEARNED PANEL
@@ -2708,8 +2690,8 @@ function openLearn(){
     <div class="l-stat"><div class="l-stat-n" style="color:var(--red)">${total-good}</div><div class="l-stat-l">Not Relevant</div></div>`;
   const withData=PRODUCTS.filter(p=>getFb(p.id).length>0);
   document.getElementById("lGrid").innerHTML = withData.length ? withData.map(p=>{
-    const items=getFb(p.id).slice(-5).reverse().map(e=>`<div class="l-item"><span class="${e.verdict==="good"?"vg":"vb"}">${e.verdict==="good"?"👍":"👎"}</span>${e.title.slice(0,55)}${e.title.length>55?"…":""}</div>`).join("");
-    return `<div class="l-card"><h4>${p.name}</h4>${items}</div>`;
+    const items=getFb(p.id).slice(-5).reverse().map(e=>`<div class="l-item"><span class="${e.verdict==="good"?"vg":"vb"}">${e.verdict==="good"?"👍":"👎"}</span>${ToolSuite.escapeText(e.title.slice(0,55))}${e.title.length>55?"…":""}</div>`).join("");
+    return `<div class="l-card"><h4>${ToolSuite.escapeText(p.name)}</h4>${items}</div>`;
   }).join("") : `<div class="l-empty">No feedback yet — rate signals with 👍/👎 after scanning.</div>`;
   document.getElementById("learnOverlay").classList.add("open");
 }
@@ -2722,14 +2704,14 @@ async function searchHN(query){
   const cutoff=Math.floor((Date.now()-90*864e5)/1000); // 90 days window
   try{
     const r=await fetch(`https://hn.algolia.com/api/v1/search?query=${enc(query)}&tags=(ask_hn,show_hn,story)&hitsPerPage=20&numericFilters=created_at_i>${cutoff}`);
-    return (await r.json()).hits?.filter(h=>h.title).map(h=>({
+    const results=(await r.json()).hits?.filter(h=>h.title).map(h=>({
       platform:"HackerNews",color:"hn",
       title:h.title, snippet:(h.story_text||"").slice(0,400),
       url:`https://news.ycombinator.com/item?id=${h.objectID}`,
       author:h.author||"", subreddit:null, score:h.points||0, comments:h.num_comments||0,
       created_at:h.created_at||""
-    }))||[];
-  }catch{return[];}
+    }))||[];markSource("HackerNews",true);return results;
+  }catch{markSource("HackerNews",false);return[];}
 }
 
 // Pushshift keyword search — no proxy, searches across all of Reddit by title
@@ -2739,15 +2721,15 @@ async function searchRedditPushshift(query){
       signal:AbortSignal.timeout(10000)
     });
     const data=await r.json();
-    return(data?.data||[]).map(p=>({
+    const results=(data?.data||[]).map(p=>({
       platform:"Reddit",color:"reddit",
       title:p.title||"", snippet:(p.selftext||"").slice(0,400),
       url:p.url?.startsWith("http")?p.url:`https://reddit.com${p.permalink||""}`,
       author:p.author||"", subreddit:p.subreddit||"",
       score:p.score||0, comments:p.num_comments||0,
       created_at:new Date((p.created_utc||0)*1000).toISOString()
-    })).filter(p=>p.title);
-  }catch{return[];}
+    })).filter(p=>p.title);markSource("Reddit",true);return results;
+  }catch{markSource("Reddit",false);return[];}
 }
 
 async function searchReddit(query,sub){
@@ -2770,10 +2752,10 @@ async function searchReddit(query,sub){
           subreddit:d.subreddit||"", score:d.score||0, comments:d.num_comments||0,
           created_at:new Date((d.created_utc||0)*1000).toISOString()};
       }).filter(p=>p.title)||[];
-      if(results.length>0) return results;
+      markSource("Reddit",true);if(results.length>0) return results;
     }catch{}
   }
-  return[];
+  markSource("Reddit",false);return[];
 }
 
 // Browse subreddit via Pushshift mirror (pullpush.io) — no proxy, no auth, free
@@ -2783,28 +2765,28 @@ async function browseSubreddit(sub){
       signal:AbortSignal.timeout(10000)
     });
     const data=await r.json();
-    return(data?.data||[]).map(p=>({
+    const results=(data?.data||[]).map(p=>({
       platform:"Reddit",color:"reddit",
       title:p.title||"", snippet:(p.selftext||"").slice(0,400),
       url:p.url?.startsWith("http")?p.url:`https://reddit.com${p.permalink||""}`,
       author:p.author||"", subreddit:p.subreddit||"",
       score:p.score||0, comments:p.num_comments||0,
       created_at:new Date((p.created_utc||0)*1000).toISOString()
-    })).filter(p=>p.title);
-  }catch{return[];}
+    })).filter(p=>p.title);markSource("Reddit",true);return results;
+  }catch{markSource("Reddit",false);return[];}
 }
 
 async function searchDevTo(tag){
   try{
     const byTag=await fetch(`https://dev.to/api/articles?tag=${enc(tag)}&per_page=15&state=fresh`);
-    return (await byTag.json()).filter(a=>a.title||a.description).map(a=>({
+    const results=(await byTag.json()).filter(a=>a.title||a.description).map(a=>({
       platform:"Dev.to",color:"devto",
       title:a.title||"", snippet:(a.description||"").slice(0,400),
       url:a.url||`https://dev.to${a.path}`, author:a.user?.username||"",
       subreddit:null, score:a.positive_reactions_count||0, comments:a.comments_count||0,
       created_at:a.published_at||""
-    }));
-  }catch{return[];}
+    }));markSource("Dev.to",true);return results;
+  }catch{markSource("Dev.to",false);return[];}
 }
 
 async function searchLobsters(query){
@@ -2825,10 +2807,10 @@ async function searchLobsters(query){
         subreddit:null, score:s.score||0, comments:s.comment_count||0,
         created_at:s.created_at||""
       })).filter(s=>s.title&&s.url);
-      if(results.length>0) return results;
+      markSource("Lobste.rs",true);if(results.length>0) return results;
     }catch{}
   }
-  return[];
+  markSource("Lobste.rs",false);return[];
 }
 
 async function searchYouTube(query){
@@ -2836,23 +2818,23 @@ async function searchYouTube(query){
   try{
     // Search by relevance, 6-month window, 15 results
     const sixMonthsAgo = new Date(Date.now()-180*864e5).toISOString();
-    const searchUrl=`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${enc(query)}&type=video&order=relevance&maxResults=15&key=${googleKey}&relevanceLanguage=en&publishedAfter=${sixMonthsAgo}`;
+    const searchUrl=`/api/tool-suite?action=youtube&resource=search&part=snippet&q=${enc(query)}&type=video&order=relevance&maxResults=15&relevanceLanguage=en&publishedAfter=${sixMonthsAgo}`;
     const r=await fetch(searchUrl,{signal:AbortSignal.timeout(8000)});
     const data=await r.json();
-    if(data.error) return[];
+    if(data.error){markSource("YouTube",false);return[];}
     const items=(data.items||[]).filter(v=>v.snippet?.title);
-    if(!items.length) return[];
+    if(!items.length){markSource("YouTube",true);return[];}
 
     // Fetch view counts so we can filter out tiny channels
     const ids=items.map(v=>v.id.videoId).filter(Boolean).join(",");
     let viewMap={};
     try{
-      const statsR=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${googleKey}`,{signal:AbortSignal.timeout(6000)});
+      const statsR=await fetch(`/api/tool-suite?action=youtube&resource=videos&part=statistics&id=${ids}`,{signal:AbortSignal.timeout(6000)});
       const statsData=await statsR.json();
       (statsData.items||[]).forEach(v=>{ viewMap[v.id]=parseInt(v.statistics?.viewCount||0); });
     }catch{}
 
-    return items
+    const results=items
       .map(v=>({
         platform:"YouTube",color:"youtube",
         title:v.snippet.title||"",
@@ -2865,20 +2847,20 @@ async function searchYouTube(query){
         viewCount:viewMap[v.id.videoId]||0,
         created_at:v.snippet.publishedAt||""
       }))
-      .filter(v=>v.title && v.viewCount>=500); // skip videos with <500 views
-  }catch{return[];}
+      .filter(v=>v.title && v.viewCount>=500);markSource("YouTube",true);return results; // skip videos with <500 views
+  }catch{markSource("YouTube",false);return[];}
 }
 
 // 7. Google Custom Search (needs googleKey + googleCX, 100 free queries/day)
 async function searchGoogle(query){
   if(!googleKey||!googleCX) return[];
   try{
-    const r=await fetch(`https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${googleCX}&q=${enc(query)}&num=10`,{
+    const r=await fetch(`/api/tool-suite?action=google-search&q=${enc(query)}&num=10`,{
       signal:AbortSignal.timeout(8000)
     });
     const data=await r.json();
-    if(data.error) return[];
-    return(data.items||[]).map(item=>{
+    if(data.error){markSource("Google",false);return[];}
+    const results=(data.items||[]).map(item=>{
       // Detect the platform from the URL for better display
       const u=item.link||"";
       const isReddit=u.includes("reddit.com");
@@ -2893,8 +2875,8 @@ async function searchGoogle(query){
         sourceLabel:isReddit?"Reddit":isQuora?"Quora":isMedium?"Medium":item.displayLink,
         created_at:""
       };
-    }).filter(r=>r.title&&r.url);
-  }catch{return[];}
+    }).filter(r=>r.title&&r.url);markSource("Google",true);return results;
+  }catch{markSource("Google",false);return[];}
 }
 
 // 6. Stack Overflow (free API — no key needed, 300 req/day)
@@ -2904,16 +2886,18 @@ async function searchStackOverflow(query){
     const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
     const data=await r.json();
     if(data.error_id) return[];
-    return (data.items||[]).map(q=>({
+    const results=(data.items||[]).map(q=>({
       platform:"Stack Overflow",color:"stackoverflow",
       title:q.title||"",
       snippet:(q.body||"").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim().slice(0,400),
       url:q.link||"", author:q.owner?.display_name||"",
       subreddit:null, score:q.score||0, comments:q.answer_count||0,
       created_at:new Date((q.creation_date||0)*1000).toISOString()
-    })).filter(q=>q.title&&q.url);
-  }catch{return[];}
+    })).filter(q=>q.title&&q.url);markSource("Stack Overflow",true);return results;
+  }catch{markSource("Stack Overflow",false);return[];}
 }
+
+function markSource(name,ok){ if(ok||sourceHealth[name]!==true) sourceHealth[name]=ok; }
 
 // ─────────────────────────────────────────────
 // SCORING
@@ -3058,9 +3042,9 @@ Rules:
 Write only the response text.`;
 
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
+    const r=await fetch("/api/tool-suite?action=anthropic",{
       method:"POST",
-      headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"content-type":"application/json"},
       body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:350,messages:[{role:"user",content:prompt}]})
     });
     if(!r.ok) throw new Error();
@@ -3073,7 +3057,7 @@ Write only the response text.`;
 // ─────────────────────────────────────────────
 async function runScan(){
   if(scanning||!PRODUCTS.length) return;
-  scanning=true; sourceCounts={};
+  scanning=true; sourceCounts={}; sourceHealth={};
   const btn=document.getElementById("scanBtn");
   btn.disabled=true; btn.textContent="⏳ Scanning…";
   document.getElementById("sbar").style.display="none";
@@ -3133,12 +3117,13 @@ function createProductPanel(p){
   const panel=document.createElement("div");
   panel.className="panel";
   panel.id=`panel-${p.id}`;
+  const safeProductUrl=ToolSuite.safeUrl(p.url),safeProductName=ToolSuite.escapeText(p.name),safeTagline=ToolSuite.escapeText(p.tagline||"");
   panel.innerHTML=`<div class="prod-bar">
-    <a href="${p.url}" target="_blank" class="prod-url">🔗 ${p.url}</a>
-    <span class="prod-tag">${p.tagline||""}</span>
+    <a href="${safeProductUrl}" target="_blank" rel="noopener noreferrer" class="prod-url">🔗 ${ToolSuite.escapeText(safeProductUrl)}</a>
+    <span class="prod-tag">${safeTagline}</span>
     <button class="prod-del" onclick="removeProduct('${p.id}')">✕ Remove</button>
   </div>
-  <div class="prompt"><div class="icon">🔍</div><h2>Ready to scan for ${p.name}</h2><p>Click "▶ Scan" to search 5 sources for people with the problems your product solves.</p></div>`;
+  <div class="prompt"><div class="icon">🔍</div><h2>Ready to scan for ${safeProductName}</h2><p>Click "▶ Scan" to search available sources for people with the problems your product solves.</p></div>`;
   document.getElementById("panels").appendChild(panel);
 }
 
@@ -3150,7 +3135,8 @@ function renderLoadingPanel(p){
     panel.id=`panel-${p.id}`;
     document.getElementById("panels").appendChild(panel);
   }
-  panel.innerHTML=`<div class="prod-bar"><a href="${p.url}" target="_blank" class="prod-url">🔗 ${p.url}</a><span class="prod-tag">${p.tagline||""}</span></div><div class="loading"><div class="spinner"></div><div class="loading-msg">Scanning 5 sources for ${p.name}…</div></div>`;
+  const url=ToolSuite.safeUrl(p.url);
+  panel.innerHTML=`<div class="prod-bar"><a href="${url}" target="_blank" rel="noopener noreferrer" class="prod-url">🔗 ${ToolSuite.escapeText(url)}</a><span class="prod-tag">${ToolSuite.escapeText(p.tagline||"")}</span></div><div class="loading"><div class="spinner"></div><div class="loading-msg">Scanning available sources for ${ToolSuite.escapeText(p.name)}…</div></div>`;
 }
 
 const PLATFORM_META = {
@@ -3178,15 +3164,18 @@ function renderPanel(p, signals, buckets, responseMap){
     const count = (buckets[name]||[]).length;
     const noYTKey = meta.needsKey && !googleKey;
     const noCX = meta.needsCX && (!googleKey || !googleCX);
+    const unavailable = sourceHealth[name]===false;
     const label = name === "HackerNews" ? "HN" : name === "Stack Overflow" ? "Stack ↗" : name;
     if(noYTKey){
-      pillsHtml += `<button class="plat-pill locked" onclick="openSettings()" title="Add Google API key to enable YouTube">
+      pillsHtml += `<button class="plat-pill locked" onclick="openSettings()" title="YOUTUBE_API_KEY setup required">
         ${meta.icon} YouTube 🔒
       </button>`;
     } else if(noCX){
-      pillsHtml += `<button class="plat-pill locked" onclick="openSettings()" title="Add Google API key + CX to enable Google Search">
+      pillsHtml += `<button class="plat-pill locked" onclick="openSettings()" title="Google Search server setup required">
         ${meta.icon} Google 🔒
       </button>`;
+    } else if(unavailable){
+      pillsHtml += `<button class="plat-pill locked" disabled title="This source was unavailable during the latest scan">${meta.icon} ${label} unavailable</button>`;
     } else {
       const empty = count === 0 ? " empty" : "";
       pillsHtml += `<button class="plat-pill${empty}" onclick="filterPlatform('${p.id}','${name}',this)">
@@ -3197,9 +3186,10 @@ function renderPanel(p, signals, buckets, responseMap){
   }
   pillsHtml += `</div>`;
 
+  const productUrl=ToolSuite.safeUrl(p.url);
   let html=`<div class="prod-bar">
-    <a href="${p.url}" target="_blank" class="prod-url">🔗 ${p.url}</a>
-    <span class="prod-tag">${p.tagline||""}</span>
+    <a href="${productUrl}" target="_blank" rel="noopener noreferrer" class="prod-url">🔗 ${ToolSuite.escapeText(productUrl)}</a>
+    <span class="prod-tag">${ToolSuite.escapeText(p.tagline||"")}</span>
     ${hasFb?`<span class="prod-fb">🧠 ${getFb(p.id).length} learnings</span>`:""}
     <button class="prod-del" onclick="removeProduct('${p.id}')">✕ Remove</button>
   </div>${pillsHtml}`;
@@ -3241,13 +3231,19 @@ function updateTabCount(pid, cnt, hv){
 }
 
 function buildCard(sig,resp,p,idx){
-  const subLabel=sig.subreddit?` · r/${sig.subreddit}`:"";
+  const safePlatform=ToolSuite.escapeText(sig.platform);
+  const safeSubreddit=ToolSuite.escapeText(sig.subreddit||"");
+  const subLabel=sig.subreddit?` · r/${safeSubreddit}`:"";
+  const safeSignalUrl=ToolSuite.safeUrl(sig.url);
+  const safeTitle=ToolSuite.escapeText(sig.title);
+  const safeSnippet=ToolSuite.escapeText(sig.snippet||"No preview");
+  const safeAuthor=ToolSuite.escapeText(sig.author||"");
   const e=getFb(p.id).find(f=>f.url===sig.url);
 
   let respHtml="";
   if(resp){
-    const safe=resp.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    const sigUrl=sig.url||"";
+    const safe=ToolSuite.escapeText(resp);
+    const sigUrl=safeSignalUrl;
     respHtml=`<div class="resp">
       <div class="resp-lbl">✍️ Draft Response <span class="resp-note">— copy &amp; paste your reply</span></div>
       <div class="resp-text" id="rt-${p.id}-${idx}">${safe}</div>
@@ -3258,7 +3254,7 @@ function buildCard(sig,resp,p,idx){
   } else if(!anthropicKey){
     respHtml=`<div class="resp no-key-resp">
       <div class="resp-lbl">✍️ Draft Response</div>
-      <div class="resp-text dim">Add Anthropic key to get AI-drafted responses</div>
+      <div class="resp-text dim">Server-side Anthropic setup is required for AI-drafted responses</div>
       <div class="resp-acts"><button class="draft-btn" onclick="openSettings()">Add Key →</button></div></div>`;
   } else {
     respHtml=`<div class="resp">
@@ -3267,17 +3263,17 @@ function buildCard(sig,resp,p,idx){
       <div class="resp-acts"><button class="draft-btn" onclick="redraft('${p.id}',${idx},this)">✦ Draft now</button></div></div>`;
   }
 
-  return `<div class="card${e?.verdict==="good"?" voted-good":e?.verdict==="bad"?" voted-bad":""}" id="card-${p.id}-${idx}" data-platform="${sig.platform}">
+  return `<div class="card${e?.verdict==="good"?" voted-good":e?.verdict==="bad"?" voted-bad":""}" id="card-${p.id}-${idx}" data-platform="${safePlatform}">
     <div class="card-top">
       <span class="badge ${(sig.color||sig.platform||"hn").toLowerCase().replace(/[\s.]/g,'')}">
         ${sig.platform==="HackerNews"?"🟠":sig.platform==="Reddit"?"🔴":sig.platform==="Dev.to"?"🔵":sig.platform==="Lobste.rs"?"🔻":sig.platform==="Stack Overflow"?"🟧":"▶️"}
-        ${sig.platform}${subLabel}
+        ${safePlatform}${subLabel}
       </span>
       <span class="rel">${sig.relevance}/10 ${relBar(sig.relevance)}</span>
     </div>
-    <a href="${sig.url}" target="_blank" class="card-title">${sig.title.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</a>
-    <div class="card-snippet">${(sig.snippet||"No preview").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
-    <div class="card-meta">👤 ${sig.author} &nbsp;·&nbsp; 💬 ${sig.comments} &nbsp;·&nbsp; ${sig.platform==="YouTube"?`👁 ${(sig.viewCount||sig.score||0).toLocaleString()} views`:`⬆ ${sig.score}`}</div>
+    <a href="${safeSignalUrl}" target="_blank" rel="noopener noreferrer" class="card-title">${safeTitle}</a>
+    <div class="card-snippet">${safeSnippet}</div>
+    <div class="card-meta">👤 ${safeAuthor} &nbsp;·&nbsp; 💬 ${Number(sig.comments)||0} &nbsp;·&nbsp; ${sig.platform==="YouTube"?`👁 ${(Number(sig.viewCount||sig.score)||0).toLocaleString()} views`:`⬆ ${Number(sig.score)||0}`}</div>
     <div class="fb-row">
       <span class="fb-lbl">Relevant?</span>
       <button class="fb-btn${e?.verdict==="good"?" good":""}" id="fbg-${p.id}-${idx}" onclick="vote('${p.id}',${idx},'good',this)">👍 Yes</button>
@@ -3365,38 +3361,26 @@ function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 async function rtAutoCheckAll(){
   if(!serpApiKey){ openSettings(); return; }
   if(!rtData.length) return;
+  const domainInput = document.getElementById("rtScanUrlInput")?.value.trim()||"";
+  if(!domainInput){ alert("Enter a valid domain before checking positions."); return; }
   const btn = document.getElementById("rtAutoCheckBtn");
   btn.textContent="⏳ Checking…"; btn.disabled=true;
   let checked=0;
-  for(const row of rtData){
-    try{
-      const url=`https://serpapi.com/search.json?q=${enc(row.query)}&api_key=${serpApiKey}&num=100&engine=google`;
-      const r = await fetch(url,{signal:AbortSignal.timeout(12000)});
-      const data = await r.json();
-      if(data.error){ console.warn("SerpAPI:",data.error); continue; }
-      const results = data.organic_results||[];
-      // Find domain in results
-      const domainInput = document.getElementById("rtScanUrlInput")?.value||"";
-      let domain="";
-      try{ domain=new URL(domainInput.startsWith("http")?domainInput:"https://"+domainInput).hostname; }catch{}
-      if(domain){
-        const hit = results.findIndex(r2=>(r2.link||"").includes(domain));
-        if(hit>=0) row.position = hit+1;
-        else row.position = 100;
-      }
-      checked++;
-      btn.textContent=`⏳ ${checked}/${rtData.length}…`;
-      await sleep(500);
-    }catch(e){ console.warn(e); }
+  try{
+    for(const row of rtData){
+      const data=await ToolSuite.fetchJson('/api/tool-suite?action=serpapi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domain:domainInput,keyword:row.query})},18000);
+      row.position=data.position;
+      checked++;btn.textContent=`⏳ ${checked}/${rtData.length}…`;
+    }
+    const ranked=rtData.filter(r=>r.position<100);
+    const avgPos=ranked.length?(ranked.reduce((s,r)=>s+r.position,0)/ranked.length).toFixed(1):"–";
+    document.getElementById("rtAvgPos").textContent=avgPos;
+    document.getElementById("rtKwCount").textContent=rtData.length;
+    rtRender();alert(`Updated positions for ${checked} keywords.`);
+  }catch(error){ alert(error.message||"Rank checking is temporarily unavailable."); }
+  finally{
+    btn.textContent="🔄 Auto-check positions";btn.disabled=false;
   }
-  btn.textContent="🔄 Auto-check positions"; btn.disabled=false;
-  // Update stats
-  const ranked=rtData.filter(r=>r.position<100);
-  const avgPos=ranked.length?(ranked.reduce((s,r)=>s+r.position,0)/ranked.length).toFixed(1):"–";
-  document.getElementById("rtAvgPos").textContent=avgPos;
-  document.getElementById("rtKwCount").textContent=rtData.length;
-  rtRender();
-  alert(`✅ Updated positions for ${checked} keywords!`);
 }
 
 // ─────────────────────────────────────────────
@@ -3762,6 +3746,7 @@ async function rtScanWebsite(){
 updateNotice();
 updateLearnPill();
 updateUI();
+loadToolSuiteConfiguration();
 
 // Restore product panels for saved products
 PRODUCTS.forEach(p => createProductPanel(p));
@@ -4029,6 +4014,7 @@ function initDashboard(){
 
 let lfLeads = [];
 let lfSaved = JSON.parse(localStorage.getItem("fc_leads")||"[]");
+let lfActiveService = "";
 
 const LF_PAIN_TERMS = [
   "need help with","struggling with","how do I get","anyone know how to",
@@ -4117,6 +4103,10 @@ async function lfSearch(){
   btn.innerHTML=`<span class="cs-spinner"></span>Scanning…`; btn.disabled=true;
   const out = document.getElementById("lfResults");
   document.getElementById("lfCount").textContent="";
+  const deadline = Date.now()+22000;
+  lfSourceFailures=0;
+
+  try{
 
   // Wave 1: AI queries (if key set) or smart defaults
   let wave1Queries = lfDefaultQueries(svc, cust).slice(0,5);
@@ -4139,32 +4129,37 @@ async function lfSearch(){
   // Run wave 1
   out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Searching Reddit… trying ${wave1Queries.length} queries</div></div>`;
   for(const q of wave1Queries){
-    addResults(await lfRedditSearch(q));
+    const remaining=deadline-Date.now();
+    if(remaining<=0) break;
+    addResults(await lfRedditSearch(q,remaining));
     await sleep(300);
   }
 
   // Wave 2: If still empty, try core keyword only (broadest fallback)
   if(!allResults.length){
     const core = lfCore(svc);
-    out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Widening search for "${core}"…</div></div>`;
+    out.innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-msg">Widening search for "${ToolSuite.escapeText(core)}"…</div></div>`;
     const fallbacks=[core, `need ${core}`, `${core} recommendation`, `${core} freelance`];
     for(const q of fallbacks){
-      addResults(await lfRedditSearch(q));
+      const remaining=deadline-Date.now();
+      if(remaining<=0) break;
+      addResults(await lfRedditSearch(q,remaining));
       await sleep(300);
     }
   }
 
   lfLeads = allResults;
-  btn.innerHTML="🔍 Find Leads"; btn.disabled=false;
 
   if(!allResults.length){
     // Show helpful no-results panel with suggested fixes
     const core = lfCore(svc);
+    const safeSvc = ToolSuite.escapeText(svc);
+    const sourceUnavailable = lfSourceFailures>0 || Date.now()>=deadline;
     out.innerHTML=`
       <div style="background:#0c0c14;border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">🔍</div>
-        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">No Reddit results found for "${svc}"</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Reddit didn't return posts for these search terms. Try one of these fixes:</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">${sourceUnavailable?'Reddit is temporarily unavailable':`No Reddit results found for "${safeSvc}"`}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px">${sourceUnavailable?'The public Reddit source did not respond in time. Retry later or use a manual platform search below.':'Reddit did not return posts for these search terms. Try one of these fixes:'}</div>
         <div style="display:grid;gap:8px;text-align:left;margin-bottom:20px">
           <div style="background:#111122;border-radius:8px;padding:12px;font-size:12px;color:var(--muted)">
             <strong style="color:#fff">1. Use simpler keywords</strong> — try just the core word. Instead of "resume/ CV writing service", try:
@@ -4190,6 +4185,12 @@ async function lfSearch(){
   document.getElementById("lfCount").textContent = `${allResults.length} leads found`;
   logActivity("lead_found","leads",{service:svc,count:allResults.length});
   lfRenderResults(allResults, svc);
+  }catch{
+    out.innerHTML=`<div style="background:#0c0c14;border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center"><div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px">Lead search temporarily unavailable</div><div style="font-size:12px;color:var(--muted)">The source could not be reached. Please retry or use the manual platform links.</div></div>`;
+  }finally{
+    btn.innerHTML="🔍 Find Leads";
+    btn.disabled=false;
+  }
 }
 
 async function lfAIQueries(svc, cust){
@@ -4205,9 +4206,10 @@ Rules:
 Examples for "resume writing": need resume help, job application failing, resume getting rejected, ATS resume tips, career advice job search
 
 Reply with ONLY 6 queries, one per line, no numbers, no explanation.`;
-  const r = await fetch("https://api.anthropic.com/v1/messages",{
+  const r = await fetch("/api/tool-suite?action=anthropic",{
     method:"POST",
-    headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+    headers:{"content-type":"application/json"},
+    signal:AbortSignal.timeout(8000),
     body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:120,messages:[{role:"user",content:prompt}]})
   });
   if(!r.ok) return [];
@@ -4215,16 +4217,21 @@ Reply with ONLY 6 queries, one per line, no numbers, no explanation.`;
   return (data.content?.[0]?.text||"").split("\n").map(s=>s.trim()).filter(s=>s.length>3).slice(0,4);
 }
 
-async function lfRedditSearch(query){
+let lfSourceFailures=0;
+async function lfRedditSearch(query, budgetMs=9000){
   const t = document.getElementById("lfTimeframe")?.value||"month";
   const base=`https://www.reddit.com/search.json?q=${enc(query)}&sort=new&limit=20&t=${t}`;
   const proxies=[
     `https://api.allorigins.win/raw?url=${enc(base)}`,
     `https://corsproxy.io/?${enc(base)}`
   ];
+  const deadline=Date.now()+Math.max(500,budgetMs);
   for(const proxy of proxies){
     try{
-      const r=await fetch(proxy,{signal:AbortSignal.timeout(9000)});
+      const remaining=deadline-Date.now();
+      if(remaining<=0){ lfSourceFailures++; break; }
+      const r=await fetch(proxy,{signal:AbortSignal.timeout(Math.min(6000,remaining))});
+      if(!r.ok) throw new Error('Reddit source unavailable');
       const data=await r.json();
       return (data?.data?.children||[]).map(p=>{
         const d=p.data;
@@ -4242,7 +4249,7 @@ async function lfRedditSearch(query){
           age, created_utc:d.created_utc||0
         };
       }).filter(p=>p.title);
-    }catch{}
+    }catch{ lfSourceFailures++; }
   }
   return[];
 }
@@ -4257,28 +4264,29 @@ function lfAge(utc){
 
 function lfRenderResults(leads, svc){
   const out = document.getElementById("lfResults");
+  lfActiveService=svc;
   out.innerHTML = `
     <div style="font-size:12px;color:var(--muted);margin-bottom:14px">
       Found <strong style="color:#34d399">${leads.length} potential leads</strong> on Reddit. Click <strong style="color:#fff">✍️ Write Outreach</strong> to get a personalised message for any lead.
     </div>
-    ${leads.map((lead,i)=>`
+    ${leads.map((lead,i)=>{const safeLeadUrl=ToolSuite.safeUrl(lead.url),safeTitle=ToolSuite.escapeText(lead.title),safeSnippet=ToolSuite.escapeText(lead.snippet||""),safeSubreddit=ToolSuite.escapeText(lead.subreddit||"reddit"),safeAge=ToolSuite.escapeText(lead.age||"");return `
     <div class="lf-card" id="lfcard${i}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span class="lf-platform-tag lf-platform-reddit">r/${lead.subreddit||"reddit"}</span>
-          <span style="font-size:11px;color:#444">${lead.age}</span>
-          <span style="font-size:11px;color:#444">↑${lead.score} · ${lead.comments} comments</span>
+          <span class="lf-platform-tag lf-platform-reddit">r/${safeSubreddit}</span>
+          <span style="font-size:11px;color:#444">${safeAge}</span>
+          <span style="font-size:11px;color:#444">↑${Number(lead.score)||0} · ${Number(lead.comments)||0} comments</span>
         </div>
         <div style="display:flex;gap:6px">
-          <a href="${lead.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">View post ↗</a>
-          <button onclick="lfWriteOutreach(${i},'${svc.replace(/'/g,"\\'")}',this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✍️ Write Outreach</button>
+          <a href="${safeLeadUrl}" target="_blank" rel="noopener noreferrer" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;text-decoration:none">View post ↗</a>
+          <button onclick="lfWriteOutreach(${i},lfActiveService,this)" style="background:#064e3b;border:1px solid #065f46;color:#34d399;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">✍️ Write Outreach</button>
           <button onclick="lfSaveLead(${i})" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer" id="lfsave${i}">+ Save</button>
         </div>
       </div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4">${lead.title}</div>
-      ${lead.snippet?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${lead.snippet}${lead.snippet.length>=300?"…":""}</div>`:""}
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.4">${safeTitle}</div>
+      ${lead.snippet?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${safeSnippet}${lead.snippet.length>=300?"…":""}</div>`:""}
       <div id="lfoutreach${i}" class="lf-outreach-box"></div>
-    </div>`).join("")}`;
+    </div>`}).join("")}`;
 }
 
 async function lfWriteOutreach(idx, svc, btn){
@@ -4288,7 +4296,7 @@ async function lfWriteOutreach(idx, svc, btn){
 
   if(!anthropicKey){
     box.style.display="block";
-    box.innerHTML=`<span style="color:#f87171">⚠️ Add your Anthropic API key in ⚙️ Settings to generate outreach messages.</span>`;
+    box.innerHTML=`<span style="color:#f87171">Setup required: configure ANTHROPIC_API_KEY in Vercel to generate outreach messages.</span>`;
     return;
   }
 
@@ -4325,9 +4333,9 @@ LINKEDIN DM:
 [DM here]`;
 
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
+    const r=await fetch("/api/tool-suite?action=anthropic",{
       method:"POST",
-      headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"content-type":"application/json"},
       body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:400,messages:[{role:"user",content:prompt}]})
     });
     const data=await r.json();
@@ -4341,12 +4349,12 @@ LINKEDIN DM:
     box.innerHTML=`
       <div style="margin-bottom:10px">
         <div style="font-size:10px;color:#ff6314;font-weight:700;margin-bottom:5px">📮 REDDIT REPLY — paste as a comment on their post</div>
-        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lfrt${idx}">${redditText}</div>
+        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lfrt${idx}">${ToolSuite.escapeText(redditText)}</div>
         <button onclick="navigator.clipboard.writeText(document.getElementById('lfrt${idx}').innerText).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy Reddit reply',1800)})" class="cs-copy-btn" style="margin-top:6px">Copy Reddit reply</button>
       </div>
       ${linkedinText?`<div style="border-top:1px solid #1a3a1a;padding-top:10px;margin-top:4px">
         <div style="font-size:10px;color:#60a5fa;font-weight:700;margin-bottom:5px">💼 LINKEDIN DM — find them on LinkedIn and send this</div>
-        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lflk${idx}">${linkedinText}</div>
+        <div style="white-space:pre-wrap;color:#e2e8f0;font-size:12px;line-height:1.7" id="lflk${idx}">${ToolSuite.escapeText(linkedinText)}</div>
         <button onclick="navigator.clipboard.writeText(document.getElementById('lflk${idx}').innerText).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy LinkedIn DM',1800)})" class="cs-copy-btn" style="margin-top:6px">Copy LinkedIn DM</button>
       </div>`:""}`;
 
@@ -4411,27 +4419,27 @@ function lfRenderSaved(){
     el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">No saved leads yet. Search above and click "+ Save" on any lead.</div>`;
     return;
   }
-  el.innerHTML=lfSaved.map((lead,i)=>`
+  el.innerHTML=lfSaved.map((lead,i)=>{const safeUrl=ToolSuite.safeUrl(lead.url),safeTitle=ToolSuite.escapeText(lead.title),safePlatform=ToolSuite.escapeText(lead.platform),safeStatus=ToolSuite.escapeText(lead.status),safeAge=ToolSuite.escapeText(lead.age||""),safeOutreach=ToolSuite.escapeText((lead.outreach||"").slice(0,80));return `
     <div style="background:#0c0c14;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span style="font-size:10px;background:#2d1a0a;color:#ff6314;border-radius:8px;padding:1px 7px;font-weight:700">${lead.platform}</span>
-            <span style="font-size:10px;background:${(LF_STATUS_COLORS[lead.status]||"#444")+"22"};color:${LF_STATUS_COLORS[lead.status]||"#888"};border-radius:8px;padding:1px 8px;font-weight:700">${lead.status}</span>
-            <span style="font-size:10px;color:#444">${lead.age||""}</span>
+            <span style="font-size:10px;background:#2d1a0a;color:#ff6314;border-radius:8px;padding:1px 7px;font-weight:700">${safePlatform}</span>
+            <span style="font-size:10px;background:${(LF_STATUS_COLORS[lead.status]||"#444")+"22"};color:${LF_STATUS_COLORS[lead.status]||"#888"};border-radius:8px;padding:1px 8px;font-weight:700">${safeStatus}</span>
+            <span style="font-size:10px;color:#444">${safeAge}</span>
           </div>
-          <a href="${lead.url}" target="_blank" style="font-size:12px;font-weight:600;color:#fff;text-decoration:none;line-height:1.4;display:block;margin-bottom:4px">${lead.title}</a>
-          ${lead.outreach?`<div style="font-size:11px;color:#444;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lead.outreach.slice(0,80)}…</div>`:""}
+          <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:600;color:#fff;text-decoration:none;line-height:1.4;display:block;margin-bottom:4px">${safeTitle}</a>
+          ${lead.outreach?`<div style="font-size:11px;color:#444;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${safeOutreach}…</div>`:""}
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">
           <select onchange="lfUpdateStatus(${i},this.value)" class="lf-status-select">
             ${["New","Contacted","Replied","Won ✓","Not interested"].map(s=>`<option${s===lead.status?" selected":""}>${s}</option>`).join("")}
           </select>
-          <a href="${lead.url}" target="_blank" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:11px;text-decoration:none">View ↗</a>
+          <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="background:#111122;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:11px;text-decoration:none">View ↗</a>
           <button onclick="lfDeleteLead(${i})" style="background:#111122;border:1px solid #3a1010;color:#f87171;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">✕</button>
         </div>
       </div>
-    </div>`).join("");
+    </div>`}).join("");
 }
 
 function lfExport(){
@@ -4474,19 +4482,8 @@ function csCopySection(id){
 }
 
 async function csCallAI(prompt, maxTokens=1800){
-  if(!anthropicKey){ alert("Add your Anthropic API key in ⚙️ Settings first."); return null; }
-  const r = await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",
-    headers:{
-      "x-api-key":anthropicKey,
-      "anthropic-version":"2023-06-01",
-      "content-type":"application/json",
-      "anthropic-dangerous-direct-browser-access":"true"
-    },
-    body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:maxTokens,messages:[{role:"user",content:prompt}]})
-  });
-  if(!r.ok) throw new Error("API error: "+r.status);
-  const data = await r.json();
+  if(!anthropicKey){ alert("Setup required: configure ANTHROPIC_API_KEY in Vercel."); return null; }
+  const data=await ToolSuite.anthropic([{role:"user",content:prompt}],maxTokens);
   return data.content?.[0]?.text||"";
 }
 
@@ -4497,7 +4494,7 @@ async function cgGenerate(){
   const tone = document.getElementById("cgTone").value;
   const length = document.getElementById("cgLength").value;
   if(!kw){ alert("Enter a keyword first."); return; }
-  if(!anthropicKey){ alert("Add your Anthropic API key in ⚙️ Settings first."); return; }
+  if(!anthropicKey){ alert("Setup required: configure ANTHROPIC_API_KEY in Vercel."); return; }
 
   const btn = document.getElementById("cgBtn");
   btn.innerHTML=`<span class="cs-spinner"></span>Generating…`; btn.disabled=true;
@@ -4574,7 +4571,7 @@ URL Slug: /${kw.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
           <span>${p.label}</span>
           <button onclick="csCopySocial(${i})" class="cs-copy-btn" id="cgSocCopy${i}">Copy</button>
         </div>
-        <div id="cgSocText${i}" class="cs-output-text" style="font-size:11px;color:var(--muted);max-height:120px;overflow-y:auto">${p.text.replace(/\n/g,"<br>")}</div>
+        <div id="cgSocText${i}" class="cs-output-text" style="font-size:11px;color:var(--muted);max-height:120px;overflow-y:auto">${ToolSuite.escapeText(p.text).replace(/\n/g,"<br>")}</div>
       </div>`).join("");
 
     // Store for copying
@@ -4585,7 +4582,7 @@ URL Slug: /${kw.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 
     // Suggest tracked keywords
     if(rtData.length){
-      const pills = rtData.slice(0,6).map(r=>`<button onclick="document.getElementById('cgKeyword').value='${r.query.replace(/'/g,"\\'")}'" style="background:#111122;border:1px solid var(--border);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--muted);cursor:pointer">${r.query}</button>`).join("");
+      const pills = rtData.slice(0,6).map(r=>`<button onclick="csUseKeyword('${encodeURIComponent(r.query)}')" style="background:#111122;border:1px solid var(--border);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--muted);cursor:pointer">${ToolSuite.escapeText(r.query)}</button>`).join("");
       document.getElementById("cgKwSuggestions").innerHTML = `<span style="font-size:10px;color:#444;margin-right:4px">From tracker:</span>`+pills;
     }
 
@@ -4610,7 +4607,7 @@ async function spGenerate(){
   const topic = document.getElementById("spTopic").value.trim();
   const product = document.getElementById("spProduct").value.trim();
   if(!topic){ alert("Enter a topic first."); return; }
-  if(!anthropicKey){ alert("Add your Anthropic API key in ⚙️ Settings first."); return; }
+  if(!anthropicKey){ alert("Setup required: configure ANTHROPIC_API_KEY in Vercel."); return; }
 
   const platforms=[];
   if(document.getElementById("spInsta").checked) platforms.push("Instagram");
@@ -4664,7 +4661,7 @@ Keep each post focused on the topic. Make them feel authentic, not robotic. Incl
           <span>${icons[p]||"📝"} ${p}</span>
           <button onclick="this.dataset.text='${encodeURIComponent(content)}';navigator.clipboard.writeText(decodeURIComponent(this.dataset.text)).then(()=>{const o=this.textContent;this.textContent='✓ Copied!';setTimeout(()=>this.textContent=o,2000)})" class="cs-copy-btn">Copy</button>
         </div>
-        <div class="cs-output-text" style="color:var(--muted)">${content.replace(/\n/g,"<br>")}</div>
+        <div class="cs-output-text" style="color:var(--muted)">${ToolSuite.escapeText(content).replace(/\n/g,"<br>")}</div>
         <div style="margin-top:8px;font-size:10px;color:#444">${p==="Twitter/X"?`${content.length}/280 chars`:""}</div>`;
       out.appendChild(div);
     });
@@ -4681,7 +4678,7 @@ async function emGenerate(){
   const goal = document.getElementById("emGoal").value;
   const benefit = document.getElementById("emBenefit").value.trim();
   if(!product){ alert("Enter your product or service first."); return; }
-  if(!anthropicKey){ alert("Add your Anthropic API key in ⚙️ Settings first."); return; }
+  if(!anthropicKey){ alert("Setup required: configure ANTHROPIC_API_KEY in Vercel."); return; }
 
   const btn=document.getElementById("emBtn");
   btn.innerHTML=`<span class="cs-spinner"></span>Writing email…`; btn.disabled=true;
@@ -4732,18 +4729,18 @@ Reply with EXACTLY this format:
     out.innerHTML=`
       <div class="cs-card">
         <div class="cs-card-header"><span>✉️ Subject Lines (test all 3)</span><button onclick="csCopyText(this,'${encodeURIComponent(subject)}')" class="cs-copy-btn">Copy</button></div>
-        <div class="cs-output-text">${subject.replace(/\n/g,"<br>")}</div>
+        <div class="cs-output-text">${ToolSuite.escapeText(subject).replace(/\n/g,"<br>")}</div>
       </div>
       <div class="cs-card" style="margin-top:12px">
         <div class="cs-card-header"><span>👁️ Preview Text</span><button onclick="csCopyText(this,'${encodeURIComponent(preview)}')" class="cs-copy-btn">Copy</button></div>
-        <div class="cs-output-text">${preview}</div>
+        <div class="cs-output-text">${ToolSuite.escapeText(preview)}</div>
       </div>
       <div class="cs-card" style="margin-top:12px">
         <div class="cs-card-header"><span>📧 Email Body</span><button onclick="csCopyText(this,'${encodeURIComponent(body)}')" class="cs-copy-btn">Copy</button></div>
-        <div class="cs-output-text">${body.replace(/\n/g,"<br>")}</div>
+        <div class="cs-output-text">${ToolSuite.escapeText(body).replace(/\n/g,"<br>")}</div>
       </div>
       <div style="margin-top:12px;padding:12px;background:#0d1117;border:1px solid #1e2d3d;border-radius:8px;font-size:12px;color:var(--muted)">
-        💡 <strong style="color:#60a5fa">Pro tip:</strong> ${tip}
+        💡 <strong style="color:#60a5fa">Pro tip:</strong> ${ToolSuite.escapeText(tip)}
       </div>`;
   }catch(e){
     out.innerHTML=`<div class="rt-empty">Failed: ${e.message}</div>`;
@@ -4759,7 +4756,7 @@ async function adGenerate(){
   const platform = document.getElementById("adPlatform").value;
   const goal = document.getElementById("adGoal").value;
   if(!product){ alert("Enter your product or service first."); return; }
-  if(!anthropicKey){ alert("Add your Anthropic API key in ⚙️ Settings first."); return; }
+  if(!anthropicKey){ alert("Setup required: configure ANTHROPIC_API_KEY in Vercel."); return; }
 
   const btn=document.getElementById("adBtn");
   btn.innerHTML=`<span class="cs-spinner"></span>Writing ads…`; btn.disabled=true;
@@ -4793,7 +4790,7 @@ Format your response with clear labels for each element. Write 2-3 variations fo
           <span>🎯 ${platform==="google"?"Google Ads":platform==="meta"?"Meta / Instagram Ads":"LinkedIn Ads"} Copy</span>
           <button onclick="navigator.clipboard.writeText(document.getElementById('adOutputText').innerText).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy all',2000)})" class="cs-copy-btn">Copy all</button>
         </div>
-        <div id="adOutputText" class="cs-output-text">${text.replace(/\n/g,"<br>")}</div>
+        <div id="adOutputText" class="cs-output-text">${ToolSuite.escapeText(text).replace(/\n/g,"<br>")}</div>
       </div>
       <div style="margin-top:12px;padding:12px;background:#0d1117;border:1px solid #1e2d3d;border-radius:8px;font-size:12px;color:var(--muted)">
         💡 <strong style="color:#60a5fa">Next step:</strong> Copy the best variation → go to your ad platform → create a new campaign → paste this copy → set your daily budget to ₹200-500 to test before scaling.
@@ -4811,6 +4808,7 @@ function csCopyText(btn, encoded){
     const orig=btn.textContent; btn.textContent="✓ Copied!"; setTimeout(()=>btn.textContent=orig,2000);
   });
 }
+function csUseKeyword(encoded){ document.getElementById('cgKeyword').value=decodeURIComponent(encoded); }
 
 // ─────────────────────────────────────────────
 // PAGE SWITCHING
@@ -5151,7 +5149,7 @@ function ytSwitch(tool, card){
 }
 
 function ytNoKey(el){
-  el.innerHTML=`<div class="rt-empty">⚙️ Add your <strong style="color:var(--purple2)">Google API Key</strong> in Keys to use YouTube features.<br><br><button class="btn btn-primary" onclick="openSettings()">⚙️ Add Key</button></div>`;
+  el.innerHTML=`<div class="rt-empty"><strong style="color:var(--purple2)">Setup required.</strong> Configure YOUTUBE_API_KEY in Vercel to use live YouTube data.<br><br><button class="btn btn-primary" onclick="openSettings()">View provider status</button></div>`;
 }
 
 // Keyword Research
@@ -5162,7 +5160,7 @@ async function ytResearch(){
   if(!googleKey){ ytNoKey(el); return; }
   el.innerHTML=`<div class="loading"><div class="spinner" style="border-top-color:#ff0000"></div><div class="loading-msg">Searching YouTube for "${q}"…</div></div>`;
   try{
-    const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${enc(q)}&type=video&maxResults=10&order=viewCount&key=${googleKey}`,{signal:AbortSignal.timeout(10000)});
+    const r = await fetch(`/api/tool-suite?action=youtube&resource=search&part=snippet&q=${enc(q)}&type=video&maxResults=10&order=viewCount`,{signal:AbortSignal.timeout(10000)});
     const data = await r.json();
     if(data.error){ el.innerHTML=`<div class="rt-empty">API error: ${data.error.message}</div>`; return; }
     const items = data.items||[];
@@ -5173,14 +5171,14 @@ async function ytResearch(){
       ${items.map(v=>{
         const vid = v.id?.videoId;
         const s = v.snippet;
-        const thumb = s?.thumbnails?.medium?.url||"";
+        const thumb = ToolSuite.safeUrl(s?.thumbnails?.medium?.url||"");
         return `<div class="yt-result">
           <div class="yt-result-top">
             ${thumb?`<img class="yt-thumb" src="${thumb}" loading="lazy" onerror="this.style.display='none'">`:""}
             <div class="yt-result-info">
-              <a href="https://youtube.com/watch?v=${vid}" target="_blank" class="yt-vid-title">${(s?.title||"").replace(/</g,"&lt;")}</a>
-              <div class="yt-vid-meta">📺 ${(s?.channelTitle||"").replace(/</g,"&lt;")} &nbsp;·&nbsp; 📅 ${(s?.publishedAt||"").slice(0,10)}</div>
-              <div class="yt-vid-meta" style="margin-top:3px;color:#666">${(s?.description||"").slice(0,120).replace(/</g,"&lt;")}…</div>
+              <a href="https://youtube.com/watch?v=${encodeURIComponent(vid||"")}" target="_blank" rel="noopener noreferrer" class="yt-vid-title">${ToolSuite.escapeText(s?.title||"")}</a>
+              <div class="yt-vid-meta">📺 ${ToolSuite.escapeText(s?.channelTitle||"")} &nbsp;·&nbsp; 📅 ${ToolSuite.escapeText((s?.publishedAt||"").slice(0,10))}</div>
+              <div class="yt-vid-meta" style="margin-top:3px;color:#666">${ToolSuite.escapeText((s?.description||"").slice(0,120))}…</div>
             </div>
           </div>
         </div>`;
@@ -5199,7 +5197,7 @@ async function ytCompetitors(){
   if(!googleKey){ ytNoKey(el); return; }
   el.innerHTML=`<div class="loading"><div class="spinner" style="border-top-color:#ff0000"></div><div class="loading-msg">Finding channels for "${q}"…</div></div>`;
   try{
-    const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${enc(q)}&type=channel&maxResults=10&key=${googleKey}`,{signal:AbortSignal.timeout(10000)});
+    const r = await fetch(`/api/tool-suite?action=youtube&resource=search&part=snippet&q=${enc(q)}&type=channel&maxResults=10`,{signal:AbortSignal.timeout(10000)});
     const data = await r.json();
     if(data.error){ el.innerHTML=`<div class="rt-empty">API error: ${data.error.message}</div>`; return; }
     const items = data.items||[];
@@ -5209,14 +5207,14 @@ async function ytCompetitors(){
       ${items.map(c=>{
         const cid = c.id?.channelId;
         const s = c.snippet;
-        const thumb = s?.thumbnails?.medium?.url||"";
+        const thumb = ToolSuite.safeUrl(s?.thumbnails?.medium?.url||"");
         return `<div class="yt-result">
           <div class="yt-result-top">
             ${thumb?`<img class="yt-thumb" src="${thumb}" loading="lazy" style="border-radius:50%;width:52px;height:52px" onerror="this.style.display='none'">`:""}
             <div class="yt-result-info">
-              <a href="https://youtube.com/channel/${cid}" target="_blank" class="yt-vid-title">${(s?.channelTitle||"").replace(/</g,"&lt;")}</a>
-              <div class="yt-vid-meta">${(s?.description||"No description").slice(0,150).replace(/</g,"&lt;")}…</div>
-              <div style="margin-top:6px"><a href="https://youtube.com/channel/${cid}/videos" target="_blank" class="kw-tip-btn" style="text-decoration:none;display:inline-block;padding:3px 10px">View Videos →</a></div>
+              <a href="https://youtube.com/channel/${encodeURIComponent(cid||"")}" target="_blank" rel="noopener noreferrer" class="yt-vid-title">${ToolSuite.escapeText(s?.channelTitle||"")}</a>
+              <div class="yt-vid-meta">${ToolSuite.escapeText((s?.description||"No description").slice(0,150))}…</div>
+              <div style="margin-top:6px"><a href="https://youtube.com/channel/${encodeURIComponent(cid||"")}/videos" target="_blank" rel="noopener noreferrer" class="kw-tip-btn" style="text-decoration:none;display:inline-block;padding:3px 10px">View Videos →</a></div>
             </div>
           </div>
         </div>`;
@@ -5245,7 +5243,7 @@ async function ytTrending(){
     let items = [];
     let usedSearch = false;
     if(cat!=="0"){
-      const url=`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=15&videoCategoryId=${cat}&key=${googleKey}`;
+      const url=`/api/tool-suite?action=youtube&resource=videos&part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=15&videoCategoryId=${cat}`;
       const r=await fetch(url,{signal:AbortSignal.timeout(10000)});
       const data=await r.json();
       if(!data.error) items=data.items||[];
@@ -5256,13 +5254,13 @@ async function ytTrending(){
       usedSearch=true;
       const term = YT_CAT_TERMS[cat]||catLabel;
       const sevenDaysAgo=new Date(Date.now()-7*864e5).toISOString();
-      const searchUrl=`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${enc(term)}&type=video&order=viewCount&regionCode=${region}&maxResults=15&publishedAfter=${sevenDaysAgo}&key=${googleKey}`;
+      const searchUrl=`/api/tool-suite?action=youtube&resource=search&part=snippet&q=${enc(term)}&type=video&order=viewCount&regionCode=${region}&maxResults=15&publishedAfter=${sevenDaysAgo}`;
       const sr=await fetch(searchUrl,{signal:AbortSignal.timeout(10000)});
       const sd=await sr.json();
       if(sd.error){ el.innerHTML=`<div class="rt-empty">API error: ${sd.error.message}</div>`; return; }
       const ids=(sd.items||[]).map(v=>v.id?.videoId).filter(Boolean).join(",");
       if(ids){
-        const vr=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${ids}&key=${googleKey}`,{signal:AbortSignal.timeout(8000)});
+        const vr=await fetch(`/api/tool-suite?action=youtube&resource=videos&part=snippet,statistics&id=${ids}`,{signal:AbortSignal.timeout(8000)});
         const vd=await vr.json();
         items=vd.items||[];
       }
@@ -5270,7 +5268,7 @@ async function ytTrending(){
 
     // If cat=0, just load all trending
     if(cat==="0"){
-      const url=`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=15&key=${googleKey}`;
+      const url=`/api/tool-suite?action=youtube&resource=videos&part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=15`;
       const r=await fetch(url,{signal:AbortSignal.timeout(10000)});
       const data=await r.json();
       if(data.error){ el.innerHTML=`<div class="rt-empty">API error: ${data.error.message}</div>`; return; }
@@ -5286,15 +5284,15 @@ async function ytTrending(){
       ${items.map((v,i)=>{
         const s = v.snippet;
         const st = v.statistics;
-        const thumb = s?.thumbnails?.medium?.url||"";
+        const thumb = ToolSuite.safeUrl(s?.thumbnails?.medium?.url||"");
         const views = parseInt(st?.viewCount||0).toLocaleString();
         const likes = parseInt(st?.likeCount||0).toLocaleString();
         return `<div class="yt-result">
           <div class="yt-result-top">
             ${thumb?`<img class="yt-thumb" src="${thumb}" loading="lazy" onerror="this.style.display='none'">`:""}
             <div class="yt-result-info">
-              <a href="https://youtube.com/watch?v=${v.id}" target="_blank" class="yt-vid-title">#${i+1} ${(s?.title||"").replace(/</g,"&lt;")}</a>
-              <div class="yt-vid-meta">📺 ${(s?.channelTitle||"").replace(/</g,"&lt;")} &nbsp;·&nbsp; 👁 ${views} views &nbsp;·&nbsp; 👍 ${likes}</div>
+              <a href="https://youtube.com/watch?v=${encodeURIComponent(v.id||"")}" target="_blank" rel="noopener noreferrer" class="yt-vid-title">#${i+1} ${ToolSuite.escapeText(s?.title||"")}</a>
+              <div class="yt-vid-meta">📺 ${ToolSuite.escapeText(s?.channelTitle||"")} &nbsp;·&nbsp; 👁 ${views} views &nbsp;·&nbsp; 👍 ${likes}</div>
             </div>
           </div>
         </div>`;
@@ -5356,7 +5354,7 @@ function scoreSEO(){
             </div>
           </div>`).join("")}
       </div>
-      ${!anthropicKey?`<div style="margin-top:14px;text-align:center;font-size:11px;color:#444">Add an Anthropic key → <button class="kw-tip-btn" onclick="openSettings()" style="margin-left:4px">⚙️ Keys</button> to get AI fix suggestions</div>`:`<button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="aiFixSEO()">✨ AI: Fix all issues</button>`}
+      ${!anthropicKey?`<div style="margin-top:14px;text-align:center;font-size:11px;color:#444">ANTHROPIC_API_KEY setup is required for AI suggestions.</div>`:`<button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="aiFixSEO()">✨ AI: Fix all issues</button>`}
     </div>`;
 }
 
@@ -5385,9 +5383,9 @@ TITLE: [improved title]
 DESCRIPTION: [improved description]
 TAGS: [tag1, tag2, tag3...]`;
   try{
-    const r = await fetch("https://api.anthropic.com/v1/messages",{
+    const r = await fetch("/api/tool-suite?action=anthropic",{
       method:"POST",
-      headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"content-type":"application/json"},
       body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:600,messages:[{role:"user",content:prompt}]})
     });
     const data = await r.json();
@@ -5421,9 +5419,9 @@ Target audience: "${audience||"general audience"}"
 Be specific, punchy, and optimised for YouTube search and click-through rate.
 Format each section clearly with a header like TITLE:, DESCRIPTION:, TAGS:, HOOK:.`;
   try{
-    const r = await fetch("https://api.anthropic.com/v1/messages",{
+    const r = await fetch("/api/tool-suite?action=anthropic",{
       method:"POST",
-      headers:{"x-api-key":anthropicKey,"anthropic-version":"2023-06-01","content-type":"application/json","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"content-type":"application/json"},
       body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:900,messages:[{role:"user",content:prompt}]})
     });
     const data = await r.json();
@@ -5483,9 +5481,9 @@ let lgGoogleResults = [];
  async function lgScan(){
   const city=(document.getElementById('lgCity').value||'').trim();
   if(!city){alert('Enter your city first.');return;}
-  const gkey=localStorage.getItem('fc_goog');
-  const gcx=localStorage.getItem('fc_gcx');
-  if(!gkey||!gcx){alert('Add your Google API key + CX ID in ⚙️ Keys first.');openSettings();return;}
+  const gkey=toolConfiguration.googleSearchConfigured;
+  const gcx=toolConfiguration.googleSearchConfigured;
+  if(!gkey||!gcx){alert('Setup required: configure GOOGLE_SEARCH_API_KEY and GOOGLE_SEARCH_ENGINE_ID in Vercel.');openSettings();return;}
   const selected=LG_SERVICES.filter(s=>{const el=document.getElementById('lgsvc_'+s.id);return el&&el.checked;});
   if(!selected.length){alert('Select at least one service.');return;}
   const btn=document.getElementById('lgScanBtn');
@@ -5500,7 +5498,7 @@ let lgGoogleResults = [];
     const query=`"need ${svc.label.toLowerCase()}" OR "looking for ${svc.label.toLowerCase()}" "${city}" -job -hiring`;
     try{
       const r=await Promise.race([
-        fetch(`https://www.googleapis.com/customsearch/v1?key=${gkey}&cx=${gcx}&q=${encodeURIComponent(query)}&num=10&dateRestrict=m6`),
+        fetch(`/api/tool-suite?action=google-search&q=${encodeURIComponent(query)}&num=10`),
         new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))
       ]);
       const d=await r.json();
@@ -5538,15 +5536,15 @@ function lgGoogCard(r,city,idx){
 }
 async function lgDraftGoogle(idx,uid,btn){
   const r=lgGoogleResults[idx];
-  const antK=localStorage.getItem('fc_ant');
+  const antK=toolConfiguration.anthropicConfigured;
   const city=document.getElementById('lgCity').value;
   if(!r||!antK){btn.textContent='Add Anthropic key';return;}
   btn.textContent='⏳ Drafting…';btn.disabled=true;
   const replyDiv=document.getElementById(uid+'_reply');
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/tool-suite?action=anthropic',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':antK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:`You are a freelancer in ${city}. Someone is looking for ${r._service} help:\nTitle: ${r.title}\nContext: ${r.snippet}\n\nWrite a short 3-4 sentence pitch: show you understand their need, mention relevant experience, offer help without being salesy, end with a CTA. Keep it casual.`}]})
     });
     const d=await res.json();
@@ -5627,9 +5625,9 @@ async function lgDraftEmail(name, addr, issues, category, uid, btn){
   box.style.display='block'; box.textContent='Writing cold email…';
   try{
     const prompt=`Write a short, friendly cold outreach email to a local ${category} business.\nBusiness: ${name}\nLocation: ${addr}\nIssues identified: ${issues}\n\nFrom a local digital marketing freelancer. Under 120 words. Reference their specific issue. Offer one concrete benefit. End with a soft CTA. Subject line first, then email body.`;
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
+    const r=await fetch('/api/tool-suite?action=anthropic',{
       method:'POST',
-      headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'content-type':'application/json'},
       body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:350,messages:[{role:'user',content:prompt}]})
     });
     const data=await r.json();
