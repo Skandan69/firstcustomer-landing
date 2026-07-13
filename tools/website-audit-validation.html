@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Website Audit Preview Validation</title>
+  <style>
+    body { margin: 0; background: #f5f7fb; color: #172033; font: 16px/1.5 system-ui, sans-serif; }
+    main { width: min(760px, calc(100% - 32px)); margin: 48px auto; }
+    section { background: white; border: 1px solid #dce2ec; border-radius: 16px; padding: 24px; box-shadow: 0 12px 36px rgba(29, 43, 69, .08); }
+    label { display: block; font-weight: 700; margin-bottom: 8px; }
+    input { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #aeb8c8; border-radius: 8px; font: inherit; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+    button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2459d3; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity: .55; cursor: wait; }
+    #status { min-height: 24px; font-weight: 700; }
+    pre { overflow: auto; min-height: 100px; padding: 16px; border-radius: 10px; background: #101827; color: #eaf0ff; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <main>
+    <section>
+      <h1>Website Audit Preview Validation</h1>
+      <p>This temporary page is available only on a Vercel preview and uses the production audit route with its existing SSRF controls.</p>
+      <label for="website">Public HTTPS website</label>
+      <input id="website" type="url" value="https://example.com/" inputmode="url" autocomplete="url">
+      <div class="actions">
+        <button id="audit" type="button">Run Audit</button>
+        <button id="refresh" type="button">Refresh Audit</button>
+        <button id="verify" type="button">Verify Stored Row</button>
+      </div>
+      <p id="status" role="status" aria-live="polite">Ready.</p>
+      <pre id="output" aria-label="Validation result">No result yet.</pre>
+    </section>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      const allowed = location.hostname === 'localhost' || location.hostname.endsWith('.vercel.app');
+      const website = document.getElementById('website');
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
+      const buttons = [...document.querySelectorAll('button')];
+      const storageKey = 'firstcustomer-pr6-audit-validation';
+      const saved = readState();
+      const workspaceId = saved.workspaceId || crypto.randomUUID();
+      website.value = saved.website || website.value;
+      writeState();
+
+      if (!allowed) {
+        document.body.textContent = 'Not found.';
+        return;
+      }
+
+      document.getElementById('audit').addEventListener('click', () => runAudit(false));
+      document.getElementById('refresh').addEventListener('click', () => runAudit(true));
+      document.getElementById('verify').addEventListener('click', verifyStoredRow);
+
+      async function runAudit(refresh) {
+        await run(refresh ? 'Refreshing audit…' : 'Running audit…', async () => {
+          writeState();
+          const result = await request('/api/website-audits', {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({
+              website: website.value.trim(),
+              refresh,
+              business: { provider: 'preview_validation', providerId: 'pr6', name: 'PR #6 validation' }
+            })
+          });
+          const stored = await fetchStoredRow();
+          return { route: result, stored };
+        });
+      }
+
+      async function verifyStoredRow() {
+        await run('Verifying stored row…', async () => ({ stored: await fetchStoredRow() }));
+      }
+
+      async function fetchStoredRow() {
+        const query = encodeURIComponent(website.value.trim());
+        return request(`/api/website-audits/validation?website=${query}`, { headers: headers(false) });
+      }
+
+      async function request(url, options) {
+        const response = await fetch(url, options);
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload?.error?.message || `Request failed (${response.status}).`);
+        return payload;
+      }
+
+      async function run(message, action) {
+        setBusy(true);
+        status.textContent = message;
+        try {
+          const result = await action();
+          output.textContent = JSON.stringify(result, null, 2);
+          status.textContent = 'Validation request completed.';
+        } catch (error) {
+          output.textContent = JSON.stringify({ error: error.message }, null, 2);
+          status.textContent = `Validation failed: ${error.message}`;
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      function headers(json = true) {
+        return { ...(json ? { 'Content-Type': 'application/json' } : {}), 'x-workspace-id': workspaceId };
+      }
+      function setBusy(value) { buttons.forEach((button) => { button.disabled = value; }); }
+      function readState() { try { return JSON.parse(sessionStorage.getItem(storageKey)) || {}; } catch { return {}; } }
+      function writeState() { sessionStorage.setItem(storageKey, JSON.stringify({ workspaceId, website: website.value.trim() })); }
+    })();
+  </script>
+</body>
+</html>
+

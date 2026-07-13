@@ -8,6 +8,7 @@ const { auditWebsite } = require('../server/website-intelligence/audit');
 const { isPrivateAddress, validatePublicUrl } = require('../server/website-intelligence/fetcher');
 const repository = require('../server/website-intelligence/repository');
 const handler = require('../api/website-audits');
+const validationHandler = require('../api/website-audits/validation');
 
 const WORKSPACE = '123e4567-e89b-42d3-a456-426614174000';
 const COMPLETE_HTML = `<!doctype html><html><head>
@@ -150,6 +151,40 @@ test('website intelligence migration is rerunnable and service-role only', () =>
   assert.doesNotMatch(sql, /create\s+policy/i);
   for (const existing of ['businesses', 'saved_leads', 'search_history', 'saved_searches', 'lead_notes', 'activity_log']) {
     assert.doesNotMatch(sql, new RegExp(`(?:alter|drop|truncate|delete\\s+from)\\s+(?:table\\s+)?public\\.${existing}`, 'i'));
+  }
+});
+
+test('temporary audit verifier is preview-only and reads a validated HTTPS row', async () => {
+  const oldEnvironment = process.env.VERCEL_ENV;
+  const oldFetch = global.fetch;
+  process.env.VERCEL_ENV = 'production';
+  let out = mockResponse();
+  await validationHandler({ method: 'GET', headers: {}, query: {} }, out);
+  assert.equal(out.statusCode, 404);
+
+  process.env.VERCEL_ENV = 'preview';
+  global.fetch = async (url, options = {}) => {
+    if (String(url).includes('/rest/v1/website_audits')) {
+      assert.match(String(url), /workspace_id=eq\./);
+      return response([{ id: 'audit-1', updated_at: '2026-07-13T00:00:00Z' }]);
+    }
+    return { ok: true, status: 200, url: String(url), headers: new Map([['content-type', 'text/html']]), text: async () => '<html></html>' };
+  };
+  process.env.SUPABASE_URL = 'https://database.example';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'sb_secret_server-only';
+  try {
+    out = mockResponse();
+    await validationHandler({ method: 'GET', headers: { 'x-workspace-id': WORKSPACE }, query: { website: 'https://8.8.8.8/' } }, out);
+    assert.equal(out.statusCode, 200);
+    assert.equal(out.body.row.id, 'audit-1');
+
+    out = mockResponse();
+    await validationHandler({ method: 'GET', headers: { 'x-workspace-id': WORKSPACE }, query: { website: 'http://8.8.8.8/' } }, out);
+    assert.equal(out.statusCode, 400);
+    assert.equal(out.body.error.code, 'UNSAFE_WEBSITE_URL');
+  } finally {
+    global.fetch = oldFetch;
+    if (oldEnvironment === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = oldEnvironment;
   }
 });
 
