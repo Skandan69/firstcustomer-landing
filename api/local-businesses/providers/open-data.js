@@ -1,6 +1,6 @@
 const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
 const OVERPASS_ENDPOINTS = [
-  'https://overpass.private.coffee/api/interpreter',
+  'https://gall.openstreetmap.de/api/interpreter',
   'https://overpass-api.de/api/interpreter',
   'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
 ];
@@ -27,7 +27,7 @@ async function searchOpenData(criteria, options = {}) {
     const remainingMs = retryDeadline - Date.now();
     if (remainingMs <= 0) break;
     try {
-      response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT }, body: `data=${encodeURIComponent(query)}` }, Math.min(options.overpassTimeoutMs || 8_000, remainingMs));
+      response = await fetchWithTimeout(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': USER_AGENT }, body: `data=${encodeURIComponent(query)}` }, Math.min(options.overpassTimeoutMs || 14_000, remainingMs));
       if (response.ok) break;
       lastError = providerError(response.status === 429 ? 'OPEN_DATA_RATE_LIMITED' : 'OPEN_DATA_UNAVAILABLE', `Open Data provider returned HTTP ${response.status}.`, response.status === 429 ? 429 : 502);
     } catch (error) {

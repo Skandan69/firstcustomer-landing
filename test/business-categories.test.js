@@ -26,7 +26,7 @@ test('recognized categories generate exact node, way, and relation Overpass tags
 test('Open Data uses current HTTPS Overpass mirrors and no obsolete Kumi hostname', () => {
   assert.ok(OVERPASS_ENDPOINTS.length >= 2);
   assert.ok(OVERPASS_ENDPOINTS.every((endpoint) => endpoint.startsWith('https://')));
-  assert.ok(OVERPASS_ENDPOINTS.includes('https://overpass.private.coffee/api/interpreter'));
+  assert.equal(OVERPASS_ENDPOINTS[0], 'https://gall.openstreetmap.de/api/interpreter');
   assert.ok(OVERPASS_ENDPOINTS.every((endpoint) => !endpoint.includes('overpass.kumi.systems')));
 });
 
