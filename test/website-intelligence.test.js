@@ -105,7 +105,7 @@ test('audit persistence returns recent summaries and upserts server-side', async
 });
 
 test('audit route validates methods, JSON, size, workspace, and unsafe URLs', async () => {
-  let out = mockResponse(); await handler({ method: 'GET', headers: {}, query: {} }, out); assert.equal(out.statusCode, 405);
+  let out = mockResponse(); await handler({ method: 'PUT', headers: {}, query: {} }, out); assert.equal(out.statusCode, 405);
   out = mockResponse(); await handler(request('POST', '{bad'), out); assert.equal(out.statusCode, 400); assert.equal(out.body.error.code, 'INVALID_JSON');
   out = mockResponse(); await handler(request('POST', JSON.stringify({ website: `https://example.com/${'x'.repeat(17000)}` })), out); assert.equal(out.statusCode, 413);
   out = mockResponse(); await handler({ ...request('POST', { website: 'https://example.com' }), headers: {} }, out); assert.equal(out.statusCode, 400);
