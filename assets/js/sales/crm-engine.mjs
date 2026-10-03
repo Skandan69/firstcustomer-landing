@@ -19,6 +19,7 @@ export function buildPipeline(savedLeads = [], activities = [], now = Date.now()
     const stage = deriveStage(events);
     const nextAction = latestMetadata(events, 'crm_next_action_set');
     const proposalEvent = latestEvent(events, 'proposal_generated');
+    const proposalResponse = latestMetadata(events, 'proposal_response');
     const proposal = proposalEvent?.metadata?.proposal || null;
     const proposalUrl = proposalEvent?.metadata?.shareToken ? `/proposal/?token=${encodeURIComponent(proposalEvent.metadata.shareToken)}` : '';
     const projectFee = Number(proposal?.pricing?.projectFee) || 0;
@@ -30,6 +31,7 @@ export function buildPipeline(savedLeads = [], activities = [], now = Date.now()
       stage,
       nextAction: nextAction ? { text: String(nextAction.text || ''), dueAt: String(nextAction.dueAt || ''), overdue: Number.isFinite(dueAt) && dueAt < now } : null,
       proposal,
+      proposalResponse,
       proposalUrl,
       projectFee,
       events
@@ -53,7 +55,8 @@ export function buildPipeline(savedLeads = [], activities = [], now = Date.now()
       lost: leads.filter((lead) => lead.stage === 'lost').length,
       proposalValue,
       wonValue,
-      followupsDue
+      followupsDue,
+      clientResponses: leads.filter((lead) => lead.proposalResponse?.response).length
     }
   };
 }
