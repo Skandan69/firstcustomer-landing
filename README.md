@@ -44,11 +44,13 @@ The public static page at `/preview/?token=<uuid>` retrieves only the whiteliste
 
 Generated previews are deliberately labelled as **concepts**. Category-specific service sections are example layout/content and must be confirmed with the business before publication; missing ratings, reviews, contact details, and claims are never invented. No additional Supabase migration is required because the existing `activity_log.metadata` JSONB field stores the small structured preview payload.
 
+Each business card also exposes **Copy Outreach**. The client-only outreach generator uses the strongest explainable opportunity reason plus verified rating/review evidence when available. If a demo has already been generated, the copied message includes the shareable preview URL. It does not call an LLM, invent business claims, or send business-identifying data to analytics.
+
 ## Google Analytics 4
 
 GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
 
-Track supported product events with `analytics.track('save_lead', { source: 'local_business_finder' })`. Supported events are `page_view`, `business_search`, `save_lead`, `remove_lead`, `save_search`, `generate_audit`, `generate_website`, and `proposal_generated`. Event calls are exception-safe and become harmless no-ops if analytics initialization is unavailable.
+Track supported product events with `analytics.track('save_lead', { source: 'local_business_finder' })`. Supported events are `page_view`, `business_search`, `save_lead`, `remove_lead`, `save_search`, `generate_audit`, `generate_website`, `outreach_generated`, and `proposal_generated`. Event calls are exception-safe and become harmless no-ops if analytics initialization is unavailable.
 
 Never include business names, phone numbers, email addresses, addresses, website URLs, notes, workspace IDs, exact search locations, or other personal data in analytics properties.
 
