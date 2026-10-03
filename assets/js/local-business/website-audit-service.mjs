@@ -20,3 +20,11 @@ export async function auditBusinessWebsite(business, { refresh = false } = {}) {
     throw error;
   } finally { clearTimeout(timer); }
 }
+
+export async function getCachedWebsiteAudit(website) {
+  const response = await fetch(`${ENDPOINT}?website=${encodeURIComponent(website)}`, { headers: { 'X-Workspace-Id': workspaceId() } });
+  if (response.status === 404) return null;
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw Object.assign(new Error(payload.error?.message || 'The recent website audit could not be loaded.'), { code: payload.error?.code || 'AUDIT_LOOKUP_FAILED', status: response.status });
+  return payload.audit || null;
+}

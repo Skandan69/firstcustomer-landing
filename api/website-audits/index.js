@@ -9,11 +9,17 @@ const MAX_REQUESTS = 10;
 const buckets = new Map();
 
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Use POST to run a website audit.'); }
-  const contentType = String(req.headers?.['content-type'] || '').toLowerCase();
-  if (contentType && !contentType.includes('application/json')) return sendError(res, 400, 'INVALID_BODY', 'Send a valid JSON request body.');
+  if (!['GET','POST'].includes(req.method)) { res.setHeader('Allow', 'GET, POST'); return sendError(res, 405, 'METHOD_NOT_ALLOWED', 'Use GET to read a recent audit or POST to run a website audit.'); }
   const workspaceId = String(req.headers?.['x-workspace-id'] || '');
   if (!UUID.test(workspaceId)) return sendError(res, 400, 'INVALID_WORKSPACE', 'Create a valid local workspace before auditing a website.');
+  if (req.method === 'GET') {
+    const website = normalizeWebsiteQuery(req.query?.website);
+    if (!website) return sendError(res, 400, 'INVALID_WEBSITE_URL', 'Choose a business with a valid public website.');
+    try { const cached = await repository.findRecent(workspaceId, website); return cached ? res.status(200).json({ audit: cached, cached: true }) : sendError(res, 404, 'AUDIT_NOT_FOUND', 'No recent website audit is available.'); }
+    catch (error) { console.error('[website-intelligence]', { code: error.code || 'AUDIT_LOOKUP_FAILED', status: error.status || 500 }); return sendError(res, error.status || 502, error.code || 'AUDIT_LOOKUP_FAILED', userMessage(error)); }
+  }
+  const contentType = String(req.headers?.['content-type'] || '').toLowerCase();
+  if (contentType && !contentType.includes('application/json')) return sendError(res, 400, 'INVALID_BODY', 'Send a valid JSON request body.');
   const parsed = parseBody(req.body);
   if (!parsed.ok) return sendError(res, parsed.status, parsed.code, parsed.message);
   if (!allowRequest(clientIp(req))) return sendError(res, 429, 'AUDIT_RATE_LIMITED', 'Too many website audits. Please wait a minute and try again.');
@@ -50,6 +56,7 @@ function sanitizeBusiness(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   return { provider: text(value.provider, 32), providerId: text(value.providerId, 256), name: text(value.name, 180) };
 }
+function normalizeWebsiteQuery(value) { try { const url = new URL(typeof value === 'string' ? value.trim() : ''); return ['http:','https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } }
 function text(value, max) { return typeof value === 'string' ? value.trim().slice(0, max) : ''; }
 function invalid(status, code, message) { return { ok: false, status, code, message }; }
 function sendError(res, status, code, message) { return res.status(status).json({ error: { code, message } }); }

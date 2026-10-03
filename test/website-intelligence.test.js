@@ -105,7 +105,7 @@ test('audit persistence returns recent summaries and upserts server-side', async
 });
 
 test('audit route validates methods, JSON, size, workspace, and unsafe URLs', async () => {
-  let out = mockResponse(); await handler({ method: 'GET', headers: {}, query: {} }, out); assert.equal(out.statusCode, 405);
+  let out = mockResponse(); await handler({ method: 'PUT', headers: {}, query: {} }, out); assert.equal(out.statusCode, 405);
   out = mockResponse(); await handler(request('POST', '{bad'), out); assert.equal(out.statusCode, 400); assert.equal(out.body.error.code, 'INVALID_JSON');
   out = mockResponse(); await handler(request('POST', JSON.stringify({ website: `https://example.com/${'x'.repeat(17000)}` })), out); assert.equal(out.statusCode, 413);
   out = mockResponse(); await handler({ ...request('POST', { website: 'https://example.com' }), headers: {} }, out); assert.equal(out.statusCode, 400);
@@ -156,3 +156,5 @@ test('website intelligence migration is rerunnable and service-role only', () =>
 function request(method, body) { return { method, body, headers: { 'x-workspace-id': WORKSPACE, 'x-forwarded-for': `audit-test-${Math.random()}` }, socket: {} }; }
 function mockResponse() { return { statusCode: 200, body: null, headers: {}, setHeader(key, value) { this.headers[key] = value; }, status(code) { this.statusCode = code; return this; }, json(body) { this.body = body; return this; } }; }
 function response(data, status = 200) { return { ok: status >= 200 && status < 300, status, json: async () => data }; }
+
+test('audit route can return a recent cached audit by website',async()=>{const old=global.fetch,oldUrl=process.env.SUPABASE_URL,oldKey=process.env.SUPABASE_SERVICE_ROLE_KEY;process.env.SUPABASE_URL='https://database.example';process.env.SUPABASE_SERVICE_ROLE_KEY='sb_secret_server-only';global.fetch=async()=>({ok:true,status:200,json:async()=>[{summary:{requestedUrl:'https://example.com/',healthScore:80,opportunityScore:20},audited_at:new Date().toISOString()}]});try{const out=mockResponse();await handler({method:'GET',query:{website:'https://example.com/'},headers:{'x-workspace-id':'123e4567-e89b-42d3-a456-426614174000'}},out);assert.equal(out.statusCode,200);assert.equal(out.body.cached,true);assert.equal(out.body.audit.healthScore,80);}finally{global.fetch=old;if(oldUrl===undefined)delete process.env.SUPABASE_URL;else process.env.SUPABASE_URL=oldUrl;if(oldKey===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=oldKey;}});

@@ -36,6 +36,22 @@ The score is deterministic and capped at 100. It also returns a priority level, 
 
 Auditing a website automatically refines the opportunity because the existing Website Intelligence `opportunityScore` and recommendations replace the preliminary website-unknown signal. No new database migration is required because opportunity intelligence is derived from the canonical business and saved audit data.
 
+## Sales CRM and proposals
+
+Saved Local Business Finder leads now form a persistent event-driven CRM. The pipeline is reconstructed from `activity_log` events rather than a mutable browser-only status field, so stage history and commercial actions remain timestamped. Current stages are **New → Contacted → Interested → Demo / Audit → Proposal → Won / Lost**.
+
+CRM capabilities include:
+- stage changes and win/loss outcomes
+- next-action text and optional due dates
+- follow-up logging
+- proposal value and won value summaries
+- prospect proposal responses surfaced back into CRM
+- links from each lead to Proposal Builder and the latest shared proposal
+
+The Proposal Builder at `/proposal-builder/` loads saved leads, recommends an editable package, lets the operator set project fee, deposit, timeline, validity and project note, and publishes a private UUID-token proposal link. Public proposal pages at `/proposal/` contain sanitized structured data only, support Print / Save PDF, and allow prospects to respond **Interested** or **Request changes**. The response is resolved server-side back to the originating workspace/business without exposing the workspace ID.
+
+Proposal generation does not add another Vercel function or require another database migration; it reuses the existing persistence route and `activity_log.metadata`.
+
 ## Shareable demo websites
 
 Qualified Local Business Finder results can generate a prospect-facing website concept without creating another Vercel function or exposing database credentials. The browser builds structured preview content in `assets/js/local-business/website-preview-generator.mjs`, then the existing server-only persistence route stores the sanitized JSON as a `website_demo_generated` activity event with a random UUID share token.
