@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Demo Website Builder — FirstCustomer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f7fb;color:#101828}.shell{max-width:1000px;margin:0 auto;padding:34px 22px 70px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:42px}.brand{font-size:20px;font-weight:900}.brand span{color:#625bf6}.back{font-size:12px;color:#475467;text-decoration:none}.hero{max-width:760px;margin-bottom:28px}.eyebrow{font-size:11px;color:#625bf6;font-weight:850;text-transform:uppercase;letter-spacing:.12em}.hero h1{font-size:clamp(34px,5vw,56px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 14px}.hero p{font-size:15px;color:#667085;line-height:1.7;margin:0}.panel{background:#fff;border:1px solid #e4e7ec;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(16,24,40,.06)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field label{display:block;font-size:11px;font-weight:750;color:#344054;margin-bottom:6px}.field input{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;color:#101828;background:#fff}.field input:focus{outline:2px solid #c7d7fe;border-color:#7f89ff}.wide{grid-column:1/-1}.optional{font-weight:500;color:#98a2b3}.check{display:flex;gap:9px;align-items:flex-start;margin:18px 0;color:#475467;font-size:12px;line-height:1.5}.check input{margin-top:3px}.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;font-size:12px;cursor:pointer}.btn-primary{background:#625bf6;color:#fff}.btn-primary:disabled{opacity:.55;cursor:wait}.hint{font-size:11px;color:#98a2b3}.result{margin-top:18px;border-radius:16px;padding:18px;background:#f8f9ff;border:1px solid #d9ddff}.result h2{font-size:16px;margin:0 0 8px}.result p{font-size:12px;color:#667085;line-height:1.6;margin:0 0 12px}.result-actions{display:flex;gap:8px;flex-wrap:wrap}.link{display:inline-flex;padding:10px 14px;border-radius:9px;background:#111827;color:#fff;font-size:11px;font-weight:800;text-decoration:none}.copy{background:#fff;border:1px solid #d0d5dd;color:#344054}.status{font-size:12px;margin-top:14px;color:#475467}.error{color:#b42318}.note{margin-top:20px;border-left:3px solid #625bf6;background:#fff;padding:13px 16px;font-size:11px;color:#667085;line-height:1.6}.hidden{display:none!important}
+@media(max-width:680px){.shell{padding:24px 14px 50px}.top{margin-bottom:30px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.panel{padding:18px}.actions{align-items:stretch}.btn{width:100%}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><div class="brand">First<span>Customer</span></div><a class="back" href="/tools/">← Back to workspace</a></div>
+  <section class="hero"><div class="eyebrow">Demo Website Builder</div><h1>Turn a business lead into something you can show.</h1><p>Enter verified public business details. FirstCustomer creates a polished concept website, stores it securely, and gives you a shareable link for outreach. If the business has a current website, you can audit it first so the concept is informed by real gaps.</p></section>
+  <form class="panel" id="demoForm">
+    <div class="grid">
+      <div class="field"><label for="businessName">Business name</label><input id="businessName" required maxlength="100" placeholder="e.g. Smile Dental Clinic"></div>
+      <div class="field"><label for="category">Business category</label><input id="category" required maxlength="80" placeholder="e.g. Dentist"></div>
+      <div class="field"><label for="location">City / area <span class="optional">(optional)</span></label><input id="location" maxlength="100" placeholder="e.g. Malkajgiri, Hyderabad"></div>
+      <div class="field"><label for="phone">Phone <span class="optional">(optional)</span></label><input id="phone" maxlength="40" placeholder="+91..."></div>
+      <div class="field"><label for="email">Email <span class="optional">(optional)</span></label><input id="email" type="email" maxlength="120" placeholder="contact@example.com"></div>
+      <div class="field"><label for="website">Existing website <span class="optional">(optional)</span></label><input id="website" maxlength="2048" placeholder="https://example.com"></div>
+      <div class="field wide"><label for="address">Address <span class="optional">(optional)</span></label><input id="address" maxlength="180" placeholder="Verified public business address"></div>
+      <div class="field"><label for="rating">Public rating <span class="optional">(optional)</span></label><input id="rating" type="number" min="0" max="5" step="0.1" placeholder="4.7"></div>
+      <div class="field"><label for="reviews">Review count <span class="optional">(optional)</span></label><input id="reviews" type="number" min="0" step="1" placeholder="120"></div>
+    </div>
+    <label class="check"><input id="runAudit" type="checkbox" checked><span>Audit the existing website first when a valid website URL is provided. If the audit cannot run, the demo will still be generated from the verified details above.</span></label>
+    <div class="actions"><button class="btn btn-primary" id="generateButton" type="submit">Generate Shareable Demo</button><span class="hint">No service claims or missing ratings are invented.</span></div>
+    <div class="status" id="status" role="status"></div>
+    <section class="result hidden" id="result"><h2>Demo ready</h2><p id="resultText"></p><div class="result-actions"><a class="link" id="previewLink" target="_blank" rel="noopener noreferrer">Open Demo Website</a><button class="btn copy" id="copyLink" type="button">Copy Demo Link</button><button class="btn copy" id="copyOutreach" type="button">Copy Outreach</button></div></section>
+  </form>
+  <div class="note"><strong>Concept safety:</strong> the generated page is a sales/demo concept, not a published business website. Verify services, claims, branding, contact details and permissions with the business before using the content as a final site.</div>
+</main>
+<script type="module" src="/demo/demo.js"></script>
+</body>
+</html>
