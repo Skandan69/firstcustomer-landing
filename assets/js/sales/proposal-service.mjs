@@ -24,3 +24,8 @@ export async function publicProposal(token) {
   const payload = await request('public_proposal', { token });
   return payload.item || null;
 }
+
+export async function sendProposalResponse(token,response,message='') {
+  const payload = await request('proposal_response', { method: 'POST', token, body: { response, message: String(message || '').slice(0,600) } });
+  return payload.item || null;
+}
