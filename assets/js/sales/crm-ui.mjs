@@ -24,6 +24,7 @@ export function renderCrm(savedLeads = [], activities = []) {
     ['Proposal value', currency(s.proposalValue), false],
     ['Won value', currency(s.wonValue), false],
     ['Won', s.won, false],
+    ['Client responses', s.clientResponses, false],
     ['Follow-ups due', s.followupsDue, Boolean(s.followupsDue)]
   ].map(([label, value, due]) => `<div class="lbf-crm-metric${due ? ' due' : ''}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
 
@@ -89,6 +90,7 @@ function renderCard(lead) {
     <h4>${escapeHtml(name)}</h4>
     <small>${escapeHtml(business.category || 'Local business')}</small>
     ${lead.projectFee ? `<div class="lbf-crm-value">${currency(lead.projectFee)}</div>` : ''}
+    ${lead.proposalResponse?.response ? `<div class="lbf-crm-response ${escapeHtml(lead.proposalResponse.response)}">Client: ${lead.proposalResponse.response === 'interested' ? 'Interested' : 'Requested changes'}${lead.proposalResponse.message ? `<small>${escapeHtml(lead.proposalResponse.message)}</small>` : ''}</div>` : ''}
     <select aria-label="CRM stage for ${escapeHtml(name)}" data-crm-stage="${escapeHtml(lead.businessId)}">${options}</select>
     ${next ? `<div class="lbf-crm-next${next.overdue ? ' overdue' : ''}"><b>Next:</b> ${escapeHtml(next.text || 'Follow up')}${next.dueAt ? `<br>${escapeHtml(next.dueAt)}` : ''}</div>` : ''}
     <div class="lbf-crm-card-actions">
