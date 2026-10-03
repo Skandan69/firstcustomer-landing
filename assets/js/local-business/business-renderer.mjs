@@ -1,3 +1,4 @@
+import { evaluateOpportunity } from './opportunity-engine.mjs';
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
 const safeUrl = (value = '') => { try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
 const phoneDigits = (value = '') => String(value).replace(/\D/g, '');
@@ -11,16 +12,23 @@ export function renderBusinessCard(business, auditState = null) {
   const ratingSummary = business.provider === 'openstreetmap' ? 'Rating unavailable from Open Data' : business.rating === null ? 'Rating not available' : `${escapeHtml(business.rating)} ★${business.reviewCount === null ? '' : ` · ${escapeHtml(business.reviewCount)} reviews`}`;
   const key = `${business.provider}:${business.providerId}`;
   const hasAudit = Boolean(auditState);
+  const opportunity = business.opportunity || evaluateOpportunity(business, auditState?.audit);
   const websiteBadge = auditState?.status === 'ready' ? `Website Health ${auditState.audit.healthScore}/100` : 'Website Available — Not Audited';
+  const reasonHtml = (opportunity.reasons || []).slice(0, 3).map((reason) => `<span>${escapeHtml(reason)}</span>`).join('');
   return `<article class="lbf-card${hasAudit ? ' lbf-card-auditing' : ''}">
     <div class="lbf-card-head"><div><h3>${escapeHtml(business.name || 'Unnamed business')}</h3><div class="lbf-category">${escapeHtml(business.category || 'Local business')}</div></div><div class="lbf-rating">${ratingSummary}</div></div>
+    <section class="lbf-opportunity-band ${escapeHtml(opportunity.level)}" aria-label="Lead opportunity">
+      <div class="lbf-opportunity-score"><strong>${escapeHtml(opportunity.score)}</strong><span>Opportunity</span></div>
+      <div class="lbf-opportunity-copy"><b>${escapeHtml(opportunity.label)}</b><span><strong>Best offer:</strong> ${escapeHtml(opportunity.recommendedService)}</span><span><strong>Next:</strong> ${escapeHtml(opportunity.nextAction)}</span></div>
+      <div class="lbf-opportunity-confidence">Confidence<br><b>${escapeHtml(opportunity.confidence)}</b></div>
+    </section>
+    ${reasonHtml ? `<div class="lbf-opportunity-reasons">${reasonHtml}</div>` : ''}
     <div class="lbf-meta"><div>${escapeHtml(business.address || 'Address unavailable')}</div><div>${phone ? escapeHtml(phone) : 'No public phone'}</div><div>${website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(business.website)}</a>` : 'No website'}</div>${business.openingHours ? `<div>Opening hours: ${escapeHtml(business.openingHours)}</div>` : ''}</div>
     <div class="lbf-badges"><span class="lbf-badge lbf-source-badge">${sourceLabel}</span>${business.matchedCategory ? `<span class="lbf-badge lbf-match-badge" title="${escapeHtml(business.matchReason || '')}">Matched: ${escapeHtml(business.category || business.matchedCategory)}${business.matchConfidence === null || business.matchConfidence === undefined ? '' : ` · ${Math.round(Number(business.matchConfidence) * 100)}%`}</span>` : ''}<span class="lbf-badge ${auditState?.status === 'ready' ? 'available' : website ? 'unknown' : 'no-website'}">${website ? escapeHtml(websiteBadge) : 'No Website'}</span>${business.businessStatus ? `<span class="lbf-badge operational">${escapeHtml(formatStatus(business.businessStatus))}</span>` : ''}</div>
-    <div class="lbf-actions">${sourceUrl ? `<a class="lbf-action primary" data-view-business="${escapeHtml(key)}" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">View source</a>` : ''}${digits ? `<a class="lbf-action" href="tel:${digits}">Call</a><a class="lbf-action" href="https://wa.me/${digits}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ''}<button class="lbf-action" type="button" data-save-business="${escapeHtml(key)}">Save Lead</button><button class="lbf-action" type="button" data-audit-business="${escapeHtml(key)}" ${website ? '' : 'disabled title="No website is available to audit"'}>${auditState?.status === 'loading' ? 'Auditing…' : auditState?.status === 'ready' ? 'View Website Intelligence' : 'Audit Website'}</button></div>
+    <div class="lbf-actions">${sourceUrl ? `<a class="lbf-action primary" data-view-business="${escapeHtml(key)}" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">View source</a>` : ''}${digits ? `<a class="lbf-action" href="tel:${digits}">Call</a><a class="lbf-action" href="https://wa.me/${digits}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ''}<button class="lbf-action" type="button" data-save-business="${escapeHtml(key)}">Save Lead</button><button class="lbf-action lbf-action-audit" type="button" data-audit-business="${escapeHtml(key)}" ${website ? '' : 'disabled title="No website is available to audit"'}>${auditState?.status === 'loading' ? 'Auditing…' : auditState?.status === 'ready' ? 'View Website Intelligence' : 'Audit Website'}</button></div>
     ${renderAuditState(auditState, key)}
   </article>`;
 }
-
 export function renderWebsiteAudit(audit, cached, key) {
   const sections = [
     ['Website Health', [

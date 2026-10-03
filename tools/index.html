@@ -2233,9 +2233,9 @@ free resume template,18,890,2.0%,14.1"></textarea>
       <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">You now know more about digital marketing than most business owners</div>
       <div style="color:var(--muted);font-size:13px;margin-bottom:16px">Knowledge is only valuable when you act on it. Pick one thing from this guide and do it today.</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button onclick="switchPage('rank')" class="btn btn-primary" style="font-size:12px">Start with Rank Tracker →</button>
-        <button onclick="switchPage('leads')" class="btn btn-ghost" style="font-size:12px">Find your first lead →</button>
-        <button onclick="switchPage('content')" class="btn btn-ghost" style="font-size:12px">Write your first article →</button>
+        <button onclick="switchPage('localGigs')" class="btn btn-primary" style="font-size:12px">Find local opportunities →</button>
+        <button onclick="switchPage('signal')" class="btn btn-ghost" style="font-size:12px">Hunt buying signals →</button>
+        <button onclick="switchPage('rank')" class="btn btn-ghost" style="font-size:12px">Track your SEO →</button>
       </div>
     </div>
 
@@ -2245,7 +2245,7 @@ free resume template,18,890,2.0%,14.1"></textarea>
 </div><!-- /page-guide -->
 <div class="page" id="page-localGigs">
   <main class="lbf-shell">
-    <header class="lbf-hero"><div><div class="lbf-eyebrow">FirstCustomer</div><h2>Local Business Finder</h2><p>Discover local businesses, evaluate their online presence, and identify the strongest opportunities to contact.</p></div><div class="lbf-pill">Secure Google Places search</div></header>
+    <header class="lbf-hero"><div><div class="lbf-eyebrow">FirstCustomer · Discover → Analyse → Prioritise</div><h2>Find the businesses worth contacting first</h2><p>Discover local businesses, measure their digital gaps, and rank the strongest sales opportunities with clear reasons and a recommended offer.</p></div><div class="lbf-pill">Opportunity Intelligence</div></header>
     <form class="lbf-panel" id="lbfSearchForm">
       <div class="lbf-search-grid lbf-search-grid-provider">
         <div class="lbf-field"><label for="lbfLocation">Location</label><input id="lbfLocation" name="location" required maxlength="120" placeholder="e.g. Malkajgiri, Hyderabad" autocomplete="address-level2"></div>
@@ -2257,9 +2257,9 @@ free resume template,18,890,2.0%,14.1"></textarea>
     </form>
     <p class="lbf-search-context" id="lbfSearchContext">Location is required. Category is optional and helps target the search.</p>
     <div class="lbf-persistence-actions"><button class="lbf-action" id="lbfSaveSearch" type="button">Save Current Search</button><span id="lbfPersistenceMessage" role="status"></span></div>
-    <section class="lbf-stats" aria-label="Result summary"><div class="lbf-stat"><div class="lbf-stat-label">Businesses found</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">No website</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Website available</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Phone available</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Average rating</div><div class="lbf-stat-value" data-stat>—</div></div></section>
+    <section class="lbf-stats" aria-label="Result summary"><div class="lbf-stat"><div class="lbf-stat-label">Businesses found</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">No website</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Website available</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Phone available</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat lbf-stat-priority"><div class="lbf-stat-label">High opportunity</div><div class="lbf-stat-value" data-stat>0</div></div><div class="lbf-stat"><div class="lbf-stat-label">Average rating</div><div class="lbf-stat-value" data-stat>—</div></div></section><p class="lbf-opportunity-help">Opportunity scores combine business strength (contactability, ratings, reviews) with digital gaps. Website audit findings automatically refine the score.</p>
     <div class="lbf-provider-notice" id="lbfProviderNotice" hidden></div>
-    <section class="lbf-filter-bar" id="lbfFilters" aria-label="Business filters"><div class="lbf-filter-tabs"><button class="lbf-filter-btn active" type="button" data-filter="website:all">All businesses</button><button class="lbf-filter-btn" type="button" data-filter="website:none">No website</button><button class="lbf-filter-btn" type="button" data-filter="website:available">Website available</button><button class="lbf-filter-btn" type="button" data-filter="rating:4">Rating 4.0+</button><button class="lbf-filter-btn" type="button" data-filter="rating:4.5">Rating 4.5+</button><button class="lbf-filter-btn" type="button" data-filter="reviews:20">20+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="reviews:50">50+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="phone:true">Phone available</button><p class="lbf-filter-help" id="lbfGoogleFilterHelp" hidden>Rating and review filters are unavailable for Open Data because OpenStreetMap does not provide those fields.</p></div><select class="lbf-filter-select" id="lbfSourceFilter" aria-label="Filter by source"><option value="">All sources</option></select><select class="lbf-filter-select" id="lbfCategoryFilter" aria-label="Filter by business category"><option value="">All categories</option></select><select class="lbf-filter-select" id="lbfStatusFilter" aria-label="Filter by business status"><option value="">All business statuses</option></select><select class="lbf-filter-select" id="lbfSort" aria-label="Sort businesses"><option value="website-opportunity">Sort: Website Opportunity</option><option value="rating">Sort: Rating</option><option value="reviews">Sort: Review count</option><option value="name">Sort: Business name</option></select></section>
+    <section class="lbf-filter-bar" id="lbfFilters" aria-label="Business filters"><div class="lbf-filter-tabs"><button class="lbf-filter-btn active" type="button" data-filter="website:all">All businesses</button><button class="lbf-filter-btn" type="button" data-filter="website:none">No website</button><button class="lbf-filter-btn" type="button" data-filter="website:available">Website available</button><button class="lbf-filter-btn" type="button" data-filter="rating:4">Rating 4.0+</button><button class="lbf-filter-btn" type="button" data-filter="rating:4.5">Rating 4.5+</button><button class="lbf-filter-btn" type="button" data-filter="reviews:20">20+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="reviews:50">50+ reviews</button><button class="lbf-filter-btn" type="button" data-filter="phone:true">Phone available</button><button class="lbf-filter-btn" type="button" data-filter="opportunity:70">High opportunity 70+</button><p class="lbf-filter-help" id="lbfGoogleFilterHelp" hidden>Rating and review filters are unavailable for Open Data because OpenStreetMap does not provide those fields.</p></div><select class="lbf-filter-select" id="lbfSourceFilter" aria-label="Filter by source"><option value="">All sources</option></select><select class="lbf-filter-select" id="lbfCategoryFilter" aria-label="Filter by business category"><option value="">All categories</option></select><select class="lbf-filter-select" id="lbfStatusFilter" aria-label="Filter by business status"><option value="">All business statuses</option></select><select class="lbf-filter-select" id="lbfSort" aria-label="Sort businesses"><option value="opportunity">Sort: Best Opportunities</option><option value="rating">Sort: Rating</option><option value="reviews">Sort: Review count</option><option value="name">Sort: Business name</option></select></section>
     <section class="lbf-results" id="lbfResults" aria-live="polite"></section>
     <div class="lbf-pagination"><button class="lbf-search-btn" id="lbfLoadMore" type="button" hidden>Load More Businesses</button><p id="lbfPaginationMessage" aria-live="polite"></p></div>
     <section class="lbf-persistence" id="lbfPersistence" aria-label="Saved business workspace"><div><h3>Saved Businesses</h3><div id="lbfSavedLeads"></div></div><div><h3>Saved Searches</h3><div id="lbfSavedSearches"></div></div><div><h3>Search History</h3><div id="lbfSearchHistory"></div></div></section>
@@ -3893,7 +3893,7 @@ function renderDashboard(){
   const feedEl=document.getElementById("dashActivityFeed");
   if(feedEl){
     if(!acts.length){
-      feedEl.innerHTML=`<span style="font-size:12px;color:#444">No activity yet — start by scanning your website in Rank Tracker or hunting signals.</span>`;
+      feedEl.innerHTML=`<span style="font-size:12px;color:#444">No activity yet — start with Local Business Finder to discover and rank prospects, or hunt online buying signals.</span>`;
     } else {
       const ACT_LABELS={
         article_generated:"📄 Article written",
@@ -3935,29 +3935,50 @@ function renderNextAction(p, acts){
   const buriedKws=rtData.filter(r=>r.position>=50).length;
   const contentCount=acts.filter(a=>a.action==="article_generated").length;
 
-  // Priority logic — most impactful action first
-  if(noKeywords){
-    el.innerHTML=`<strong style="color:#22c55e">Start with Rank Tracker →</strong><br>You haven't tracked any keywords yet. Paste your website URL there to see where you rank on Google and what to improve first.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Rank Tracker →"; btn.onclick=()=>switchPage("rank"); }
-  } else if(buriedKws>0&&contentCount===0){
-    el.innerHTML=`<strong style="color:#f472b6">Create your first SEO article →</strong><br>You have <strong style="color:#fff">${buriedKws} keywords buried</strong> at position 50+. Go to Content Studio → Article Writer → type one of those keywords → generate and publish the article on your site.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Content Studio →"; btn.onclick=()=>switchPage("content"); }
-  } else if(uncontacted>0){
-    el.innerHTML=`<strong style="color:#34d399">${uncontacted} lead${uncontacted>1?"s":""} waiting →</strong><br>You have saved leads you haven't contacted yet. Go to Lead Finder → Saved Leads → click View post → send the outreach message → update status to Contacted.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Lead Finder →"; btn.onclick=()=>switchPage("leads"); }
+  const show=(html,label,handler)=>{
+    el.innerHTML=html;
+    if(btn){ btn.style.display="block"; btn.textContent=label; btn.onclick=handler; }
+  };
+
+  // Customer-acquisition actions come before secondary marketing tools.
+  if(uncontacted>0){
+    show(
+      `<strong style="color:#34d399">${uncontacted} lead${uncontacted>1?"s":""} waiting →</strong><br>You already have prospects saved. Contact them while the context is fresh, then update their status so FirstCustomer can keep your pipeline moving.`,
+      "Open Lead Finder →",
+      ()=>switchPage("leads")
+    );
+  } else if(lfSaved.length===0){
+    show(
+      `<strong style="color:#818cf8">Find businesses worth contacting →</strong><br>Start with Local Business Finder. Search a location and category, rank prospects by opportunity, audit the strongest websites, then save the best leads.`,
+      "Find Local Opportunities →",
+      ()=>switchPage("localGigs")
+    );
   } else if(daysSinceSignal>2){
-    el.innerHTML=`<strong style="color:#c084fc">Hunt new signals →</strong><br>It's been ${daysSinceSignal>30?"a while":Math.floor(daysSinceSignal)+" days"} since your last signal hunt. People are posting problems that match your product right now. Run a scan to find them.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Hunt Signals →"; btn.onclick=()=>{}; }
-  } else if(buriedKws>0){
-    el.innerHTML=`<strong style="color:#fbbf24">${buriedKws} keywords to improve →</strong><br>Click the <strong style="color:#fff">Tips 💡</strong> button on any buried keyword in Rank Tracker — it gives you exact steps to create a page that ranks.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Rank Tracker →"; btn.onclick=()=>switchPage("rank"); }
+    show(
+      `<strong style="color:#c084fc">Hunt new buying signals →</strong><br>People are posting problems that match your offer right now. Run Signal Hunter to find fresh demand beyond local-business discovery.`,
+      "Hunt Signals →",
+      ()=>switchPage("signal")
+    );
+  } else if(noKeywords){
+    show(
+      `<strong style="color:#22c55e">Strengthen your own acquisition site →</strong><br>You have prospecting activity underway. Add your keywords to Rank Tracker so you can also grow inbound traffic while outreach runs.`,
+      "Open Rank Tracker →",
+      ()=>switchPage("rank")
+    );
+  } else if(buriedKws>0&&contentCount===0){
+    show(
+      `<strong style="color:#f472b6">Create your first SEO article →</strong><br>You have <strong style="color:#fff">${buriedKws} keywords buried</strong> at position 50+. Use Content Studio to publish around one of those opportunities.`,
+      "Open Content Studio →",
+      ()=>switchPage("content")
+    );
   } else {
-    el.innerHTML=`<strong style="color:#22c55e">You're doing great!</strong><br>Keep publishing content for your tracked keywords and checking positions weekly. Each new page you create compounds your SEO results over time.`;
-    if(btn){ btn.style.display="none"; }
+    show(
+      `<strong style="color:#818cf8">Build your next sales opportunity →</strong><br>Use Local Business Finder to discover another prospect, audit its website, and prioritize the businesses with the clearest digital gap.`,
+      "Find More Opportunities →",
+      ()=>switchPage("localGigs")
+    );
   }
 }
-
-// ── Cross-tab auto-fill from profile ──
 function profileAutoFill(page){
   const p=getProfile();
   if(!p.website&&!p.niche) return;

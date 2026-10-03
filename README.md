@@ -25,6 +25,17 @@ The engine is modular:
 
 Apply `supabase/migrations/202607130001_website_intelligence.sql` before deploying the feature. Audits are scoped to the anonymous local workspace and reused for 24 hours. The **Refresh audit** action explicitly bypasses that recent-audit cache. The audit is a fast structural inspection, not a full browser crawl: it does not execute JavaScript, measure Core Web Vitals, validate every schema object, inspect certificate expiry, or crawl secondary pages.
 
+## Opportunity Engine
+
+The Local Business Finder now ranks businesses by an explainable lead-opportunity score instead of relying on a simple no-website sort. The browser-side `assets/js/local-business/opportunity-engine.mjs` combines two evidence groups:
+
+- **Business strength:** public phone availability, operational status, Google rating, and review volume.
+- **Digital gap:** no website, or Website Intelligence audit findings when an audit exists.
+
+The score is deterministic and capped at 100. It also returns a priority level, confidence label, recommended service, next action, and the strongest reasons behind the score. Open Data records with missing ratings/reviews are not promoted to high priority solely because a website is absent; evidence confidence remains visible.
+
+Auditing a website automatically refines the opportunity because the existing Website Intelligence `opportunityScore` and recommendations replace the preliminary website-unknown signal. No new database migration is required because opportunity intelligence is derived from the canonical business and saved audit data.
+
 ## Google Analytics 4
 
 GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
