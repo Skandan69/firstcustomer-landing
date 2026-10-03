@@ -1,6 +1,6 @@
 (function(root,factory){const createAnalytics=factory();if(typeof module==='object'&&module.exports)module.exports={createAnalytics};else root.analytics=createAnalytics(root);})(typeof globalThis!=='undefined'?globalThis:this,function(){
   const MEASUREMENT_ID='G-WKVRV08E16';
-  const EVENTS=new Set(['page_view','business_search','save_lead','remove_lead','save_search','generate_audit','generate_website','proposal_generated']);
+  const EVENTS=new Set(['page_view','business_search','save_lead','remove_lead','save_search','generate_audit','generate_website','outreach_generated','proposal_generated']);
   function createAnalytics(root){
     if(root.__firstCustomerAnalytics)return root.__firstCustomerAnalytics;
     const api={measurementId:MEASUREMENT_ID,track};root.__firstCustomerAnalytics=api;
