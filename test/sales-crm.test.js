@@ -83,7 +83,7 @@ test('proposal save uses existing activity log and public lookup exposes no work
 test('CRM event allowlist accepts stage, follow-up, won and lost events',async()=>{
   configure();const old=global.fetch;global.fetch=async()=>response([{id:'activity'}]);
   try{
-    for(const eventType of ['crm_stage_changed','crm_next_action_set','crm_followup_logged','outreach_sent','proposal_status_changed','lead_won','lead_lost']){
+    for(const eventType of ['crm_stage_changed','crm_next_action_set','crm_followup_logged','outreach_sent','proposal_status_changed','proposal_response','lead_won','lead_lost']){
       const out=res();
       await handler({method:'POST',query:{resource:'activity_log'},headers:{'x-workspace-id':WORKSPACE},body:{eventType,businessId:BUSINESS,metadata:{stage:'contacted'}}},out);
       assert.equal(out.statusCode,201,eventType);
@@ -99,4 +99,10 @@ test('public proposal renderer uses safe text rendering and supports print-to-PD
   assert.match(js,/textContent/);
   assert.match(html,/window\.print/);
   assert.match(html,/noindex,nofollow/);
+});
+
+test('public proposal responses resolve back to the originating workspace without exposing it',async()=>{
+  configure();const old=global.fetch;let call=0,inserted;
+  global.fetch=async(_url,options={})=>{call++;if(call===1)return response([{workspace_id:WORKSPACE,business_id:BUSINESS}]);inserted=JSON.parse(options.body);return response([{id:'response-1',created_at:'2026-10-03T00:00:00Z'}]);};
+  try{const out=res();await handler({method:'POST',query:{resource:'proposal_response',token:TOKEN},headers:{},body:{response:'interested',message:'Please call me'}},out);assert.equal(out.statusCode,201);assert.equal(inserted.workspace_id,WORKSPACE);assert.equal(inserted.business_id,BUSINESS);assert.equal(inserted.event_type,'proposal_response');assert.equal(inserted.metadata.response,'interested');assert.equal(JSON.stringify(out.body).includes(WORKSPACE),false);}finally{global.fetch=old;}
 });
