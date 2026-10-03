@@ -6,7 +6,7 @@ async function request(resource,{method='GET',body,token=''}={}) {
   const query = new URLSearchParams({ resource });
   if (token) query.set('token', token);
   const headers = { 'Content-Type': 'application/json' };
-  if (resource !== 'public_proposal') headers['X-Workspace-Id'] = workspaceId();
+  if (!['public_proposal','proposal_response'].includes(resource)) headers['X-Workspace-Id'] = workspaceId();
   const response = await fetch(`${ENDPOINT}?${query}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw Object.assign(new Error(payload.error?.message || 'Proposal service is temporarily unavailable.'), { code: payload.error?.code || 'PROPOSAL_FAILED', status: response.status });
