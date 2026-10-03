@@ -2233,9 +2233,9 @@ free resume template,18,890,2.0%,14.1"></textarea>
       <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">You now know more about digital marketing than most business owners</div>
       <div style="color:var(--muted);font-size:13px;margin-bottom:16px">Knowledge is only valuable when you act on it. Pick one thing from this guide and do it today.</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button onclick="switchPage('rank')" class="btn btn-primary" style="font-size:12px">Start with Rank Tracker →</button>
-        <button onclick="switchPage('leads')" class="btn btn-ghost" style="font-size:12px">Find your first lead →</button>
-        <button onclick="switchPage('content')" class="btn btn-ghost" style="font-size:12px">Write your first article →</button>
+        <button onclick="switchPage('localGigs')" class="btn btn-primary" style="font-size:12px">Find local opportunities →</button>
+        <button onclick="switchPage('signal')" class="btn btn-ghost" style="font-size:12px">Hunt buying signals →</button>
+        <button onclick="switchPage('rank')" class="btn btn-ghost" style="font-size:12px">Track your SEO →</button>
       </div>
     </div>
 
@@ -3893,7 +3893,7 @@ function renderDashboard(){
   const feedEl=document.getElementById("dashActivityFeed");
   if(feedEl){
     if(!acts.length){
-      feedEl.innerHTML=`<span style="font-size:12px;color:#444">No activity yet — start by scanning your website in Rank Tracker or hunting signals.</span>`;
+      feedEl.innerHTML=`<span style="font-size:12px;color:#444">No activity yet — start with Local Business Finder to discover and rank prospects, or hunt online buying signals.</span>`;
     } else {
       const ACT_LABELS={
         article_generated:"📄 Article written",
@@ -3935,29 +3935,50 @@ function renderNextAction(p, acts){
   const buriedKws=rtData.filter(r=>r.position>=50).length;
   const contentCount=acts.filter(a=>a.action==="article_generated").length;
 
-  // Priority logic — most impactful action first
-  if(noKeywords){
-    el.innerHTML=`<strong style="color:#22c55e">Start with Rank Tracker →</strong><br>You haven't tracked any keywords yet. Paste your website URL there to see where you rank on Google and what to improve first.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Rank Tracker →"; btn.onclick=()=>switchPage("rank"); }
-  } else if(buriedKws>0&&contentCount===0){
-    el.innerHTML=`<strong style="color:#f472b6">Create your first SEO article →</strong><br>You have <strong style="color:#fff">${buriedKws} keywords buried</strong> at position 50+. Go to Content Studio → Article Writer → type one of those keywords → generate and publish the article on your site.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Content Studio →"; btn.onclick=()=>switchPage("content"); }
-  } else if(uncontacted>0){
-    el.innerHTML=`<strong style="color:#34d399">${uncontacted} lead${uncontacted>1?"s":""} waiting →</strong><br>You have saved leads you haven't contacted yet. Go to Lead Finder → Saved Leads → click View post → send the outreach message → update status to Contacted.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Lead Finder →"; btn.onclick=()=>switchPage("leads"); }
+  const show=(html,label,handler)=>{
+    el.innerHTML=html;
+    if(btn){ btn.style.display="block"; btn.textContent=label; btn.onclick=handler; }
+  };
+
+  // Customer-acquisition actions come before secondary marketing tools.
+  if(uncontacted>0){
+    show(
+      `<strong style="color:#34d399">${uncontacted} lead${uncontacted>1?"s":""} waiting →</strong><br>You already have prospects saved. Contact them while the context is fresh, then update their status so FirstCustomer can keep your pipeline moving.`,
+      "Open Lead Finder →",
+      ()=>switchPage("leads")
+    );
+  } else if(lfSaved.length===0){
+    show(
+      `<strong style="color:#818cf8">Find businesses worth contacting →</strong><br>Start with Local Business Finder. Search a location and category, rank prospects by opportunity, audit the strongest websites, then save the best leads.`,
+      "Find Local Opportunities →",
+      ()=>switchPage("localGigs")
+    );
   } else if(daysSinceSignal>2){
-    el.innerHTML=`<strong style="color:#c084fc">Hunt new signals →</strong><br>It's been ${daysSinceSignal>30?"a while":Math.floor(daysSinceSignal)+" days"} since your last signal hunt. People are posting problems that match your product right now. Run a scan to find them.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Hunt Signals →"; btn.onclick=()=>{}; }
-  } else if(buriedKws>0){
-    el.innerHTML=`<strong style="color:#fbbf24">${buriedKws} keywords to improve →</strong><br>Click the <strong style="color:#fff">Tips 💡</strong> button on any buried keyword in Rank Tracker — it gives you exact steps to create a page that ranks.`;
-    if(btn){ btn.style.display="block"; btn.textContent="Open Rank Tracker →"; btn.onclick=()=>switchPage("rank"); }
+    show(
+      `<strong style="color:#c084fc">Hunt new buying signals →</strong><br>People are posting problems that match your offer right now. Run Signal Hunter to find fresh demand beyond local-business discovery.`,
+      "Hunt Signals →",
+      ()=>switchPage("signal")
+    );
+  } else if(noKeywords){
+    show(
+      `<strong style="color:#22c55e">Strengthen your own acquisition site →</strong><br>You have prospecting activity underway. Add your keywords to Rank Tracker so you can also grow inbound traffic while outreach runs.`,
+      "Open Rank Tracker →",
+      ()=>switchPage("rank")
+    );
+  } else if(buriedKws>0&&contentCount===0){
+    show(
+      `<strong style="color:#f472b6">Create your first SEO article →</strong><br>You have <strong style="color:#fff">${buriedKws} keywords buried</strong> at position 50+. Use Content Studio to publish around one of those opportunities.`,
+      "Open Content Studio →",
+      ()=>switchPage("content")
+    );
   } else {
-    el.innerHTML=`<strong style="color:#22c55e">You're doing great!</strong><br>Keep publishing content for your tracked keywords and checking positions weekly. Each new page you create compounds your SEO results over time.`;
-    if(btn){ btn.style.display="none"; }
+    show(
+      `<strong style="color:#818cf8">Build your next sales opportunity →</strong><br>Use Local Business Finder to discover another prospect, audit its website, and prioritize the businesses with the clearest digital gap.`,
+      "Find More Opportunities →",
+      ()=>switchPage("localGigs")
+    );
   }
 }
-
-// ── Cross-tab auto-fill from profile ──
 function profileAutoFill(page){
   const p=getProfile();
   if(!p.website&&!p.niche) return;
