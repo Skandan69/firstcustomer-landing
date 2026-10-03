@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Proposal Builder — FirstCustomer</title>
+<script src="/assets/js/analytics.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f7fb;color:#101828}.shell{max-width:1080px;margin:0 auto;padding:30px 22px 70px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}.brand{font-size:20px;font-weight:900}.brand span{color:#635bdb}.back{font-size:12px;color:#475467;text-decoration:none}.hero{max-width:760px;margin-bottom:24px}.eyebrow{font-size:11px;color:#635bdb;text-transform:uppercase;letter-spacing:.12em;font-weight:850}.hero h1{font-size:42px;line-height:1.05;letter-spacing:-.04em;margin:10px 0 12px}.hero p{color:#667085;font-size:14px;line-height:1.7}.layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px}.panel{background:#fff;border:1px solid #e4e7ec;border-radius:18px;padding:22px;box-shadow:0 10px 32px rgba(16,24,40,.05)}.panel h2{font-size:15px;margin:0 0 16px}.field{margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:750;color:#344054;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #d0d5dd;border-radius:9px;background:#fff;color:#101828;font:inherit;font-size:12px;padding:10px 11px}.field textarea{min-height:100px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid #d9ddff;border-color:#7f75e8}.business-card{background:#f8f9ff;border:1px solid #dfe3ff;border-radius:13px;padding:15px;margin-bottom:18px}.business-card strong{display:block;font-size:14px}.business-card span{display:block;color:#667085;font-size:11px;margin-top:4px}.proposal-preview{border:1px solid #eaecf0;border-radius:13px;overflow:hidden}.preview-head{background:#101828;color:#fff;padding:17px}.preview-head small{color:#98a2b3}.preview-head h3{font-family:Georgia,serif;font-size:23px;font-weight:500;margin:5px 0 0}.preview-body{padding:17px}.preview-section{padding:13px 0;border-bottom:1px solid #f2f4f7}.preview-section:last-child{border:0}.preview-section b{font-size:11px;color:#344054}.preview-section p{font-size:11px;color:#667085;line-height:1.6;margin:5px 0 0}.price-row{display:flex;justify-content:space-between;gap:20px;font-size:12px;padding-top:8px}.btn{width:100%;border:0;border-radius:10px;background:#635bdb;color:#fff;font-size:12px;font-weight:850;padding:12px 16px;cursor:pointer}.btn:disabled{opacity:.55;cursor:wait}.status{font-size:11px;line-height:1.5;color:#667085;margin-top:10px}.error{color:#b42318}.success{margin-top:14px;background:#ecfdf3;border:1px solid #abefc6;border-radius:12px;padding:14px}.success p{font-size:11px;color:#067647;margin:0 0 10px}.success-actions{display:flex;gap:8px;flex-wrap:wrap}.link{display:inline-flex;padding:8px 11px;border-radius:8px;text-decoration:none;background:#101828;color:#fff;font-size:10px;font-weight:800}.link.secondary{background:#fff;color:#344054;border:1px solid #d0d5dd}.hidden{display:none!important}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.hero h1{font-size:34px}.shell{padding:24px 14px 50px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><div class="brand">First<span>Customer</span></div><a class="back" href="/tools/">← Back to workspace</a></div>
+  <section class="hero"><div class="eyebrow">Sales Proposal Builder</div><h1>Turn a qualified lead into a proposal you can send today.</h1><p>Select a saved lead, edit the commercial terms, attach the latest demo website when one exists, and publish a private share link. The proposal stays factual and clearly separates observed opportunity signals from final agreed scope.</p></section>
+  <div class="layout">
+    <form class="panel" id="proposalForm">
+      <h2>Proposal settings</h2>
+      <div class="field"><label for="leadSelect">Saved lead</label><select id="leadSelect" required><option value="">Loading saved leads…</option></select></div>
+      <div class="business-card hidden" id="businessCard"><strong id="businessName"></strong><span id="businessMeta"></span><span id="businessOpportunity"></span></div>
+      <div class="field"><label for="packageSelect">Recommended package</label><select id="packageSelect"></select></div>
+      <div class="field"><label for="projectFee">Project fee (₹)</label><input id="projectFee" type="number" min="0" max="10000000" step="500" required></div>
+      <div class="field"><label for="depositPercent">Deposit (%)</label><input id="depositPercent" type="number" min="0" max="100" step="5" value="50"></div>
+      <div class="field"><label for="timeline">Timeline</label><input id="timeline" maxlength="80"></div>
+      <div class="field"><label for="validityDays">Proposal validity (days)</label><input id="validityDays" type="number" min="1" max="90" value="14"></div>
+      <div class="field"><label for="note">Optional project note</label><textarea id="note" maxlength="600" placeholder="Anything specific you want the prospect to see…"></textarea></div>
+      <button class="btn" id="generateButton" type="submit">Generate Shareable Proposal</button>
+      <div class="status" id="status" role="status"></div>
+      <div class="success hidden" id="success"><p>Proposal saved to the CRM and ready to share.</p><div class="success-actions"><a class="link" id="openProposal" target="_blank" rel="noopener noreferrer">Open Proposal</a><button class="link secondary" id="copyProposal" type="button">Copy Link</button><button class="link secondary" id="copyFollowup" type="button">Copy Follow-up</button></div></div>
+    </form>
+    <section class="panel">
+      <h2>Live proposal preview</h2>
+      <div class="proposal-preview"><div class="preview-head"><small>Digital growth proposal</small><h3 id="previewTitle">Select a saved lead</h3></div><div class="preview-body"><div class="preview-section"><b>Observed opportunity</b><p id="previewObserved">The strongest factual opportunity signals will appear here.</p></div><div class="preview-section"><b>Recommended scope</b><p id="previewScope">Choose a lead to see the recommended project scope.</p></div><div class="preview-section"><b>Investment</b><div class="price-row"><span>Project fee</span><strong id="previewPrice">₹0</strong></div><div class="price-row"><span>Deposit</span><strong id="previewDeposit">₹0</strong></div></div><div class="preview-section"><b>Demo website</b><p id="previewDemo">No demo linked yet.</p></div></div></div>
+    </section>
+  </div>
+</main>
+<script type="module" src="/proposal-builder/proposal-builder.js"></script>
+</body>
+</html>
