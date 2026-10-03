@@ -2,9 +2,10 @@ import { listSavedLeads, listActivity } from '/assets/js/local-business/persiste
 import { evaluateOpportunity } from '/assets/js/local-business/opportunity-engine.mjs';
 import { buildProposal, PROPOSAL_PACKAGES, recommendedPackage, formatInr } from '/assets/js/sales/proposal-generator.mjs';
 import { saveProposal } from '/assets/js/sales/proposal-service.mjs';
+import { getCachedWebsiteAudit } from '/assets/js/local-business/website-audit-service.mjs';
 
 const $=(id)=>document.getElementById(id);
-let leads=[],activities=[],selected=null,lastUrl='';
+let leads=[],activities=[],selected=null,selectedAudit=null,lastUrl='';
 
 init();
 
@@ -36,17 +37,18 @@ function fillPackages(){
   Object.entries(PROPOSAL_PACKAGES).forEach(([id,pkg])=>select.add(new Option(`${pkg.name} — ${formatInr(pkg.price)}`,id)));
 }
 
-function selectLead(id){
-  selected=leads.find((lead)=>lead.id===id)||null;
+async function selectLead(id){
+  selected=leads.find((lead)=>lead.id===id)||null;selectedAudit=null;
   $('success').classList.add('hidden');lastUrl='';
   if(!selected){$('businessCard').classList.add('hidden');renderPreview();return;}
   const business=toBusiness(selected.businesses||{});
-  const opportunity=evaluateOpportunity(business,null);
+  if(business.website){try{selectedAudit=await getCachedWebsiteAudit(business.website);}catch{selectedAudit=null;}}
+  const opportunity=evaluateOpportunity(business,selectedAudit);
   const packageId=recommendedPackage(business,opportunity);
   $('businessCard').classList.remove('hidden');
   text('businessName',business.name);
   text('businessMeta',[business.category,business.city,business.phone].filter(Boolean).join(' · '));
-  text('businessOpportunity',`Opportunity ${opportunity.score}/100 · ${opportunity.recommendedService}`);
+  text('businessOpportunity',`Opportunity ${opportunity.score}/100 · ${opportunity.recommendedService}${selectedAudit?' · recent audit applied':''}`);
   $('packageSelect').value=packageId;
   applyPackage(packageId,true);
 }
@@ -61,7 +63,7 @@ function applyPackage(id,overwrite){
 function renderPreview(){
   if(!selected){text('previewTitle','Select a saved lead');text('previewObserved','The strongest factual opportunity signals will appear here.');text('previewScope','Choose a lead to see the recommended project scope.');text('previewPrice','₹0');text('previewDeposit','₹0');text('previewDemo','No demo linked yet.');return;}
   const business=toBusiness(selected.businesses||{});
-  const opportunity=evaluateOpportunity(business,null);
+  const opportunity=evaluateOpportunity(business,selectedAudit);
   const packageId=$('packageSelect').value||recommendedPackage(business,opportunity);
   const previewUrl=findDemoUrl(business);
   const proposal=currentProposal(business,opportunity,packageId,previewUrl);
@@ -79,7 +81,7 @@ async function generate(event){
   const button=$('generateButton');button.disabled=true;button.textContent='Generating…';$('success').classList.add('hidden');
   try{
     const business=toBusiness(selected.businesses||{});
-    const opportunity=evaluateOpportunity(business,null);
+    const opportunity=evaluateOpportunity(business,selectedAudit);
     const packageId=$('packageSelect').value||recommendedPackage(business,opportunity);
     const previewUrl=findDemoUrl(business);
     const proposal=currentProposal(business,opportunity,packageId,previewUrl);
