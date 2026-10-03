@@ -1,10 +1,12 @@
-import { publicProposal } from '/assets/js/sales/proposal-service.mjs';
+import { publicProposal, sendProposalResponse } from '/assets/js/sales/proposal-service.mjs';
 import { formatInr } from '/assets/js/sales/proposal-generator.mjs';
 
 const $=(id)=>document.getElementById(id);
 const token=new URLSearchParams(location.search).get('token')||'';
 
 load();
+$('interestedButton').addEventListener('click',()=>respond('interested'));
+$('changesButton').addEventListener('click',()=>respond('request_changes'));
 
 async function load(){
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token))return fail('This proposal link is invalid.');
@@ -58,3 +60,5 @@ async function copy(value){try{await navigator.clipboard.writeText(value);$('cop
 function dateLabel(value){const date=new Date(value);return Number.isNaN(date.getTime())?'To be confirmed':date.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
 function text(id,value){const node=$(id);if(node)node.textContent=String(value||'');}
 function fail(message){$('loading').classList.add('hidden');$('error').classList.remove('hidden');text('errorMessage',message);}
+
+async function respond(response){const message=$('responseMessage').value.trim();const interested=$('interestedButton'),changes=$('changesButton');interested.disabled=true;changes.disabled=true;text('responseStatus','Sending response…');try{await sendProposalResponse(token,response,message);text('responseStatus',response==='interested'?'Thanks — your interest has been sent to the proposal owner.':'Your change request has been sent to the proposal owner.');$('responseMessage').disabled=true;}catch(error){text('responseStatus',error.message||'The response could not be sent.');interested.disabled=false;changes.disabled=false;}}
