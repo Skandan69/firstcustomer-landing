@@ -36,11 +36,21 @@ The score is deterministic and capped at 100. It also returns a priority level, 
 
 Auditing a website automatically refines the opportunity because the existing Website Intelligence `opportunityScore` and recommendations replace the preliminary website-unknown signal. No new database migration is required because opportunity intelligence is derived from the canonical business and saved audit data.
 
+## Shareable demo websites
+
+Qualified Local Business Finder results can generate a prospect-facing website concept without creating another Vercel function or exposing database credentials. The browser builds structured preview content in `assets/js/local-business/website-preview-generator.mjs`, then the existing server-only persistence route stores the sanitized JSON as a `website_demo_generated` activity event with a random UUID share token.
+
+The public static page at `/preview/?token=<uuid>` retrieves only the whitelisted preview JSON through `GET /api/persistence?resource=public_preview&token=<uuid>`. It never returns a workspace ID, service key, internal business record, or arbitrary stored HTML. Preview rendering uses DOM `textContent` rather than injecting business-controlled HTML.
+
+Generated previews are deliberately labelled as **concepts**. Category-specific service sections are example layout/content and must be confirmed with the business before publication; missing ratings, reviews, contact details, and claims are never invented. No additional Supabase migration is required because the existing `activity_log.metadata` JSONB field stores the small structured preview payload.
+
+Each business card also exposes **Copy Outreach**. The client-only outreach generator uses the strongest explainable opportunity reason plus verified rating/review evidence when available. If a demo has already been generated, the copied message includes the shareable preview URL. It does not call an LLM, invent business claims, or send business-identifying data to analytics.
+
 ## Google Analytics 4
 
 GA4 is configured centrally in `assets/js/analytics.js` with measurement ID `G-WKVRV08E16`. Each HTML entry page loads this shared utility once; feature modules must not add Google scripts or call `gtag` directly.
 
-Track supported product events with `analytics.track('save_lead', { source: 'local_business_finder' })`. Supported events are `page_view`, `business_search`, `save_lead`, `remove_lead`, `save_search`, `generate_audit`, `generate_website`, and `proposal_generated`. Event calls are exception-safe and become harmless no-ops if analytics initialization is unavailable.
+Track supported product events with `analytics.track('save_lead', { source: 'local_business_finder' })`. Supported events are `page_view`, `business_search`, `save_lead`, `remove_lead`, `save_search`, `generate_audit`, `generate_website`, `outreach_generated`, and `proposal_generated`. Event calls are exception-safe and become harmless no-ops if analytics initialization is unavailable.
 
 Never include business names, phone numbers, email addresses, addresses, website URLs, notes, workspace IDs, exact search locations, or other personal data in analytics properties.
 
