@@ -23,7 +23,7 @@ export function buildPipeline(savedLeads = [], activities = [], now = Date.now()
     const proposal = proposalEvent?.metadata?.proposal || null;
     const proposalUrl = proposalEvent?.metadata?.shareToken ? `/proposal/?token=${encodeURIComponent(proposalEvent.metadata.shareToken)}` : '';
     const projectFee = Number(proposal?.pricing?.projectFee) || 0;
-    const dueAt = nextAction?.dueAt ? new Date(nextAction.dueAt).getTime() : NaN;
+    const dueAt = nextAction?.dueAt ? dueTime(nextAction.dueAt) : NaN;
     return {
       savedLead,
       business,
@@ -99,6 +99,7 @@ function latestMetadata(events, eventType) {
 function latestEvent(events, eventType) {
   return [...(events || [])].filter((event) => event.event_type === eventType).sort((a, b) => timestamp(b) - timestamp(a))[0] || null;
 }
+function dueTime(value) { const text=String(value||''); const date=/^\d{4}-\d{2}-\d{2}$/.test(text)?new Date(`${text}T23:59:59`):new Date(text); const time=date.getTime(); return Number.isFinite(time)?time:NaN; }
 function timestamp(event) {
   const value = new Date(event?.created_at || 0).getTime();
   return Number.isFinite(value) ? value : 0;
