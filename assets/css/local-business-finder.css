@@ -25,3 +25,5 @@
 @media(max-width:580px){.lbf-crm{padding:14px;margin-left:-2px;margin-right:-2px}.lbf-crm-summary{grid-template-columns:1fr 1fr}.lbf-crm-metric:last-child{grid-column:1/-1}.lbf-crm-board{grid-template-columns:repeat(7,210px)}}
 
 .lbf-crm-response{margin-top:7px;border-radius:8px;padding:7px;font-size:9px;font-weight:750;background:#eef2ff;color:#3538cd}.lbf-crm-response.interested{background:#ecfdf3;color:#067647}.lbf-crm-response.request_changes{background:#fffaeb;color:#b54708}.lbf-crm-response small{display:block;margin-top:3px;color:inherit;font-weight:500;line-height:1.4}
+
+.lbf-crm-history{margin:7px 0;border-top:1px solid #f2f4f7;padding-top:7px}.lbf-crm-history summary{cursor:pointer;color:#667085;font-size:9px;font-weight:750}.lbf-crm-history>div{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px solid #f7f8fa;font-size:8px}.lbf-crm-history b{color:#475467;font-weight:650}.lbf-crm-history span{color:#98a2b3;white-space:nowrap}
